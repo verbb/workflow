@@ -4,6 +4,8 @@ Workflow is a Craft CMS plugin for a common publisher-editor scenario when it co
 
 A common scenario might involve certain users who are content editors/creators, but don't have the permission to publish particular entries. Instead, once an entry is ready to be published, the user can submit it for review. An entry moderator will be notified of any pending entries through email (and the control panel) where they can action the entry.
 
+<img src="https://raw.githubusercontent.com/engram-design/Workflow/master/screenshots/review-pane.png" />
+
 
 ## Features
 
