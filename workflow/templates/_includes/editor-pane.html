@@ -1,8 +1,8 @@
 {% import "_includes/forms" as forms %}
 
-<div class="pane workflow-pane">
-    <div class="field">
-        {% if submission %}
+{% if submission %}
+    <div class="pane workflow-pane">
+        <div class="field">
             {% if submission.approved %}
                 <div class="heading">
                     <label>{{ "Approved submission" | t }}</label>
@@ -20,7 +20,11 @@
                     </div>
                 </div>
             {% endif %}
-        {% else %}
+        </div>
+    </div>
+{% else %}
+    <div class="pane workflow-pane">
+        <div class="field">
             <div class="heading">
                 <label>{{ "Submit for review" | t }}</label>
 
@@ -34,9 +38,9 @@
             <div class="btngroup">
                 <a href="{{ actionUrl('workflow/sendForSubmission', { entryId: context.entry.id }) }}" class="btn submit">{{ "Submit for review" | t }}</a>
             </div>
-        {% endif %}
+        </div>
     </div>
-</div>
+{% endif %}
 
 {# Disable saving if there's a submission #}
 {% if submission %}

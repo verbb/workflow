@@ -1,8 +1,8 @@
 {% import "_includes/forms" as forms %}
 
-<div class="pane workflow-pane">
-    <div class="field">
-        {% if submission %}
+{% if submission %}
+    <div class="pane workflow-pane">
+        <div class="field">
             {% if submission.approved %}
                 <div class="heading">
                     <label>{{ "Approved submission" | t }}</label>
@@ -26,6 +26,6 @@
                     <a href="{{ actionUrl('workflow/approveSubmission', { submissionId: submission.id }) }}" class="btn submit">{{ "Approve & publish entry" | t }}</a>
                 </div>
             {% endif %}
-        {% endif %}
+        </div>
     </div>
-</div>
+{% endif %}
