@@ -1,0 +1,71 @@
+{% extends "workflow/_layouts" %}
+
+{% set crumbs = [
+    { label: "Workflow" | t, url: url('workflow') },
+    { label: "Overview" | t, url: url('workflow') },
+] %}
+
+{% set selectedTab = 'workflow' %}
+
+{% block blockContent %}
+
+{% if submissions | length %}
+    <table id="submissions" class="data fullwidth collapsible">
+        <thead>
+            <tr>
+                <th scope="col">{{ 'Entry' | t }}</th>
+                <th scope="col">{{ 'Editor' | t }}</th>
+                <th scope="col">{{ 'Date Submitted' | t }}</th>
+                <th scope="col">{{ 'Publisher' | t }}</th>
+                <th scope="col">{{ 'Date Approved' | t }}</th>
+                <td class="thin"></td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in submissions %}
+                <tr data-id="{{ submission.id }}">
+                    <th scope="row" data-title="{{ 'Name' | t }}">
+                        {% if submission.approved %}
+                            <span class="status green"></span>
+                        {% else %}
+                            <span class="status"></span>
+                        {% endif %}
+
+                        <a href="{{ submission.element.cpEditUrl }}">{{ submission.element.title }}</a>
+                    </th>
+
+                    <td data-title="{{ 'Editor' | t }}">
+                        <a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor.fullName }}</a>
+                    </td>
+
+                    <td data-title="{{ 'Date submitted' | t }}">
+                        {{ submission.dateCreated | date('Y-m-d H:i:s') }}
+                    </td>
+
+                    <td data-title="{{ 'Publisher' | t }}">
+                        {% if submission.publisher %}
+                            <a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher.fullName }}</a>
+                        {% endif %}
+                    </td>
+
+                    <td data-title="{{ 'Date approved' | t }}">
+                        {{ submission.dateApproved | date('Y-m-d H:i:s') }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>{{ "No entries in the queue to approve." | t }}</p>
+{% endif %}
+
+{% endblock %}
+
+{% set js %}
+    new Craft.AdminTable({
+        tableSelector: '#submissions',
+        noObjectsSelector: '#nosubmissions',
+    });
+{% endset %}
+{% includeJs js %}
+

@@ -1,0 +1,65 @@
+{% extends "workflow/_layouts" %}
+
+{% set crumbs = [
+    { label: "Workflow" | t, url: url('workflow') },
+    { label: "Settings" | t, url: url('workflow/settings') },
+] %}
+
+{% set selectedTab = 'settings' %}
+
+{% set fullPageForm = true %}
+
+{% block blockContent %}
+
+<input type="hidden" name="action" value="plugins/savePluginSettings">
+<input type="hidden" name="pluginClass" value="workflow">
+
+{% namespace 'settings' %}
+
+{% set sections = [] %}
+{% for section in craft.sections.getAllSections() %}
+    {% set sections = [{ value: section.id, label: section.name }] | merge(sections) %}
+{% endfor %}
+
+{{ forms.checkboxSelectField({
+    label: 'Enabled Sections' | t,
+    instructions: 'Select which sections you require editor-publisher workflow enabled for.' | t,
+    id: 'enabledSections',
+    name: 'enabledSections',
+    values: settings.enabledSections,
+    errors: settings.getErrors('enabledSections'),
+    options: sections,
+    first: true,
+}) }}
+
+{% set groups = [{ label: "None" | t, value: '' }] %}
+{% for group in craft.userGroups.getAllGroups() %}
+    {% set groups = groups | merge([{ label: group.name, value: group.id }]) %}
+{% endfor %}
+
+{{ forms.selectField({
+    label: 'Editor User Group' | t,
+    instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t,
+    id: 'editorUserGroup',
+    name: 'editorUserGroup',
+    value: settings.editorUserGroup,
+    errors: settings.getErrors('editorUserGroup'),
+    required: true,
+    options: groups,
+}) }}
+
+{{ forms.selectField({
+    label: 'Publisher User Group' | t,
+    instructions: 'Select the user group that your publishers belong to. Publishers are users who are notified when an editor submits content for review, and can approve content to be published live.' | t,
+    id: 'publisherUserGroup',
+    name: 'publisherUserGroup',
+    value: settings.publisherUserGroup,
+    errors: settings.getErrors('publisherUserGroup'),
+    required: true,
+    options: groups,
+}) }}
+    
+
+{% endnamespace %}
+
+{% endblock %}

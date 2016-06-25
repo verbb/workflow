@@ -1,0 +1,108 @@
+<?php
+namespace Craft;
+
+class WorkflowController extends BaseController
+{
+    // Public Methods
+    // =========================================================================
+
+    //
+    // Control Panel
+    //
+
+    public function actionIndex()
+    {
+        $submissions = craft()->workflow_submissions->getAll();
+
+        $this->renderTemplate('workflow/index', array(
+            'submissions' => $submissions,
+        ));
+    }
+
+    public function actionSettings()
+    {
+        $settings = craft()->workflow->getSettings();
+
+        $this->renderTemplate('workflow/settings', array(
+            'settings' => $settings,
+        ));
+    }
+
+    //
+    // Front-End
+    //
+    public function actionSendForSubmission()
+    {
+        $user = craft()->userSession->getUser();
+
+        $entryId = craft()->request->getParam('entryId');
+
+        $model = new Workflow_SubmissionModel();
+        $model->elementId = craft()->request->getParam('entryId');
+        $model->editorId = $user->id;
+
+        if (craft()->workflow_submissions->save($model)) {
+            craft()->userSession->setNotice(Craft::t('Entry submitted for approval.'));
+        } else {
+            craft()->userSession->setError(Craft::t('Could not submit for approval.'));
+        }
+
+        // Redirect page to the entry as its not a form submission
+        craft()->request->redirect($model->element->cpEditUrl);
+    }
+
+    public function actionApproveSubmission()
+    {
+        $user = craft()->userSession->getUser();
+
+        $submissionId = craft()->request->getParam('submissionId');
+        $model = craft()->workflow_submissions->getById($submissionId);
+        $model->approved = true;
+        $model->publisherId = $user->id;
+
+        if (craft()->workflow_submissions->approveSubmission($model)) {
+            craft()->userSession->setNotice(Craft::t('Entry approved and published.'));
+        } else {
+            craft()->userSession->setError(Craft::t('Could not approve and publish.'));
+        }
+
+        // Redirect page to the entry as its not a form submission
+        craft()->request->redirect($model->element->cpEditUrl);
+    }
+
+
+
+
+
+    // Private Methods
+    // =========================================================================
+
+    /*private function _response($model = null)
+    {
+        // Handle Ajax response
+        if (craft()->request->isAjaxRequest()) {
+            $this->returnJson($model);
+        } else {
+            $this->_redirect($model);
+        }
+    }
+
+    private function _redirect($model)
+    {
+        $url = craft()->request->getPost('redirect');
+
+        if ($url === null) {
+            $url = craft()->request->getParam('return');
+
+            if ($url === null) {
+                $url = craft()->request->getUrlReferrer();
+
+                if ($url === null) {
+                    $url = '/';
+                }
+            }
+        }
+
+        craft()->request->redirect($url);
+    }*/
+}

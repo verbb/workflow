@@ -1,0 +1,17 @@
+#plugin-footer {
+    width: 100% 
+}
+
+#plugin-footer .footer-left {
+    float: left;
+}
+
+#plugin-footer .footer-right {
+    float: right;
+}
+
+#plugin-footer .plugin-credit {
+    font-size: 11px;
+    color: #8f98a3;
+    text-align: right;
+}

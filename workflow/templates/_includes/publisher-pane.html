@@ -1,0 +1,31 @@
+{% import "_includes/forms" as forms %}
+
+<div class="pane workflow-pane">
+    <div class="field">
+        {% if submission %}
+            {% if submission.approved %}
+                <div class="heading">
+                    <label>{{ "Approved submission" | t }}</label>
+
+                    <div class="instructions">
+                        <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher.fullName }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="heading">
+                    <label>{{ "Approve submission" | t }}</label>
+
+                    <div class="instructions">
+                        <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor.fullName }}</a> {{ "has submitted this entry for review on " ~ submission.dateCreated | date('jS M Y g:ia') ~ ". Please review this entry before publishing." | t }}</p>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="btngroup">
+                    <a href="{{ actionUrl('workflow/approveSubmission', { submissionId: submission.id }) }}" class="btn submit">{{ "Approve & publish entry" | t }}</a>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
