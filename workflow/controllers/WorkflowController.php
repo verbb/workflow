@@ -40,6 +40,7 @@ class WorkflowController extends BaseController
         $model = new Workflow_SubmissionModel();
         $model->elementId = craft()->request->getParam('entryId');
         $model->editorId = $user->id;
+        $model->dateApproved = null;
 
         if (craft()->workflow_submissions->save($model)) {
             craft()->userSession->setNotice(Craft::t('Entry submitted for approval.'));
@@ -59,6 +60,7 @@ class WorkflowController extends BaseController
         $model = craft()->workflow_submissions->getById($submissionId);
         $model->approved = true;
         $model->publisherId = $user->id;
+        $model->dateApproved = new DateTime;
 
         if (craft()->workflow_submissions->approveSubmission($model)) {
             craft()->userSession->setNotice(Craft::t('Entry approved and published.'));
