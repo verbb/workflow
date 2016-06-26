@@ -6,7 +6,7 @@
     {% for submission in submissions %}
         <div class="pane workflow-pane">
             <div class="field">
-                {% if submission.approved %}
+                {% if submission.status == 'approved' %}
                     {% set submissionsPending = submissionsPending | merge([submission]) %}
 
                     <div class="heading">
@@ -54,7 +54,7 @@
 {# Disable saving if there's a submission #}
 {% if submissions | length %}
     {% for submission in submissions %}
-        {% if not submission.approved %}
+        {% if submission.status != 'approved' %}
             {# Hide first so we don't see a flicker #}
             {% set css %}
                 #extra-headers .btngroup { display: none; }

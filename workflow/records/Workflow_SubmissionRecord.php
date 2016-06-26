@@ -14,10 +14,17 @@ class Workflow_SubmissionRecord extends BaseRecord
     public function defineRelations()
     {
         return array(
-            'element'  => array(static::BELONGS_TO, 'ElementRecord', 'required' => true, 'onDelete' => static::CASCADE),
+            'owner'  => array(static::BELONGS_TO, 'ElementRecord', 'required' => true, 'onDelete' => static::CASCADE),
             'draft'  => array(static::BELONGS_TO, 'EntryDraftRecord', 'required' => false, 'onDelete' => static::CASCADE),
             'editor' => array(static::BELONGS_TO, 'UserRecord', 'required' => false, 'onDelete' => static::CASCADE),
             'publisher' => array(static::BELONGS_TO, 'UserRecord', 'required' => false, 'onDelete' => static::CASCADE),
+        );
+    }
+
+    public function scopes()
+    {
+        return array(
+            'ordered' => array('order' => 'dateCreated'),
         );
     }
 
@@ -28,7 +35,10 @@ class Workflow_SubmissionRecord extends BaseRecord
     protected function defineAttributes()
     {
         return array(
-            'approved'      => array(AttributeType::Bool),
+            'status'        => array(AttributeType::Enum, 'values' => array(
+                Workflow_SubmissionModel::APPROVED,
+                Workflow_SubmissionModel::PENDING,
+            )),
             'dateApproved'  => array(AttributeType::DateTime),
         );
     }

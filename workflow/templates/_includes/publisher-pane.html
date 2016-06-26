@@ -4,7 +4,7 @@
     {% for submission in submissions %}
         <div class="pane workflow-pane">
             <div class="field">
-                {% if submission.approved %}
+                {% if submission.status == 'approved' %}
                     <div class="heading">
                         <label>{{ "Approved submission" | t }}</label>
 

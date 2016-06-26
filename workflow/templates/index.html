@@ -1,4 +1,4 @@
-{% extends "workflow/_layouts" %}
+{#{% extends "workflow/_layouts" %}
 
 {% set crumbs = [
     { label: "Workflow" | t, url: url('workflow') },
@@ -67,5 +67,26 @@
         noObjectsSelector: '#nosubmissions',
     });
 {% endset %}
-{% includeJs js %}
+{% includeJs js %}#}
+
+
+
+
+{% set parentLayout = '_layouts/elementindex' %}
+{% extends "workflow/_layouts" %}
+
+{% set crumbs = [
+    { label: "Workflow" | t, url: url('workflow') },
+    { label: "Overview" | t, url: url('workflow') },
+] %}
+
+{% set elementType = 'Workflow_Submission' %}
+{% set selectedTab = 'workflow' %}
+{% set showStatusMenu = true %}
+{% set title = 'Workflow' %}
+
+{% block sidebar %}
+    {{ parent() }}
+{% endblock %}
+
 

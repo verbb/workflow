@@ -10,15 +10,6 @@ class WorkflowController extends BaseController
     // Control Panel
     //
 
-    public function actionIndex()
-    {
-        $submissions = craft()->workflow_submissions->getAll();
-
-        $this->renderTemplate('workflow/index', array(
-            'submissions' => $submissions,
-        ));
-    }
-
     public function actionSettings()
     {
         $settings = craft()->workflow->getSettings();
@@ -36,9 +27,10 @@ class WorkflowController extends BaseController
         $user = craft()->userSession->getUser();
 
         $model = new Workflow_SubmissionModel();
-        $model->elementId = craft()->request->getParam('entryId');
+        $model->ownerId = craft()->request->getParam('entryId');
         $model->draftId = craft()->request->getParam('draftId');
         $model->editorId = $user->id;
+        $model->status = Workflow_SubmissionModel::PENDING;
         $model->dateApproved = null;
 
         if (craft()->workflow_submissions->save($model)) {
@@ -57,7 +49,7 @@ class WorkflowController extends BaseController
 
         $submissionId = craft()->request->getParam('submissionId');
         $model = craft()->workflow_submissions->getById($submissionId);
-        $model->approved = true;
+        $model->status = Workflow_SubmissionModel::APPROVED;
         $model->publisherId = $user->id;
         $model->dateApproved = new DateTime;
 

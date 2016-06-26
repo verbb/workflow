@@ -6,27 +6,27 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
     // Public Methods
     // =========================================================================
 
+    public function getCriteria(array $attributes = array())
+    {
+        $attributes['status'] = null;
+        return craft()->elements->getCriteria('Workflow_Submission', $attributes);
+    }
+
     public function getAll()
     {
-        $records = Workflow_SubmissionRecord::model()->findAll();
-        return Workflow_SubmissionModel::populateModels($records);
+        return $this->getCriteria()->find();
+    }
+
+    public function getAllByOwnerId($ownerId, $draftId)
+    {
+        return $this->getCriteria(array('ownerId' => $ownerId, 'draftId' => $draftId))->find();
     }
 
     public function getById($id)
     {
-        $record = Workflow_SubmissionRecord::model()->findById($id);
-
-        if ($record) {
-            return Workflow_SubmissionModel::populateModel($record);
-        }
+        return $this->getCriteria(array('limit' => 1, 'id' => $id))->first();
     }
-
-    public function getAllByElementId($elementId, $draftId)
-    {
-        $records = Workflow_SubmissionRecord::model()->findAllByAttributes(array('elementId' => $elementId, 'draftId' => $draftId));
-        return Workflow_SubmissionModel::populateModels($records);
-    }
-
+    
     public function save(Workflow_SubmissionModel $model)
     {
         $isNewSubmission = !$model->id;
@@ -55,9 +55,17 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
             return false;
         }
 
+        if (!craft()->elements->saveElement($model)) {
+            return false;
+        }
+
+        if ($isNewSubmission) {
+            $record->id = $model->id;
+        }
+
         $record->save(false);
 
-        if (!$model->id) {
+        if ($isNewSubmission) {
             $model->id = $record->id;
         }
 
@@ -84,7 +92,7 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         }
         
         // Set the entry to be enabled first
-        $entry = craft()->entries->getEntryById($model->element->id);
+        $entry = craft()->entries->getEntryById($model->owner->id);
         $entry->enabled = true;
 
         craft()->entries->saveEntry($entry);
@@ -139,8 +147,7 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
 
         foreach ($publishers as $key => $user) {
             craft()->email->sendEmailByKey($user, 'workflow_publisher_notification', array(
-                'element' => $model->element,
-                'sender' => $model->editor,
+                'submission' => $model,
             ));
         }
     }

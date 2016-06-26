@@ -1,15 +1,43 @@
 <?php
 namespace Craft;
 
-class Workflow_SubmissionModel extends BaseModel
+class Workflow_SubmissionModel extends BaseElementModel
 {
+    // Properties
+    // =========================================================================
+
+    protected $elementType = 'Workflow_Submission';
+
+    const APPROVED  = 'approved';
+    const PENDING   = 'pending';
+
+
     // Public Methods
     // =========================================================================
 
-    public function getElement()
+    public function __toString()
     {
-        if ($this->elementId) {
-            return craft()->entries->getEntryById($this->elementId);
+        if ($this->ownerId) {
+            return $this->owner->title;
+        } else {
+            return '';
+        }
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function getCpEditUrl()
+    {
+        return UrlHelper::getCpUrl('workflow/edit/' . $this->id);
+    }
+
+    public function getOwner()
+    {
+        if ($this->ownerId) {
+            return craft()->entries->getEntryById($this->ownerId);
         }
     }
 
@@ -33,17 +61,20 @@ class Workflow_SubmissionModel extends BaseModel
 
     protected function defineAttributes()
     {
-        return array(
+        return array_merge(parent::defineAttributes(), array(
             'id'            => array(AttributeType::Number),
-            'elementId'     => array(AttributeType::Number),
+            'ownerId'       => array(AttributeType::Number),
             'draftId'       => array(AttributeType::Number),
             'editorId'      => array(AttributeType::Number),
             'publisherId'   => array(AttributeType::Number),
-            'approved'      => array(AttributeType::Bool),
+            'status'        => array(AttributeType::Enum, 'values' => array(
+                Workflow_SubmissionModel::APPROVED,
+                Workflow_SubmissionModel::PENDING,
+            )),
             'dateApproved'  => array(AttributeType::DateTime),
             'dateCreated'   => array(AttributeType::DateTime),
             'dateUpdated'   => array(AttributeType::DateTime),
-        );
+        ));
     }
 
 }

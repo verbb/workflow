@@ -15,3 +15,12 @@
     color: #8f98a3;
     text-align: right;
 }
+
+
+
+/* ElementIndex */
+.status.approved {
+    background-color: #27AE60;
+}
+
+

@@ -1,4 +1,5 @@
-{% extends "_layouts/cp" %}
+{% extends parentLayout | default("_layouts/cp") %}
+
 {% import "_includes/forms" as forms %}
 
 {% includeCssResource 'workflow/css/workflow.css' %}

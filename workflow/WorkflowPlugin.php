@@ -60,7 +60,6 @@ class WorkflowPlugin extends BasePlugin
     public function registerCpRoutes()
     {
         return array(
-            'workflow' => array('action' => 'workflow/index'),
             'workflow/settings' => array('action' => 'workflow/settings'),
         );
     }
@@ -88,8 +87,10 @@ class WorkflowPlugin extends BasePlugin
 
     public function init()
     {
-        // Add template to the sidebar for maximum trendyness
-        craft()->workflow->renderEntrySidebar();
+        if (craft()->request->isCpRequest()) {
+            // Add template to the sidebar for maximum trendyness
+            craft()->workflow->renderEntrySidebar();
+        }
     }
 
     public function registerEmailMessages()
