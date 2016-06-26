@@ -1,31 +1,33 @@
 {% import "_includes/forms" as forms %}
 
-{% if submission %}
-    <div class="pane workflow-pane">
-        <div class="field">
-            {% if submission.approved %}
-                <div class="heading">
-                    <label>{{ "Approved submission" | t }}</label>
+{% if submissions | length %}
+    {% for submission in submissions %}
+        <div class="pane workflow-pane">
+            <div class="field">
+                {% if submission.approved %}
+                    <div class="heading">
+                        <label>{{ "Approved submission" | t }}</label>
 
-                    <div class="instructions">
-                        <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
+                        <div class="instructions">
+                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
+                        </div>
                     </div>
-                </div>
-            {% else %}
-                <div class="heading">
-                    <label>{{ "Approve submission" | t }}</label>
+                {% else %}
+                    <div class="heading">
+                        <label>{{ "Approve submission" | t }}</label>
 
-                    <div class="instructions">
-                        <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a> {{ "has submitted this entry for review on " ~ submission.dateCreated | date('jS M Y g:ia') ~ ". Please review this entry before publishing." | t }}</p>
+                        <div class="instructions">
+                            <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a> {{ "has submitted this entry for review on " ~ submission.dateCreated | date('jS M Y g:ia') ~ ". Please review this entry before publishing." | t }}</p>
+                        </div>
                     </div>
-                </div>
 
-                <br>
+                    <br>
 
-                <div class="btngroup">
-                    <a href="{{ actionUrl('workflow/approveSubmission', { submissionId: submission.id }) }}" class="btn submit">{{ "Approve & publish entry" | t }}</a>
-                </div>
-            {% endif %}
+                    <div class="btngroup">
+                        <a href="{{ actionUrl('workflow/approveSubmission', { submissionId: submission.id }) }}" class="btn submit">{{ "Approve & publish entry" | t }}</a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
+    {% endfor %}
 {% endif %}

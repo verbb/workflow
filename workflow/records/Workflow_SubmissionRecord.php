@@ -15,15 +15,9 @@ class Workflow_SubmissionRecord extends BaseRecord
     {
         return array(
             'element'  => array(static::BELONGS_TO, 'ElementRecord', 'required' => true, 'onDelete' => static::CASCADE),
-            'editor' => array(static::BELONGS_TO, 'UserRecord', 'onDelete' => static::CASCADE),
-            'publisher' => array(static::BELONGS_TO, 'UserRecord', 'onDelete' => static::CASCADE),
-        );
-    }
-
-    public function defineIndexes()
-    {
-        return array(
-            array('columns' => array('elementId', 'editorId'), 'unique' => true),
+            'draft'  => array(static::BELONGS_TO, 'EntryDraftRecord', 'required' => false, 'onDelete' => static::CASCADE),
+            'editor' => array(static::BELONGS_TO, 'UserRecord', 'required' => false, 'onDelete' => static::CASCADE),
+            'publisher' => array(static::BELONGS_TO, 'UserRecord', 'required' => false, 'onDelete' => static::CASCADE),
         );
     }
 

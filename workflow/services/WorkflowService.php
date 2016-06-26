@@ -60,11 +60,12 @@ class WorkflowService extends BaseApplicationComponent
             }
 
             // See if there's an existing submission
-            $submission = craft()->workflow_submissions->getByElementId($context['entry']->id);
+            $draftId = (isset($context['draftId'])) ? $context['draftId'] : null;
+            $submissions = craft()->workflow_submissions->getAllByElementId($context['entry']->id, $draftId);
 
             return craft()->templates->render('workflow/_includes/' . $template, array(
                 'context' => $context,
-                'submission' => $submission,
+                'submissions' => $submissions,
             ));
         });
     }

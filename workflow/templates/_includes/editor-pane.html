@@ -1,28 +1,36 @@
 {% import "_includes/forms" as forms %}
 
-{% if submission %}
-    <div class="pane workflow-pane">
-        <div class="field">
-            {% if submission.approved %}
-                <div class="heading">
-                    <label>{{ "Approved submission" | t }}</label>
+{% set submissionsPending = [] %}
 
-                    <div class="instructions">
-                        <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
-                    </div>
-                </div>
-            {% else %}
-                <div class="heading">
-                    <label>{{ "Awaiting approval" | t }}</label>
+{% if submissions | length %}
+    {% for submission in submissions %}
+        <div class="pane workflow-pane">
+            <div class="field">
+                {% if submission.approved %}
+                    {% set submissionsPending = submissionsPending | merge([submission]) %}
 
-                    <div class="instructions">
-                        <p style="color: #da5a47;">{{ "This entry has been submitted for review on " ~ submission.dateCreated | date('jS M Y g:ia') ~ " and is awaiting approval. Changes cannot be made until approved." | t }}</p>
+                    <div class="heading">
+                        <label>{{ "Approved submission" | t }}</label>
+
+                        <div class="instructions">
+                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
+                {% else %}
+                    <div class="heading">
+                        <label>{{ "Awaiting approval" | t }}</label>
+
+                        <div class="instructions">
+                            <p style="color: #da5a47;">{{ "This entry has been submitted for review on " ~ submission.dateCreated | date('jS M Y g:ia') ~ " and is awaiting approval. Changes cannot be made until approved." | t }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
-{% else %}
+    {% endfor %}
+{% endif %}
+
+{% if not submissions | length or (submissionsPending | length == submissions | length) %}
     <div class="pane workflow-pane">
         <div class="field">
             <div class="heading">
@@ -36,30 +44,33 @@
             <br>
 
             <div class="btngroup">
-                <a href="{{ actionUrl('workflow/sendForSubmission', { entryId: context.entry.id }) }}" class="btn submit">{{ "Submit for review" | t }}</a>
+                {% set draftId = context.draftId | default('') %}
+                <a href="{{ actionUrl('workflow/sendForSubmission', { entryId: context.entry.id, draftId: draftId }) }}" class="btn submit">{{ "Submit for review" | t }}</a>
             </div>
         </div>
     </div>
 {% endif %}
 
 {# Disable saving if there's a submission #}
-{% if submission %}
-    {% if not submission.approved %}
-        {# Hide first so we don't see a flicker #}
-        {% set css %}
-            #extra-headers .btngroup { display: none; }
-        {% endset %}
+{% if submissions | length %}
+    {% for submission in submissions %}
+        {% if not submission.approved %}
+            {# Hide first so we don't see a flicker #}
+            {% set css %}
+                #extra-headers .btngroup { display: none; }
+            {% endset %}
 
-        {% set js %}
-            $('form#container').on('submit', function(e) {
-                e.preventDefault();
-            });
+            {% set js %}
+                $('form#container').on('submit', function(e) {
+                    e.preventDefault();
+                });
 
-            $('#page-header #extra-headers').html('');
-        {% endset %}
+                $('#page-header #extra-headers').html('');
+            {% endset %}
 
-        {% includeCss css first %}
-        {% includeJs js first %}
+            {% includeCss css first %}
+            {% includeJs js first %}
 
-    {% endif %}
+        {% endif %}
+    {% endfor %}
 {% endif %}

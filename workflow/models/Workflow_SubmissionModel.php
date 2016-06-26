@@ -36,6 +36,7 @@ class Workflow_SubmissionModel extends BaseModel
         return array(
             'id'            => array(AttributeType::Number),
             'elementId'     => array(AttributeType::Number),
+            'draftId'       => array(AttributeType::Number),
             'editorId'      => array(AttributeType::Number),
             'publisherId'   => array(AttributeType::Number),
             'approved'      => array(AttributeType::Bool),

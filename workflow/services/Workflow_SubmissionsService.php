@@ -21,13 +21,10 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         }
     }
 
-    public function getByElementId($elementId)
+    public function getAllByElementId($elementId, $draftId)
     {
-        $record = Workflow_SubmissionRecord::model()->findByAttributes(array('elementId' => $elementId));
-
-        if ($record) {
-            return Workflow_SubmissionModel::populateModel($record);
-        }
+        $records = Workflow_SubmissionRecord::model()->findAllByAttributes(array('elementId' => $elementId, 'draftId' => $draftId));
+        return Workflow_SubmissionModel::populateModels($records);
     }
 
     public function save(Workflow_SubmissionModel $model)

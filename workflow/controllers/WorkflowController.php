@@ -35,10 +35,9 @@ class WorkflowController extends BaseController
     {
         $user = craft()->userSession->getUser();
 
-        $entryId = craft()->request->getParam('entryId');
-
         $model = new Workflow_SubmissionModel();
         $model->elementId = craft()->request->getParam('entryId');
+        $model->draftId = craft()->request->getParam('draftId');
         $model->editorId = $user->id;
         $model->dateApproved = null;
 
@@ -49,7 +48,7 @@ class WorkflowController extends BaseController
         }
 
         // Redirect page to the entry as its not a form submission
-        craft()->request->redirect($model->element->cpEditUrl);
+        craft()->request->redirect(craft()->request->urlReferrer);
     }
 
     public function actionApproveSubmission()
@@ -69,7 +68,7 @@ class WorkflowController extends BaseController
         }
 
         // Redirect page to the entry as its not a form submission
-        craft()->request->redirect($model->element->cpEditUrl);
+        craft()->request->redirect(craft()->request->urlReferrer);
     }
 
 
