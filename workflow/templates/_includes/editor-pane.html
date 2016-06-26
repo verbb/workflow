@@ -8,7 +8,7 @@
                     <label>{{ "Approved submission" | t }}</label>
 
                     <div class="instructions">
-                        <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher.fullName }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
+                        <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
                     </div>
                 </div>
             {% else %}

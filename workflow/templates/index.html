@@ -35,7 +35,7 @@
                     </th>
 
                     <td data-title="{{ 'Editor' | t }}">
-                        <a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor.fullName }}</a>
+                        <a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a>
                     </td>
 
                     <td data-title="{{ 'Date submitted' | t }}">
@@ -44,7 +44,7 @@
 
                     <td data-title="{{ 'Publisher' | t }}">
                         {% if submission.publisher %}
-                            <a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher.fullName }}</a>
+                            <a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a>
                         {% endif %}
                     </td>
 
