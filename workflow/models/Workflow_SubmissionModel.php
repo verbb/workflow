@@ -31,7 +31,13 @@ class Workflow_SubmissionModel extends BaseElementModel
 
     public function getCpEditUrl()
     {
-        return UrlHelper::getCpUrl('workflow/edit/' . $this->id);
+        if ($this->draftId) {
+            $url = $this->owner->cpEditUrl . '/drafts/' . $this->draftId;
+        } else {
+            $url = $this->owner->cpEditUrl;
+        }
+
+        return $url;
     }
 
     public function getOwner()
