@@ -2,7 +2,7 @@
 
 Workflow is a Craft CMS plugin for a common publisher-editor scenario when it comes to content authoring.
 
-A common scenario might involve certain users who are content editors/creators, but don't have the permission to publish particular entries. Instead, once an entry is ready to be published, the user can submit it for review. An entry moderator will be notified of any pending entries through email (and the control panel) where they can action the entry.
+Your site might have two distinct user groups - Publishers and Editors. An Editor is a user who can create and edit content entries, but cannot publish these so they are publicly visible. Instead, Editors should submit these entries to a Publisher user, who is then notified (via email), reviews the entry, and eventually approved the entry for public viewing.
 
 <img src="https://raw.githubusercontent.com/engram-design/Workflow/master/screenshots/review-pane.png" />
 
@@ -22,7 +22,9 @@ Please visit the [Wiki](https://github.com/engram-design/Workflow/wiki) for all 
 
 ## Roadmap
 - Entry diffs to compare previous and submitted entries.
-- Setting specific (non Craft user) recipients for Publisher notifications.
+- Setting specific recipients for Publisher notifications - rather than entire Publisher group.
+- Better note-tracking per-version
+- Incorporate versions - tie each submission to a version
 
 
 ### Changelog
