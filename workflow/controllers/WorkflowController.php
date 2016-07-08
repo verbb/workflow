@@ -47,20 +47,34 @@ class WorkflowController extends BaseController
     {
         $user = craft()->userSession->getUser();
 
+        $draftId = craft()->request->getParam('draftId');
         $submissionId = craft()->request->getParam('submissionId');
+
         $model = craft()->workflow_submissions->getById($submissionId);
         $model->status = Workflow_SubmissionModel::APPROVED;
         $model->publisherId = $user->id;
         $model->dateApproved = new DateTime;
 
-        if (craft()->workflow_submissions->approveSubmission($model)) {
+        // Check if we're approving a draft - we publish it too.
+        if ($draftId) {
+            $draft = craft()->entryRevisions->getDraftById($draftId);
+        } else {
+            $draft = null;
+        }
+
+        if (craft()->workflow_submissions->approveSubmission($model, $draft)) {
             craft()->userSession->setNotice(Craft::t('Entry approved and published.'));
         } else {
             craft()->userSession->setError(Craft::t('Could not approve and publish.'));
         }
 
-        // Redirect page to the entry as its not a form submission
-        craft()->request->redirect(craft()->request->urlReferrer);
+        // Redirect page to the entry as its not a form submission - check for draft
+        if ($draft) {
+            // If we've published a draft the url has changed
+            craft()->request->redirect($draft->cpEditUrl);
+        } else {
+            craft()->request->redirect(craft()->request->urlReferrer);
+        }
     }
 
 

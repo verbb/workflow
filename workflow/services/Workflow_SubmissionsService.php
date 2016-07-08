@@ -80,7 +80,7 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         return true;
     }
 
-    public function approveSubmission(Workflow_SubmissionModel $model)
+    public function approveSubmission(Workflow_SubmissionModel $model, $draft)
     {
         // Fire an 'onBeforeApproveSubmission' event
         $event = new Event($this, array('submission' => $model));
@@ -90,15 +90,24 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         if (!$event->performAction) {
             return false;
         }
-        
-        // Set the entry to be enabled first
-        $entry = craft()->entries->getEntryById($model->owner->id);
-        $entry->enabled = true;
 
-        craft()->entries->saveEntry($entry);
+        // Check for approving a Draft - need to publish not just save
+        if ($draft) {
+            $draft->enabled = true;
+            craft()->entryRevisions->publishDraft($draft);
 
-        // Then, update our submission record with the necessary information
-        $result = $this->save($model);
+            // The Draft entry has now been deleted, so we don't need to update the submission record
+            // because it no also doesn't exist (due to cascade deleting of records)
+            $result = true;
+        } else {
+            $entry = craft()->entries->getEntryById($model->owner->id);
+            $entry->enabled = true;
+
+            craft()->entries->saveEntry($entry);
+
+            // Then, update our submission record with the necessary information
+            $result = $this->save($model);           
+        }
 
         // Fire an 'onSaveSubmission' event
         $this->onApproveSubmission(new Event($this, array('submission' => $model)));
