@@ -6,5 +6,5 @@ return array (
     'workflow_publisher_notification_body' => "Hey {{ user.friendlyName }},\n\n" .
         "{{ submission.editor }} has submitted the entry \"{{ submission.owner.title }}\" for approval on {{ siteName }}.\n\n" .
         "To review it please log into your control panel.\n\n" .
-        "{{ submission.owner.cpEditUrl }}",
+        "{{ submission.cpEditUrl }}",
 );
