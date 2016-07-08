@@ -10,6 +10,16 @@ class WorkflowController extends BaseController
     // Control Panel
     //
 
+    public function actionDrafts()
+    {
+        $records = EntryDraftRecord::model()->findAll();
+        $drafts = EntryDraftModel::populateModels($records);
+
+        $this->renderTemplate('workflow/drafts', array(
+            'entries' => $drafts,
+        ));
+    }
+
     public function actionSettings()
     {
         $settings = craft()->workflow->getSettings();
@@ -18,6 +28,7 @@ class WorkflowController extends BaseController
             'settings' => $settings,
         ));
     }
+
 
     //
     // Front-End

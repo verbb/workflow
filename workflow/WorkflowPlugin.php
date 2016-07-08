@@ -14,7 +14,7 @@ class WorkflowPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '0.9.1';
+        return '0.9.2';
     }
 
     public function getSchemaVersion()
@@ -60,6 +60,7 @@ class WorkflowPlugin extends BasePlugin
     public function registerCpRoutes()
     {
         return array(
+            'workflow/drafts' => array('action' => 'workflow/drafts'),
             'workflow/settings' => array('action' => 'workflow/settings'),
         );
     }
