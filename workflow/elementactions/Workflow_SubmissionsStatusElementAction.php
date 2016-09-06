@@ -53,8 +53,8 @@ class Workflow_SubmissionsStatusElementAction extends BaseElementAction
     {
         return array(
             'status' => array(AttributeType::Enum, 'values' => array(
-                Workflow_SubmissionsModel::APPROVED,
-                Workflow_SubmissionsModel::PENDING,
+                Workflow_SubmissionModel::APPROVED,
+                Workflow_SubmissionModel::PENDING,
             ), 'required' => true)
         );
     }
