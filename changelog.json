@@ -2,7 +2,7 @@
     {
         "version": "0.9.3",
         "downloadUrl": "https://github.com/engram-design/Comments/archive/0.9.3.zip",
-        "date": "2016-07-16T23:00:00+10:00",
+        "date": "2016-09-25T00:00:00+10:00",
         "notes": [
             "[Added] Added ability to set notes on an approval/rejection from a publisher.",
             "[Added] Added submission rejection option integrating notes (as above).",
