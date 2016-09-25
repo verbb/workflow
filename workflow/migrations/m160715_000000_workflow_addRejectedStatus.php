@@ -11,6 +11,7 @@ class m160715_000000_workflow_addRejectedStatus extends BaseMigration
                 Workflow_SubmissionModel::APPROVED,
                 Workflow_SubmissionModel::PENDING,
                 Workflow_SubmissionModel::REJECTED,
+                Workflow_SubmissionModel::REVOKED,
             ),
             'column' => 'enum'
         ));
@@ -19,7 +20,7 @@ class m160715_000000_workflow_addRejectedStatus extends BaseMigration
 
         craft()->db->createCommand()->addColumnAfter('workflow_submissions', 'dateRejected', ColumnType::DateTime, 'dateApproved');
 
-        craft()->db->createCommand()->addColumnAfter('workflow_submissions', 'notes', ColumnType::Mixed, 'status');
+        craft()->db->createCommand()->addColumnAfter('workflow_submissions', 'notes', ColumnType::Text, 'status');
 
         return true;
     }
