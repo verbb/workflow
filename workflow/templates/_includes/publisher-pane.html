@@ -2,11 +2,14 @@
 
 {% import "_includes/forms" as forms %}
 
-{% if submissions | length %}
+{% set pendingSubmissions = craft.workflow.submissions({ status: 'pending' }).count() %}
+{% set nonPendingSubmissions = craft.workflow.submissions({ status: 'not pending' }).count() %}
+
+{% if nonPendingSubmissions %}
     <div class="pane workflow-pane">
         {% for submission in submissions if submission.status != 'pending' %}
-            <div class="field">
-                {% if submission.status == 'approved' %}
+            {% if submission.status == 'approved' %}
+                <div class="field">
                     <div class="heading">
                         <label>{{ "Approved submission" | t }}</label>
 
@@ -18,7 +21,9 @@
                             {% endif %}
                         </div>
                     </div>
-                {% elseif submission.status == 'rejected' %}
+                </div>
+            {% elseif submission.status == 'rejected' %}
+                <div class="field">
                     <div class="heading">
                         <label>{{ "Rejected submission" | t }}</label>
 
@@ -30,7 +35,9 @@
                             {% endif %}
                         </div>
                     </div>
-                {% elseif submission.status == 'revoked' %}
+                </div>
+            {% elseif submission.status == 'revoked' %}
+                <div class="field">
                     <div class="heading">
                         <label>{{ "Revoked submission" | t }}</label>
 
@@ -38,13 +45,15 @@
                             <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a> {{ "revoked this submission on {date}." | t({ date: submission.dateRevoked | date('jS M Y g:ia') }) }}</p>
                         </div>
                     </div>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
+{% endif %}
 
-    {% for submission in submissions if submission.status == 'pending' %}
-        <div class="pane workflow-pane">
+{% if pendingSubmissions %}
+    <div class="pane workflow-pane">
+        {% for submission in submissions if submission.status == 'pending' %}
             <div class="field">
                 <div class="heading">
                     <label>{{ "Submission awaiting approval" | t }}</label>
@@ -71,8 +80,8 @@
                     <a class="btn formsubmit" href="{{ actionUrl('workflow/rejectSubmission', { submissionId: submission.id, draftId: draftId }) }}">{{ "Reject" | t }}</a>
                 </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
 {% endif %}
 
 {# Because we can't have a form inside the outer entries saving form, we need to append notes onto our button submits #}

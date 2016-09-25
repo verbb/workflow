@@ -22,4 +22,9 @@ class WorkflowVariable
     {
         return $this->getPlugin()->getVersion();
     }
+
+    public function submissions($criteria)
+    {
+        return craft()->elements->getCriteria('Workflow_Submission', $criteria);
+    }
 }
