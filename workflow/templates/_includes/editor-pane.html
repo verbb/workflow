@@ -1,33 +1,69 @@
+{% includeCssResource 'workflow/css/workflow.css' %}
+
 {% import "_includes/forms" as forms %}
 
 {% set submissionsPending = [] %}
 
 {% if submissions | length %}
-    {% for submission in submissions %}
-        <div class="pane workflow-pane">
-            <div class="field">
-                {% if submission.status == 'approved' %}
-                    {% set submissionsPending = submissionsPending | merge([submission]) %}
+    <div class="pane workflow-pane">
+        {% for submission in submissions %}
+            {% if submission.status != 'pending' %}
+                {% set submissionsPending = submissionsPending | merge([submission]) %}
+            {% endif %}
 
+            {% if submission.status == 'approved' %}
+                <div class="field">
                     <div class="heading">
                         <label>{{ "Approved submission" | t }}</label>
 
                         <div class="instructions">
-                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on " ~ submission.dateApproved | date('jS M Y g:ia') ~ "." | t }}</p>
+                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on {date}." | t({ date: submission.dateApproved | date('jS M Y g:ia') }) }}</p>
+
+                            {% if submission.notes %}
+                                <p class="code">"{{ submission.notes }}"</p>
+                            {% endif %}
                         </div>
                     </div>
-                {% else %}
+                </div>
+            {% elseif submission.status == 'rejected' %}
+                <div class="field">
+                    <div class="heading">
+                        <label>{{ "Rejected submission" | t }}</label>
+
+                        <div class="instructions">
+                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "rejected this entry on {date}." | t({ date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
+
+                            {% if submission.notes %}
+                                <p class="code">"{{ submission.notes }}"</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% elseif submission.status == 'pending' %}
+                <div class="field">
                     <div class="heading">
                         <label>{{ "Awaiting approval" | t }}</label>
 
                         <div class="instructions">
-                            <p style="color: #da5a47;">{{ "This entry has been submitted for review on " ~ submission.dateCreated | date('jS M Y g:ia') ~ " and is awaiting approval. Changes cannot be made until approved." | t }}</p>
+                            <p style="color: #da5a47;">{{ "This entry has been submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t({ date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
+
+                            <a href="{{ actionUrl('workflow/revokeSubmission', { submissionId: submission.id }) }}" class="btn small">{{ "Revoke submission" | t }}</a>
                         </div>
                     </div>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
+                </div>
+            {% elseif submission.status == 'revoked' %}
+                <div class="field">
+                    <div class="heading">
+                        <label>{{ "Revoked submission" | t }}</label>
+
+                        <div class="instructions">
+                            <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a> {{ "revoked this entry on {date}." | t({ date: submission.dateRevoked | date('jS M Y g:ia') }) }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endif %}
 
 {% if not submissions | length or (submissionsPending | length == submissions | length) %}
@@ -54,7 +90,7 @@
 {# Disable saving if there's a submission #}
 {% if submissions | length %}
     {% for submission in submissions %}
-        {% if submission.status != 'approved' %}
+        {% if submission.status == 'pending' %}
             {# Hide first so we don't see a flicker #}
             {% set css %}
                 #extra-headers .btngroup { display: none; }

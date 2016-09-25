@@ -54,17 +54,37 @@ class WorkflowController extends BaseController
         craft()->request->redirect(craft()->request->urlReferrer);
     }
 
+    public function actionRevokeSubmission()
+    {
+        $submissionId = craft()->request->getParam('submissionId');
+
+        $model = craft()->workflow_submissions->getById($submissionId);
+        $model->status = Workflow_SubmissionModel::REVOKED;
+        $model->dateRevoked = new DateTime;
+
+        if (craft()->workflow_submissions->revokeSubmission($model)) {
+            craft()->userSession->setNotice(Craft::t('Submission revoked.'));
+        } else {
+            craft()->userSession->setError(Craft::t('Could not revoke submission.'));
+        }
+
+        // Redirect page to the entry as its not a form submission
+        craft()->request->redirect(craft()->request->urlReferrer);
+    }
+
     public function actionApproveSubmission()
     {
         $user = craft()->userSession->getUser();
 
         $draftId = craft()->request->getParam('draftId');
         $submissionId = craft()->request->getParam('submissionId');
+        $notes = craft()->request->getParam('notes');
 
         $model = craft()->workflow_submissions->getById($submissionId);
         $model->status = Workflow_SubmissionModel::APPROVED;
         $model->publisherId = $user->id;
         $model->dateApproved = new DateTime;
+        $model->notes = $notes;
 
         // Check if we're approving a draft - we publish it too.
         if ($draftId) {
@@ -86,6 +106,30 @@ class WorkflowController extends BaseController
         } else {
             craft()->request->redirect(craft()->request->urlReferrer);
         }
+    }
+
+    public function actionRejectSubmission()
+    {
+        $user = craft()->userSession->getUser();
+
+        $draftId = craft()->request->getParam('draftId');
+        $submissionId = craft()->request->getParam('submissionId');
+        $notes = craft()->request->getParam('notes');
+
+        $model = craft()->workflow_submissions->getById($submissionId);
+        $model->status = Workflow_SubmissionModel::REJECTED;
+        $model->publisherId = $user->id;
+        $model->dateRejected = new DateTime;
+        $model->notes = $notes;
+
+        if (craft()->workflow_submissions->rejectSubmission($model)) {
+            craft()->userSession->setNotice(Craft::t('Submission rejected.'));
+        } else {
+            craft()->userSession->setError(Craft::t('Could not reject submission.'));
+        }
+
+        // Redirect page to the entry as its not a form submission
+        craft()->request->redirect(craft()->request->urlReferrer);
     }
 
 

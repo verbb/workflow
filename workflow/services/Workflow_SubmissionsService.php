@@ -19,7 +19,7 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
 
     public function getAllByOwnerId($ownerId, $draftId)
     {
-        return $this->getCriteria(array('ownerId' => $ownerId, 'draftId' => $draftId))->find();
+        return $this->getCriteria(array('ownerId' => $ownerId, 'draftId' => $draftId, 'order' => 'dateCreated asc'))->find();
     }
 
     public function getById($id)
@@ -43,6 +43,8 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         $model->addErrors($record->getErrors());
 
         if ($model->hasErrors()) {
+            WorkflowPlugin::log(print_r($model->getAllErrors(), true), LogLevel::Error, true);
+
             return false;
         }
 
@@ -112,7 +114,37 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         // Fire an 'onSaveSubmission' event
         $this->onApproveSubmission(new Event($this, array('submission' => $model)));
 
+        // Trigger notification to editor
+        $this->_sendEditorNotificationEmail($model);
+
         return $result;
+    }
+
+    public function rejectSubmission(Workflow_SubmissionModel $model)
+    {
+        // Fire an 'onBeforeRejectSubmission' event
+        $event = new Event($this, array('submission' => $model));
+        $this->onBeforeRejectSubmission($event);
+        
+        // Allow event to cancel submission saving
+        if (!$event->performAction) {
+            return false;
+        }
+
+        $result = $this->save($model);
+        
+        // Fire an 'onSaveSubmission' event
+        $this->onRejectSubmission(new Event($this, array('submission' => $model)));
+
+        // Trigger notification to editor
+        $this->_sendEditorNotificationEmail($model);
+
+        return $result;
+    }
+
+    public function revokeSubmission(Workflow_SubmissionModel $model)
+    {
+        return $this->save($model);
     }
 
 
@@ -140,6 +172,15 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         $this->raiseEvent('onApproveSubmission', $event);
     }
 
+    public function onBeforeRejectSubmission(\CEvent $event)
+    {
+        $this->raiseEvent('onBeforeRejectSubmission', $event);
+    }
+    public function onRejectSubmission(\CEvent $event)
+    {
+        $this->raiseEvent('onRejectSubmission', $event);
+    }
+
 
 
 
@@ -156,6 +197,21 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
 
         foreach ($publishers as $key => $user) {
             craft()->email->sendEmailByKey($user, 'workflow_publisher_notification', array(
+                'submission' => $model,
+            ));
+        }
+    }
+
+    private function _sendEditorNotificationEmail(Workflow_SubmissionModel $model)
+    {
+        $settings = craft()->workflow->getSettings();
+
+        $criteria = craft()->elements->getCriteria(ElementType::User);
+        $criteria->groupId = $settings->editorUserGroup;
+        $editors = $criteria->find();
+
+        foreach ($editors as $key => $user) {
+            craft()->email->sendEmailByKey($user, 'workflow_editor_notification', array(
                 'submission' => $model,
             ));
         }

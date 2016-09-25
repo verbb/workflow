@@ -1,0 +1,38 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+    label: "Limit" | t,
+    name: 'limit',
+    value: settings.limit,
+    size: 2,
+    errors: settings.getErrors('limit')
+}) }}
+
+{{ forms.selectField({
+    label: 'Status' | t,
+    instructions: 'Show submissions for certain status.' | t,
+    name: 'status',
+    value: settings.status,
+    options: [
+        {
+            label: 'All',
+            value: ''
+        },
+        {
+            label: 'Approved',
+            value: 'approved'
+        },
+        {
+            label: 'Pending',
+            value: 'pending'
+        },
+        {
+            label: 'Rejected',
+            value: 'rejected'
+        },
+        {
+            label: 'Revoked',
+            value: 'revoked'
+        }
+    ]
+}) }}

@@ -38,8 +38,13 @@ class Workflow_SubmissionRecord extends BaseRecord
             'status'        => array(AttributeType::Enum, 'values' => array(
                 Workflow_SubmissionModel::APPROVED,
                 Workflow_SubmissionModel::PENDING,
+                Workflow_SubmissionModel::REJECTED,
+                Workflow_SubmissionModel::REVOKED,
             )),
+            'notes'         => array(AttributeType::Mixed),
             'dateApproved'  => array(AttributeType::DateTime),
+            'dateRejected'  => array(AttributeType::DateTime),
+            'dateRevoked'   => array(AttributeType::DateTime),
         );
     }
 }

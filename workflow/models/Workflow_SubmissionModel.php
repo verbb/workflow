@@ -10,6 +10,8 @@ class Workflow_SubmissionModel extends BaseElementModel
 
     const APPROVED  = 'approved';
     const PENDING   = 'pending';
+    const REJECTED  = 'rejected';
+    const REVOKED   = 'revoked';
 
 
     // Public Methods
@@ -76,8 +78,13 @@ class Workflow_SubmissionModel extends BaseElementModel
             'status'        => array(AttributeType::Enum, 'values' => array(
                 Workflow_SubmissionModel::APPROVED,
                 Workflow_SubmissionModel::PENDING,
+                Workflow_SubmissionModel::REJECTED,
+                Workflow_SubmissionModel::REVOKED,
             )),
+            'notes'         => array(AttributeType::Mixed),
             'dateApproved'  => array(AttributeType::DateTime),
+            'dateRejected'  => array(AttributeType::DateTime),
+            'dateRevoked'   => array(AttributeType::DateTime),
             'dateCreated'   => array(AttributeType::DateTime),
             'dateUpdated'   => array(AttributeType::DateTime),
         ));

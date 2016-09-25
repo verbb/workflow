@@ -31,6 +31,8 @@ class Workflow_SubmissionElementType extends BaseElementType
         return array(
             Workflow_SubmissionModel::APPROVED => Craft::t('Approved'),
             Workflow_SubmissionModel::PENDING => Craft::t('Pending'),
+            Workflow_SubmissionModel::REJECTED => Craft::t('Rejected'),
+            Workflow_SubmissionModel::REVOKED => Craft::t('Revoked'),
         );
     }
 
@@ -74,6 +76,7 @@ class Workflow_SubmissionElementType extends BaseElementType
             'dateCreated'   => Craft::t('Date Submitted'),
             'publisher'     => Craft::t('Publisher'),
             'dateApproved'  => Craft::t('Date Approved'),
+            'dateRejected'  => Craft::t('Date Rejected'),
         );
     }
 
@@ -85,6 +88,7 @@ class Workflow_SubmissionElementType extends BaseElementType
             'dateCreated'   => Craft::t('Date Submitted'),
             'publisher'     => Craft::t('Publisher'),
             'dateApproved'  => Craft::t('Date Approved'),
+            'dateRejected'  => Craft::t('Date Rejected'),
         );
     }
 
@@ -95,6 +99,12 @@ class Workflow_SubmissionElementType extends BaseElementType
             case 'editor': {
                 if ($element->$attribute) {
                     return "<a href='" . $element->$attribute->cpEditUrl . "'>" . $element->$attribute . "</a>";
+                }
+            }
+            case 'dateApproved':
+            case 'dateRejected': {
+                if (!$element->$attribute) {
+                    return "-";
                 }
             }
             default: {
@@ -111,7 +121,12 @@ class Workflow_SubmissionElementType extends BaseElementType
             'editorId'      => array(AttributeType::Number),
             'publisherId'   => array(AttributeType::Number),
             'status'        => array(AttributeType::String, 'default' => Workflow_SubmissionModel::PENDING),
-            'order'         => array(AttributeType::String, 'default' => 'dateCreated asc'),
+            'notes'         => array(AttributeType::Mixed),
+            'dateApproved'  => array(AttributeType::DateTime),
+            'dateRejected'  => array(AttributeType::DateTime),
+            'dateRevoked'   => array(AttributeType::DateTime),
+            'dateCreated'   => array(AttributeType::DateTime),
+            'order'         => array(AttributeType::String, 'default' => 'dateCreated desc'),
         );
     }
 
@@ -123,7 +138,11 @@ class Workflow_SubmissionElementType extends BaseElementType
             workflow_submissions.draftId,
             workflow_submissions.editorId,
             workflow_submissions.publisherId,
-            workflow_submissions.status
+            workflow_submissions.status,
+            workflow_submissions.notes,
+            workflow_submissions.dateApproved,
+            workflow_submissions.dateRejected,
+            workflow_submissions.dateRevoked
         ')
         ->join('workflow_submissions workflow_submissions', 'workflow_submissions.id = elements.id');
 
@@ -145,6 +164,22 @@ class Workflow_SubmissionElementType extends BaseElementType
 
         if ($criteria->status) {
             $query->andWhere(DbHelper::parseParam('workflow_submissions.status', $criteria->status, $query->params));
+        }
+
+        if ($criteria->notes) {
+            $query->andWhere(DbHelper::parseParam('workflow_submissions.notes', $criteria->notes, $query->params));
+        }
+
+        if ($criteria->dateApproved) {
+            $query->andWhere(DbHelper::parseDateParam('workflow_submissions.dateApproved', $criteria->dateApproved, $query->params));
+        }
+
+        if ($criteria->dateRejected) {
+            $query->andWhere(DbHelper::parseDateParam('workflow_submissions.dateRejected', $criteria->dateRejected, $query->params));
+        }
+
+        if ($criteria->dateRevoked) {
+            $query->andWhere(DbHelper::parseDateParam('workflow_submissions.dateRevoked', $criteria->dateRevoked, $query->params));
         }
 
         if ($criteria->dateCreated) {

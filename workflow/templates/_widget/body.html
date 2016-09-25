@@ -1,0 +1,22 @@
+{% includeCssResource 'workflow/css/workflow.css' %}
+
+<div class="workflow-widget">
+    {% if submissions | length %}
+        <table class="data fullwidth">
+            <tbody>
+                {% for submission in submissions %}
+                    <tr>
+                        <td>
+                            <span class="status {{ submission.status }}"></span>
+                            <a href="{{ submission.owner.cpEditUrl }}">{{ submission.owner.title }}</a>
+
+                            <span class="light">{{ submission.dateCreated }}, {{ submission.editor }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ "No submissions." | t }}</p>
+    {% endif %}
+</div>

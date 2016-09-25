@@ -14,12 +14,12 @@ class WorkflowPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '0.9.2';
+        return '0.9.3';
     }
 
     public function getSchemaVersion()
     {
-        return '0.9.0';
+        return '0.9.3';
     }
 
     public function getDeveloper()
@@ -98,6 +98,7 @@ class WorkflowPlugin extends BasePlugin
     {
         return array(
             'workflow_publisher_notification',
+            'workflow_editor_notification',
         );
     }
 }
