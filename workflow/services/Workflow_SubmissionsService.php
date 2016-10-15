@@ -29,6 +29,8 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
     
     public function save(Workflow_SubmissionModel $model)
     {
+        $settings = craft()->workflow->getSettings();
+
         $isNewSubmission = !$model->id;
 
         if ($model->id) {
@@ -76,7 +78,9 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
 
         if ($isNewSubmission) {
             // Trigger notification to publisher
-            $this->_sendPublisherNotificationEmail($model);
+            if ($settings->publisherNotifications) {
+                $this->_sendPublisherNotificationEmail($model);
+            }
         }
 
         return true;
@@ -84,6 +88,8 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
 
     public function approveSubmission(Workflow_SubmissionModel $model, $draft)
     {
+        $settings = craft()->workflow->getSettings();
+
         // Fire an 'onBeforeApproveSubmission' event
         $event = new Event($this, array('submission' => $model));
         $this->onBeforeApproveSubmission($event);
@@ -115,13 +121,17 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         $this->onApproveSubmission(new Event($this, array('submission' => $model)));
 
         // Trigger notification to editor
-        $this->_sendEditorNotificationEmail($model);
+        if ($settings->editorNotifications) {
+            $this->_sendEditorNotificationEmail($model);
+        }
 
         return $result;
     }
 
     public function rejectSubmission(Workflow_SubmissionModel $model)
     {
+        $settings = craft()->workflow->getSettings();
+
         // Fire an 'onBeforeRejectSubmission' event
         $event = new Event($this, array('submission' => $model));
         $this->onBeforeRejectSubmission($event);
@@ -137,7 +147,9 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
         $this->onRejectSubmission(new Event($this, array('submission' => $model)));
 
         // Trigger notification to editor
-        $this->_sendEditorNotificationEmail($model);
+        if ($settings->editorNotifications) {
+            $this->_sendEditorNotificationEmail($model);
+        }
 
         return $result;
     }
@@ -193,6 +205,14 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
 
         $criteria = craft()->elements->getCriteria(ElementType::User);
         $criteria->groupId = $settings->publisherUserGroup;
+
+        // Check settings to see if we should email all publishers or not
+        if (isset($settings->selectedPublishers)) {
+            if ($settings->selectedPublishers != '*') {
+                $criteria->id = $settings->selectedPublishers;
+            }
+        }
+
         $publishers = $criteria->find();
 
         foreach ($publishers as $key => $user) {
@@ -208,10 +228,12 @@ class Workflow_SubmissionsService extends BaseApplicationComponent
 
         $criteria = craft()->elements->getCriteria(ElementType::User);
         $criteria->groupId = $settings->editorUserGroup;
-        $editors = $criteria->find();
+        $criteria->id = $model->editorId;
+        $editor = $criteria->first();
 
-        foreach ($editors as $key => $user) {
-            craft()->email->sendEmailByKey($user, 'workflow_editor_notification', array(
+        // Only send to the single user editor - not the whole group
+        if ($editor) {
+            craft()->email->sendEmailByKey($editor, 'workflow_editor_notification', array(
                 'submission' => $model,
             ));
         }

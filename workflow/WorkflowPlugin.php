@@ -14,7 +14,7 @@ class WorkflowPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '0.9.3';
+        return '0.9.4';
     }
 
     public function getSchemaVersion()
@@ -71,6 +71,9 @@ class WorkflowPlugin extends BasePlugin
             'enabledSections' => AttributeType::Mixed,
             'editorUserGroup' => AttributeType::String,
             'publisherUserGroup' => AttributeType::String,
+            'editorNotifications' => array( AttributeType::Bool, 'default' => true ),
+            'publisherNotifications' => array( AttributeType::Bool, 'default' => true ),
+            'selectedPublishers' => AttributeType::Mixed,
         );
     }
 

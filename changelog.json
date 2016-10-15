@@ -1,7 +1,17 @@
 [
     {
+        "version": "0.9.4",
+        "downloadUrl": "https://github.com/engram-design/Workflow/archive/0.9.4.zip",
+        "date": "2016-10-16T01:30:00+10:00",
+        "notes": [
+            "[Added] Added ability to enabled/disable email notifications for editors or publishers.",
+            "[Added] Added ability to select all, or individual publishers to be notified via email on submissions.",
+            "[Fixed] Only individual editors receive approval/rejection email notifications - not each user in the editor group."
+        ]
+    },
+    {
         "version": "0.9.3",
-        "downloadUrl": "https://github.com/engram-design/Comments/archive/0.9.3.zip",
+        "downloadUrl": "https://github.com/engram-design/Workflow/archive/0.9.3.zip",
         "date": "2016-09-25T00:00:00+10:00",
         "notes": [
             "[Added] Added ability to set notes on an approval/rejection from a publisher.",

@@ -37,6 +37,8 @@
     {% set groups = groups | merge([{ label: group.name, value: group.id }]) %}
 {% endfor %}
 
+<hr>
+
 {{ forms.selectField({
     label: 'Editor User Group' | t,
     instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t,
@@ -48,6 +50,16 @@
     options: groups,
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Editor Notifications' | t,
+    instructions: 'Whether email notifications should be delivered to individual editors when approved or rejected.' | t,
+    id: 'editorNotifications',
+    name: 'editorNotifications',
+    on: settings.editorNotifications,
+}) }}
+
+<hr>
+
 {{ forms.selectField({
     label: 'Publisher User Group' | t,
     instructions: 'Select the user group that your publishers belong to. Publishers are users who are notified when an editor submits content for review, and can approve content to be published live.' | t,
@@ -58,6 +70,44 @@
     required: true,
     options: groups,
 }) }}
+
+{{ forms.lightswitchField({
+    label: 'Publisher Notifications' | t,
+    instructions: 'Whether email notifications should be delivered to publishers when editors submit an entry for review.' | t,
+    id: 'publisherNotifications',
+    name: 'publisherNotifications',
+    on: settings.publisherNotifications,
+}) }}
+
+{% if settings.publisherUserGroup %}
+    {% set publishers = [] %}
+    {% for user in craft.users({ groupId: settings.publisherUserGroup }) %}
+        {% set publishers = [{ value: user.id, label: user }] | merge(publishers) %}
+    {% endfor %}
+
+    {{ forms.checkboxSelectField({
+        label: 'Publishers To Receive Notifications' | t,
+        instructions: 'Select all, or specific publishers to receive email notifications. By default, all will be notified.' | t,
+        id: 'selectedPublishers',
+        name: 'selectedPublishers',
+        values: settings.selectedPublishers,
+        options: publishers,
+    }) }}
+{% else %}
+    <div class="field">
+        <div class="heading">
+            <label>
+                {{ "Publishers To Receive Notifications" | t }}
+            </label>
+
+            <div class="instructions">
+                <p>{{ "Select all, or specific publishers to receive email notifications. By default, all will be notified." | t }}</p>
+            </div>
+        </div>
+
+        <p class="small warning">Select a Publisher User Group first.</p>
+    </div>
+{% endif %}
     
 
 {% endnamespace %}
