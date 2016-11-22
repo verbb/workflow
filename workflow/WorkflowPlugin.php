@@ -78,8 +78,15 @@ class WorkflowPlugin extends BasePlugin
     }
 
     public function onBeforeInstall()
-    {   
-        if (version_compare(craft()->getVersion(), '2.5', '<')) {
+    {
+        $version = craft()->getVersion();
+
+        // Craft 2.6.2951 deprecated `craft()->getBuild()`, so get the version number consistently
+        if (version_compare(craft()->getVersion(), '2.6.2951', '<')) {
+            $version = craft()->getVersion() . '.' . craft()->getBuild();
+        }
+
+        if (version_compare($version, '2.5', '<')) {
             throw new Exception($this->getName() . ' requires Craft CMS 2.5+ in order to run.');
         }
     }
