@@ -14,7 +14,7 @@ class WorkflowPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '0.9.4';
+        return '0.9.5';
     }
 
     public function getSchemaVersion()
@@ -24,17 +24,17 @@ class WorkflowPlugin extends BasePlugin
 
     public function getDeveloper()
     {
-        return 'S. Group';
+        return 'Verbb';
     }
 
     public function getDeveloperUrl()
     {
-        return 'http://sgroup.com.au';
+        return 'https://verbb.io';
     }
 
     public function getPluginUrl()
     {
-        return 'https://github.com/engram-design/Workflow';
+        return 'https://github.com/verbb/workflow';
     }
 
     public function getDocumentationUrl()
@@ -44,7 +44,7 @@ class WorkflowPlugin extends BasePlugin
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/engram-design/Workflow/master/changelog.json';
+        return 'https://raw.githubusercontent.com/verbb/workflow/master/changelog.json';
     }
 
     public function hasCpSection()

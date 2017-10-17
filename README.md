@@ -1,11 +1,12 @@
-# Workflow
+> 
+> ### Workflow has a new home with the fine folks at Verbb. Read about it in our [blog post](https://verbb.io/blog/welcome-to-verbb).
+>
+
+# Workflow Plugin for Craft CMS
+
+<img width="500" src="https://verbb.io/uploads/plugins/workflow/_800x455_crop_center-center/workflow-social-card.png">
 
 Workflow is a Craft CMS plugin for a common publisher-editor scenario when it comes to content authoring.
-
-Your site might have two distinct user groups - Publishers and Editors. An Editor is a user who can create and edit content entries, but cannot publish these so they are publicly visible. Instead, Editors should submit these entries to a Publisher user, who is then notified (via email), reviews the entry, and eventually approved the entry for public viewing.
-
-<img src="https://raw.githubusercontent.com/engram-design/Workflow/master/screenshots/review-pane.png" />
-
 
 ## Features
 
@@ -14,19 +15,21 @@ Your site might have two distinct user groups - Publishers and Editors. An Edito
 - Email notifications to Publisher group, which editable content.
 - Events for third-party plugins to hook into for submissions.
 
-
 ## Documentation
 
-Please visit the [Wiki](https://github.com/engram-design/Workflow/wiki) for all documentation, a getting started guide, template tags, and developer resources.
+Visit the [Workflow Plugin page](https://verbb.io/craft-plugins/workflow) for all documentation, guides, pricing and developer resources.
+
+## Support
+
+Get in touch with us via the [Workflow Support page](https://verbb.io/craft-plugins/workflow/support) or by [creating a Github issue](/verbb/workflow/issues)
+
+<h2></h2>
+
+<a href="https://verbb.io" target="_blank">
+  <img width="100" src="https://verbb.io/assets/img/verbb-pill.svg">
+</a>
 
 
-## Roadmap
-- Entry diffs to compare previous and submitted entries.
-- Setting specific recipients for Publisher notifications - rather than entire Publisher group.
-- Better note-tracking per-version
-- Incorporate versions - tie each submission to a version
 
 
-### Changelog
 
-[View JSON Changelog](https://github.com/engram-design/Workflow/blob/master/changelog.json)

@@ -1,5 +1,13 @@
 [
     {
+        "version": "0.9.5",
+        "downloadUrl": "https://github.com/engram-design/Workflow/archive/0.9.5.zip",
+        "date": "2017-10-18T00:00:00+10:00",
+        "notes": [
+            "[Added] Verbb marketing (new plugin icon, readme, etc)."
+        ]
+    },
+    {
         "version": "0.9.4",
         "downloadUrl": "https://github.com/engram-design/Workflow/archive/0.9.4.zip",
         "date": "2016-10-16T01:30:00+10:00",
