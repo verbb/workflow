@@ -14,7 +14,7 @@ class WorkflowPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '0.9.5';
+        return '0.9.6';
     }
 
     public function getSchemaVersion()
