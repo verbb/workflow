@@ -39,12 +39,12 @@ class WorkflowPlugin extends BasePlugin
 
     public function getDocumentationUrl()
     {
-        return $this->getPluginUrl() . '/blob/master/README.md';
+        return 'https://verbb.io/craft-plugins/workflow/docs';
     }
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/verbb/workflow/master/changelog.json';
+        return 'https://raw.githubusercontent.com/verbb/workflow/craft-2/changelog.json';
     }
 
     public function hasCpSection()
