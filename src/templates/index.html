@@ -1,0 +1,12 @@
+{% set parentLayout = '_layouts/elementindex' %}
+{% extends 'workflow/_layouts' %}
+
+{% set crumbs = [
+    { label: 'Workflow' | t('workflow'), url: url('workflow') },
+    { label: 'Overview' | t('workflow'), url: url('workflow') },
+] %}
+
+{% set elementType = 'verbb\\workflow\\elements\\submission' %}
+{% set selectedTab = 'workflow' %}
+{% set showStatusMenu = true %}
+{% set title = 'Workflow' %}

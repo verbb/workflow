@@ -1,0 +1,102 @@
+{% do view.registerAssetBundle('verbb\\workflow\\assetbundles\\WorkflowAsset') %}
+
+{% import '_includes/forms' as forms %}
+
+{% set pendingSubmissions = [] %}
+{% set nonPendingSubmissions = [] %}
+
+{% if submissions | length %}
+    {% for submission in submissions %}
+        {% if submission.status == 'pending' %}
+            {% set pendingSubmissions = pendingSubmissions | merge([submission]) %}
+        {% else %}
+            {% set nonPendingSubmissions = nonPendingSubmissions | merge([submission]) %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if pendingSubmissions | length %}
+    {% set submission = pendingSubmissions[0] %}
+
+    <div class="pane workflow-pane">
+        <div class="field">
+            <div class="heading">
+                <label>{{ "Submission awaiting approval" | t('workflow') }}</label>
+
+                <div class="instructions">
+                    <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a> {{ "has submitted this entry for review on {date}. Please review this entry before publishing." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
+                </div>
+            </div>
+
+            {{ forms.textareaField({
+                placeholder: 'Notes about your response.' | t('workflow'),
+                id: 'workflowNotes',
+                rows: 2,
+                value: submission.notes,
+            }) }}
+
+            {% set draftId = context.draftId | default('') %}
+
+            <div class="btngroup">
+                <a class="btn submit" href="{{ actionUrl('workflow/submissions/approve', { submissionId: submission.id, draftId: draftId }) }}">{{ "Approve & publish entry" | t('workflow') }}</a>
+                <a class="btn formsubmit" href="{{ actionUrl('workflow/submissions/reject', { submissionId: submission.id, draftId: draftId }) }}">{{ "Reject" | t('workflow') }}</a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if nonPendingSubmissions | length %}
+    <div class="pane workflow-pane workflow-info-pane">
+        {% for submission in submissions if submission.status != 'pending' %}
+            {% if submission.status == 'approved' %}
+                <div class="field">
+                    <div class="heading">
+                        <label>{{ "Approved submission" | t('workflow') }}</label>
+
+                        <div class="instructions">
+                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | date('jS M Y g:ia') }) }}</p>
+
+                            {% if submission.notes %}
+                                <p class="code">"{{ submission.notes }}"</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% elseif submission.status == 'rejected' %}
+                <div class="field">
+                    <div class="heading">
+                        <label>{{ "Rejected submission" | t('workflow') }}</label>
+
+                        <div class="instructions">
+                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
+
+                            {% if submission.notes %}
+                                <p class="code">"{{ submission.notes }}"</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% elseif submission.status == 'revoked' %}
+                <div class="field">
+                    <div class="heading">
+                        <label>{{ "Revoked submission" | t('workflow') }}</label>
+
+                        <div class="instructions">
+                            <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a> {{ "revoked this submission on {date}." | t('workflow', { date: submission.dateRevoked | date('jS M Y g:ia') }) }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{# Because we can't have a form inside the outer entries saving form, we need to append notes onto our button submits #}
+{% js %}
+    $('.workflow-pane .btn').on('click', function(e) {
+        var notes = $('#workflowNotes-field textarea').val();
+        var href = $(this).attr('href');
+
+        $(this).attr('href', href + '&notes=' + notes);
+    });
+{% endjs %}

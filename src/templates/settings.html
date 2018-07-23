@@ -1,0 +1,120 @@
+{% extends 'workflow/_layouts' %}
+{% import '_includes/forms' as forms %}
+
+{% set crumbs = [
+    { label: 'Workflow' | t('workflow'), url: url('workflow') },
+    { label: 'Settings' | t('workflow'), url: url('workflow/settings') },
+] %}
+
+{% set selectedTab = 'settings' %}
+
+{% set fullPageForm = true %}
+
+{% block blockContent %}
+
+<input type="hidden" name="action" value="plugins/save-plugin-settings">
+<input type="hidden" name="pluginHandle" value="workflow">
+
+{% namespace 'settings' %}
+
+{% set sections = [] %}
+{% for section in craft.app.sections.getAllSections() %}
+    {% set sections = [{ value: section.id, label: section.name }] | merge(sections) %}
+{% endfor %}
+
+{{ forms.checkboxSelectField({
+    label: 'Enabled Sections' | t('workflow'),
+    instructions: 'Select which sections you require editor-publisher workflow enabled for.' | t('workflow'),
+    id: 'enabledSections',
+    name: 'enabledSections',
+    values: settings.enabledSections,
+    errors: settings.getErrors('enabledSections'),
+    options: sections,
+    first: true,
+    showAllOption: true,
+}) }}
+
+{% set groups = [{ label: "None" | t('workflow'), value: '' }] %}
+{% for group in craft.app.userGroups.getAllGroups() %}
+    {% set groups = groups | merge([{ label: group.name, value: group.id }]) %}
+{% endfor %}
+
+<hr>
+
+{{ forms.selectField({
+    label: 'Editor User Group' | t('workflow'),
+    instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t('workflow'),
+    id: 'editorUserGroup',
+    name: 'editorUserGroup',
+    value: settings.editorUserGroup,
+    errors: settings.getErrors('editorUserGroup'),
+    required: true,
+    options: groups,
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Editor Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to individual editors when approved or rejected.' | t('workflow'),
+    id: 'editorNotifications',
+    name: 'editorNotifications',
+    on: settings.editorNotifications,
+}) }}
+
+<hr>
+
+{{ forms.selectField({
+    label: 'Publisher User Group' | t('workflow'),
+    instructions: 'Select the user group that your publishers belong to. Publishers are users who are notified when an editor submits content for review, and can approve content to be published live.' | t('workflow'),
+    id: 'publisherUserGroup',
+    name: 'publisherUserGroup',
+    value: settings.publisherUserGroup,
+    errors: settings.getErrors('publisherUserGroup'),
+    required: true,
+    options: groups,
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Publisher Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to publishers when editors submit an entry for review.' | t('workflow'),
+    id: 'publisherNotifications',
+    name: 'publisherNotifications',
+    on: settings.publisherNotifications,
+}) }}
+
+{% if settings.publisherUserGroup %}
+    {% set publishers = [] %}
+    {% for user in craft.users({ groupId: settings.publisherUserGroup }).all() %}
+        {% set publishers = [{ value: user.id, label: user }] | merge(publishers) %}
+    {% endfor %}
+
+    {{ forms.checkboxSelectField({
+        label: 'Publishers To Receive Notifications' | t('workflow'),
+        instructions: 'Select all, or specific publishers to receive email notifications. By default, all will be notified.' | t('workflow'),
+        id: 'selectedPublishers',
+        name: 'selectedPublishers',
+        values: settings.selectedPublishers,
+        options: publishers,
+        showAllOption: true,
+    }) }}
+{% else %}
+    <div class="field">
+        <div class="heading">
+            <label>
+                {{ "Publishers To Receive Notifications" | t('workflow') }}
+            </label>
+
+            <div class="instructions">
+                <p>{{ "Select all, or specific publishers to receive email notifications. By default, all will be notified." | t('workflow') }}</p>
+            </div>
+        </div>
+
+        <p class="small warning">
+            {{ "Select a Publisher User Group first." | t('workflow') }}
+        </p>
+    </div>
+{% endif %}
+    
+
+{% endnamespace %}
+
+{% endblock %}

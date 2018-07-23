@@ -1,7 +1,3 @@
-> 
-> ### Workflow has a new home with the fine folks at Verbb. Read about it in our [blog post](https://verbb.io/blog/welcome-to-verbb).
->
-
 # Workflow Plugin for Craft CMS
 
 <img width="500" src="https://verbb.io/uploads/plugins/workflow/_800x455_crop_center-center/workflow-social-card.png">

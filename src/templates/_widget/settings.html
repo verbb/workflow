@@ -1,0 +1,38 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+    label: "Limit" | t('workflow'),
+    name: 'limit',
+    value: widget.limit,
+    size: 2,
+    errors: widget.getErrors('limit')
+}) }}
+
+{{ forms.selectField({
+    label: 'Status' | t('workflow'),
+    instructions: 'Show submissions for certain status.' | t('workflow'),
+    name: 'status',
+    value: widget.status,
+    options: [
+        {
+            label: 'All',
+            value: ''
+        },
+        {
+            label: 'Approved',
+            value: 'approved'
+        },
+        {
+            label: 'Pending',
+            value: 'pending'
+        },
+        {
+            label: 'Rejected',
+            value: 'rejected'
+        },
+        {
+            label: 'Revoked',
+            value: 'revoked'
+        }
+    ]
+}) }}

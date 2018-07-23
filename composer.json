@@ -1,0 +1,44 @@
+{
+    "name": "verbb/workflow",
+    "description": "A Craft CMS plugin to create a workflow for publishing entries.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "workflow"
+    ],
+    "support": {
+        "email": "support@verbb.io",
+        "issues": "https://github.com/verbb/workflow/issues?state=open",
+        "source": "https://github.com/verbb/workflow",
+        "docs": "https://github.com/verbb/workflow",
+        "rss": "https://github.com/verbb/workflow/commits/v2.atom"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Verbb",
+            "homepage": "https://verbb.io"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "verbb\\workflow\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Workflow",
+        "handle": "workflow",
+        "schemaVersion": "2.0.0",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/workflow/craft-3/CHANGELOG.md",
+        "class": "verbb\\workflow\\Workflow"
+    }
+}
