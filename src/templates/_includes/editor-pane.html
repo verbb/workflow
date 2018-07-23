@@ -30,7 +30,8 @@
 
             <div class="btngroup">
                 {% set draftId = context.draftId | default('') %}
-                <a href="{{ actionUrl('workflow/submissions/send', { entryId: context.entry.id, draftId: draftId }) }}" class="btn submit">{{ "Submit for review" | t('workflow') }}</a>
+                {% set siteId = context.entry.siteId | default('') %}
+                <a href="{{ actionUrl('workflow/submissions/send', { entryId: context.entry.id, draftId: draftId, siteId: siteId }) }}" class="btn submit">{{ "Submit for review" | t('workflow') }}</a>
             </div>
         </div>
     </div>

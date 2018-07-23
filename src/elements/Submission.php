@@ -26,6 +26,7 @@ class Submission extends Element
     // =========================================================================
 
     public $ownerId;
+    public $ownerSiteId;
     public $draftId;
     public $editorId;
     public $publisherId;
@@ -125,7 +126,7 @@ class Submission extends Element
         if ($this->draftId) {
             $url = $this->owner->cpEditUrl . '/drafts/' . $this->draftId;
         } else {
-            $url = $this->owner->cpEditUrl;
+            $url = $this->getOwner()->cpEditUrl;
         }
 
         return $url;
@@ -134,7 +135,7 @@ class Submission extends Element
     public function getOwner()
     {
         if ($this->ownerId !== null) {
-            return Craft::$app->getEntries()->getEntryById($this->ownerId);
+            return Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
         }
     }
 
@@ -166,6 +167,7 @@ class Submission extends Element
         }
 
         $record->ownerId = $this->ownerId;
+        $record->ownerSiteId = $this->ownerSiteId;
         $record->draftId = $this->draftId;
         $record->editorId = $this->editorId;
         $record->publisherId = $this->publisherId;

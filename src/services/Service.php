@@ -60,8 +60,10 @@ class Service extends Component
 
         // See if there's an existing submission
         $draftId = (isset($context['draftId'])) ? $context['draftId'] : ':empty:';
+        $siteId = (isset($context['entry']['siteId'])) ? $context['entry']['siteId'] : Craft::$app->getSites()->getCurrentSite()->id;
         $submissions = Submission::find()
             ->ownerId($context['entry']->id)
+            ->ownerSiteId($siteId)
             ->draftId($draftId)
             ->all();
 

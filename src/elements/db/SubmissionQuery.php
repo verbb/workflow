@@ -9,6 +9,7 @@ use craft\helpers\Db;
 class SubmissionQuery extends ElementQuery
 {
     public $ownerId;
+    public $ownerSiteId;
     public $draftId;
     public $editorId;
     public $publisherId;
@@ -26,6 +27,12 @@ class SubmissionQuery extends ElementQuery
     public function draftId($value)
     {
         $this->draftId = $value;
+        return $this;
+    }
+
+    public function ownerSiteId($value)
+    {
+        $this->ownerSiteId = $value;
         return $this;
     }
 
@@ -55,6 +62,10 @@ class SubmissionQuery extends ElementQuery
 
         if ($this->draftId) {
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.draftId', $this->draftId));
+        }
+
+        if ($this->ownerSiteId) {
+            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerSiteId', $this->ownerSiteId));
         }
 
         if ($this->editorId) {

@@ -23,6 +23,7 @@ class SubmissionsController extends Controller
 
         $submission = $this->_setSubmissionFromPost();
         $submission->ownerId = $request->getParam('entryId');
+        $submission->ownerSiteId = $request->getParam('siteId', Craft::$app->getSites()->getCurrentSite()->id);
         $submission->draftId = $request->getParam('draftId');
         $submission->editorId = $currentUser->id;
         $submission->status = Submission::STATUS_PENDING;
