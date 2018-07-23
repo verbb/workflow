@@ -123,10 +123,16 @@ class Submission extends Element
 
     public function getCpEditUrl()
     {
+        $cpEditUrl = $url = $this->getOwner()->cpEditUrl;
+
         if ($this->draftId) {
-            $url = $this->owner->cpEditUrl . '/drafts/' . $this->draftId;
-        } else {
-            $url = $this->getOwner()->cpEditUrl;
+            if (Craft::$app->getIsMultiSite()) {
+                $cpEditUrl = explode('/', $cpEditUrl);
+                array_pop($cpEditUrl);
+                $cpEditUrl = implode('/', $cpEditUrl);
+            }
+
+            $url = $cpEditUrl . '/drafts/' . $this->draftId;
         }
 
         return $url;
