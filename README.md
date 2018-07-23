@@ -11,6 +11,28 @@ Workflow is a Craft CMS plugin for a common publisher-editor scenario when it co
 - Email notifications to Publisher group, which editable content.
 - Events for third-party plugins to hook into for submissions.
 
+## Requirements
+
+This plugin requires Craft CMS 3.0.0 or later.
+
+## Installation
+
+To install the plugin, follow these instructions.
+
+1. Open your terminal and go to your Craft project:
+
+```
+cd /path/to/project
+```
+
+2. Then tell Composer to load the plugin:
+
+```
+composer require verbb/workflow
+```
+
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Workflow.
+
 ## Documentation
 
 Visit the [Workflow Plugin page](https://verbb.io/craft-plugins/workflow) for all documentation, guides, pricing and developer resources.
