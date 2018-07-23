@@ -24,7 +24,14 @@
             {% for entry in entries %}
                 <tr data-id="{{ entry.id }}">
                     <th scope="row" data-title="{{ 'Name' | t('workflow') }}">
-                        <a href="{{ entry.cpEditUrl }}">{{ entry.title }}</a>
+                        {% set url = entry.cpEditUrl %}
+
+                        {% if craft.app.isMultiSite() %}
+                            {% set segments = entry.cpEditUrl | split('/') %}
+                            {% set url = segments | without(segments | last) | join('/') %}
+                        {% endif %}
+
+                        <a href="{{ url }}/drafts/{{ entry.draftId }}">{{ entry.title }}</a>
                     </th>
 
                     <td data-title="{{ 'Date created' | t('workflow') }}">
