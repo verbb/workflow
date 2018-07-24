@@ -1,11 +1,18 @@
 # Changelog
 
+## 1.0.2 - 2018-07-24
+
+### Fixed
+- Fix Verbb logo reference (for real this time)
+
 ## 1.0.1 - 2018-07-24
+
 ### Fixed
 - Fix elementType typo
-- Fix verbb logo reference
+- Fix Verbb logo reference
 
 ## 1.0.0 - 2018-07-23
+
 - Craft 3 release
 
 ## 0.9.6 - 2017-11-04
