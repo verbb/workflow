@@ -35,10 +35,16 @@ class Submissions extends Component
         $publishers = $query->all();
 
         foreach ($publishers as $key => $user) {
-            Craft::$app->getMailer()
-                ->composeFromKey('workflow_publisher_notification', ['submission' => $submission])
-                ->setTo($user)
-                ->send();
+            try {
+                Craft::$app->getMailer()
+                    ->composeFromKey('workflow_publisher_notification', ['submission' => $submission])
+                    ->setTo($user)
+                    ->send();
+
+                Workflow::log('Sent publisher notification to ' . $user->email);
+            } catch (\Throwable $e) {
+                Workflow::log('Failed to send publisher notification to ' . $user->email . ' - ' . $e->getMessage());
+            }
         }
     }
 
@@ -53,10 +59,16 @@ class Submissions extends Component
 
         // Only send to the single user editor - not the whole group
         if ($editor) {
-            Craft::$app->getMailer()
-                ->composeFromKey('workflow_editor_notification', ['submission' => $submission])
-                ->setTo($editor)
-                ->send();
+            try {
+                Craft::$app->getMailer()
+                    ->composeFromKey('workflow_editor_notification', ['submission' => $submission])
+                    ->setTo($editor)
+                    ->send();
+
+                Workflow::log('Sent editor notification to ' . $editor->email);
+            } catch (\Throwable $e) {
+                Workflow::log('Failed to send editor notification to ' . $editor->email . ' - ' . $e->getMessage());
+            }
         }
     }
 }

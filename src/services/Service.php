@@ -18,6 +18,8 @@ class Service extends Component
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         if (!$settings->editorUserGroup || !$settings->publisherUserGroup) {
+            Workflow::log('Editor and Publisher groups not set in settings.');
+
             return;
         }
 
@@ -25,6 +27,8 @@ class Service extends Component
         $publisherGroup = Craft::$app->userGroups->getGroupById($settings->publisherUserGroup);
 
         if (!$currentUser) {
+            Workflow::log('No current user.');
+
             return;
         }
 
@@ -47,13 +51,18 @@ class Service extends Component
     {
         $settings = Workflow::$plugin->getSettings();
 
+        Workflow::log('Try to render ' . $template);
+
         if (!$context['entry']->id) {
+            Workflow::log('New entry.');
+
             return;
         }
-
         // Make sure workflow is enabled for this section - or all section
         if ($settings->enabledSections != '*') {
             if (!in_array($context['entry']->sectionId, $settings->enabledSections)) {
+                Workflow::log('Entry not in allowed section.');
+
                 return;
             }
         }
@@ -66,6 +75,8 @@ class Service extends Component
             ->ownerSiteId($siteId)
             ->draftId($draftId)
             ->all();
+
+        Workflow::log('Rendering ' . $template . ' for #' . $context['entry']->id);
 
         return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, [
             'context' => $context,
