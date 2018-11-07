@@ -8,18 +8,16 @@ To get started, you'll need to create two member groups - lets call them Editor 
 
 Start by making a User Group called Editor with the following settings:
 
-![](https://raw.githubusercontent.com/engram-design/Workflow/craft-2/screenshots/editor-permissions.png)
+![](/uploads/plugins/workflow/editor-permissions.png)
 
 Things to note are disabling access to the Workflow plugin page, and disabling the ability to publish changes live.
 
 Create another User Group called Publisher with the following settings:
 
-![](https://raw.githubusercontent.com/engram-design/Workflow/craft-2/screenshots/publisher-permissions.png)
+![](/uploads/plugins/workflow/publisher-permissions.png)
 
 You can name either of these groups whatever you like, but we'll refer to them as Editor/Publisher throughout the guide.
 
 ## Plugin Settings
 
 Next, head to the plugin settings for Workflow, and assign both these groups you created to their respective fields. Easy as that!
-
-[Next: **Editors →**](/craft-plugins/workflow/docs/feature-tour/editors)
