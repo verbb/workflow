@@ -29,8 +29,7 @@
         "title": "Support",
         "collapsable": false,
         "children": [
-            "support/get-support",
-            "support/roadmap"
+            "support/get-support"
         ]
     }
 ]
