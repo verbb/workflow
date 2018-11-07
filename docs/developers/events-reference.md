@@ -1,6 +1,6 @@
 # Events Reference
 
-To learn more about how events work, see the [Craft documentation on events](http://buildwithcraft.com/docs/plugins/hooks-and-events#events).
+To learn more about how events work, see the [Craft documentation on events](https://docs.craftcms.com/v3/extend/updating-plugins.html#events).
 
 ### Submission::EVENT_BEFORE_SAVE
 
