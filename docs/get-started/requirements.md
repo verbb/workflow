@@ -1,9 +1,7 @@
 # Requirements
 
 ### Craft CMS
-
-Workflow requires Craft CMS 2.6 or greater.
+Workflow requires Craft CMS 3.0 or greater.
 
 ### PHP
-
-Workflow requires PHP 5.4 or greater.
+Workflow requires PHP 7.0 or greater.
