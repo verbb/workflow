@@ -8,7 +8,7 @@ Raised before an editor submits an entry for approval. Event handlers can preven
 
 Params:
 
-- `element` – The [Submission](/craft-plugins/workflow/docs/developers/submissions) element that is about to be submitted.
+- `element` – The [Submission](docs:developers/submissions) element that is about to be submitted.
 - `isNew` - Whether this is a new submission.
 
 ```php
@@ -27,7 +27,7 @@ Raised after an editor submits an entry for approval.
 
 Params:
 
-- `element` – The [Submission](/craft-plugins/workflow/docs/developers/submissions) element that has been sent.
+- `element` – The [Submission](docs:developers/submissions) element that has been sent.
 - `isNew` - Whether this is a new submission.
 
 ```php
