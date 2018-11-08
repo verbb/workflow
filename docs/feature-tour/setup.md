@@ -8,13 +8,13 @@ To get started, you'll need to create two member groups - lets call them Editor 
 
 Start by making a User Group called Editor with the following settings:
 
-![](https://raw.githubusercontent.com/engram-design/Workflow/craft-2/screenshots/editor-permissions.png)
+![](/docs/screenshots/editor-permissions.png)
 
 Things to note are disabling access to the Workflow plugin page, and disabling the ability to publish changes live.
 
 Create another User Group called Publisher with the following settings:
 
-![](https://raw.githubusercontent.com/engram-design/Workflow/craft-2/screenshots/publisher-permissions.png)
+![](/docs/screenshots/publisher-permissions.png)
 
 You can name either of these groups whatever you like, but we'll refer to them as Editor/Publisher throughout the guide.
 

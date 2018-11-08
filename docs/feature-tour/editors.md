@@ -4,12 +4,12 @@ Editors are your content authors that can create content, but not publish live e
 
 After saving a new entry for the first time, Editors have access to the following panel on the right-hand side of the editing screen:
 
-![](https://raw.githubusercontent.com/engram-design/Workflow/craft-2/screenshots/review-pane.png)
+![](/docs/screenshots/review-pane.png)
 
 When the editor is ready to publish this entry, they can press the _Submit for review_ button. This will lock the entry so they are unable to make further changes, create a [SubmissionModel](05.-Submission-Model), and email all users in the Publishers group of their submission.
 
 Once submitted, editors can no longer edit the entry, with the below indicator:
 
-![](https://raw.githubusercontent.com/engram-design/Workflow/craft-2/screenshots/review-pane2.png)
+![](/docs/screenshots/review-pane2.png)
 
 [Next: **Publishers →**](/craft-plugins/workflow/docs/feature-tour/publishers)
