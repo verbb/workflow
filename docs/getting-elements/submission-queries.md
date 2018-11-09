@@ -2,7 +2,7 @@
 
 You can fetch submissions in your templates or PHP submission using **submission queries**.
 
-:::submission
+:::code
 ```twig
 {# Create a new submission query #}
 {% set myQuery = craft.workflow.submissions() %}
