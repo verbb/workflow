@@ -18,11 +18,25 @@
         ]
     },
     {
+        "title": "Template Guides",
+        "collapsable": false,
+        "children": [
+            "template-guides/available-variables"
+        ]
+    },
+    {
+        "title": "Getting Elements",
+        "collapsable": false,
+        "children": [
+            "getting-elements/submission-queries"
+        ]
+    },
+    {
         "title": "Developers",
         "collapsable": false,
         "children": [
-            "developers/submissions",
-            "developers/events-reference"
+            "developers/submission",
+            "developers/events"
         ]
     },
     {

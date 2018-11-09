@@ -1,20 +1,6 @@
-# Submissions
+# Submission
 
-Submissions can be queried:
-
-```twig
-{% set submissions = craft.workflow.submissions({
-    ownerId: entry.id,
-    limit: 10,
-    status: 'pending'
-}) %}
-
-{% for submission in submissions %}
-    {{ submission.notes }}
-{% endfor %}
-```
-
-Submissions also have the following attributes:
+Whenever you're dealing with a submission in your template, you're actually working with a `Submission` object.
 
 ### Attributes
 

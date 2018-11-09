@@ -56,7 +56,7 @@
 		"oO": 0,
 		"oS": 1
 		},
-	"/docs/developers/events-reference.md": {
+	"/docs/developers/events.md": {
 		"cB": 0,
 		"cS": 0,
 		"eF": 1,
@@ -65,7 +65,7 @@
 		"eSQ": 1,
 		"ft": 4096,
 		"oA": 1,
-		"oAP": "/docs/developers/events-reference.html",
+		"oAP": "/docs/developers/events.html",
 		"oF": 0,
 		"oFM": 0,
 		"oS": 0,
@@ -74,7 +74,7 @@
 		"rFN": 0,
 		"uCM": 0
 		},
-	"/docs/developers/submission-model.md": {
+	"/docs/developers/submission.md": {
 		"cB": 0,
 		"cS": 0,
 		"eF": 1,
@@ -83,7 +83,7 @@
 		"eSQ": 1,
 		"ft": 4096,
 		"oA": 1,
-		"oAP": "/docs/developers/submission-model.html",
+		"oAP": "/docs/developers/submission.html",
 		"oF": 0,
 		"oFM": 0,
 		"oS": 0,
@@ -146,6 +146,24 @@
 		"rFN": 0,
 		"uCM": 0
 		},
+	"/docs/get-started/configuration.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"oA": 1,
+		"oAP": "/docs/get-started/configuration.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
+		},
 	"/docs/get-started/installation-setup.md": {
 		"cB": 0,
 		"cS": 0,
@@ -174,6 +192,24 @@
 		"ft": 4096,
 		"oA": 1,
 		"oAP": "/docs/get-started/requirements.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
+		},
+	"/docs/getting-elements/submission-queries.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"oA": 1,
+		"oAP": "/docs/getting-elements/submission-queries.html",
 		"oF": 0,
 		"oFM": 0,
 		"oS": 0,
@@ -284,7 +320,7 @@
 		"rFN": 0,
 		"uCM": 0
 		},
-	"/docs/support/roadmap.md": {
+	"/docs/template-guides/available-variables.md": {
 		"cB": 0,
 		"cS": 0,
 		"eF": 1,
@@ -293,7 +329,7 @@
 		"eSQ": 1,
 		"ft": 4096,
 		"oA": 1,
-		"oAP": "/docs/support/roadmap.html",
+		"oAP": "/docs/template-guides/available-variables.html",
 		"oF": 0,
 		"oFM": 0,
 		"oS": 0,
