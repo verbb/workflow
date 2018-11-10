@@ -116,6 +116,13 @@ class Submission extends Element
     // Public Methods
     // -------------------------------------------------------------------------
 
+    public function __tostring()
+    {
+        if ($this->getOwner()) {
+            return $this->getOwner()->title;
+        }
+    }
+
     public function getStatus()
     {
         return $this->status;
@@ -221,7 +228,7 @@ class Submission extends Element
     protected function tableAttributeHtml(string $attribute): string
     {
         switch ($attribute) {
-            case 'publisher':
+            case 'publisher': {
                 $publisher = $this->getPublisher();
 
                 if ($publisher) {
@@ -229,6 +236,7 @@ class Submission extends Element
                 } else {
                     return '-';
                 }
+            }
             case 'editor': {
                 $editor = $this->getEditor();
 
