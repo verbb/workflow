@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 - 2018-11-10
+
+### Fixed
+- Show the entry title on submissions index, rather than the Submission ID.
+
 ## 1.0.2 - 2018-07-24
 
 ### Fixed
