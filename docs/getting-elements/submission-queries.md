@@ -22,15 +22,15 @@ See Introduction to [Element Queries](https://docs.craftcms.com/v3/dev/element-q
 
 ## Example
 
-We can display submissions for a given order by doing the following:
+We can display submissions for a given entry by doing the following:
 
-1. Create an submission query with `craft.workflow.submissions()`.
-2. Set the [orderId](#orderId) an [limit](#limit) parameters on it.
+1. Create a submission query with `craft.workflow.submissions()`.
+2. Set the [ownerId](#ownerId), [status](#status) and [limit](#limit) parameters on it.
 3. Fetch all submissions with `.all()` and output.
 4. Loop through the submissions using a [for](https://twig.symfony.com/doc/2.x/tags/for.html) tag to output the contents.
 
 ```twig
-{# Create a submissions query with the 'orderId' and 'limit' parameters #}
+{# Create a submissions query with the 'ownerId', 'status' and 'limit' parameters #}
 {% set submissionsQuery = craft.workflow.submissions()
     .ownerId(entry.id)
     .status('pending')
@@ -41,7 +41,7 @@ We can display submissions for a given order by doing the following:
 
 {# Display their contents #}
 {% for submission in submissions %}
-    <p>{{ submission.submissionKey }}</p>
+    <p>{{ submission.id }}</p>
 {% endfor %}
 ```
 
