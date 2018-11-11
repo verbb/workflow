@@ -24,6 +24,13 @@ use yii\web\User;
 
 class Workflow extends Plugin
 {
+    // Public Properties
+    // =========================================================================
+
+    public $schemaVersion = '2.0.0';
+    public $hasCpSettings = true;
+    public $hasCpSection = true;
+
     // Traits
     // =========================================================================
 

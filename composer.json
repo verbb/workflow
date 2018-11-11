@@ -35,9 +35,6 @@
     "extra": {
         "name": "Workflow",
         "handle": "workflow",
-        "schemaVersion": "2.0.0",
-        "hasCpSettings": true,
-        "hasCpSection": true,
         "changelogUrl": "https://raw.githubusercontent.com/verbb/workflow/craft-3/CHANGELOG.md",
         "class": "verbb\\workflow\\Workflow"
     }
