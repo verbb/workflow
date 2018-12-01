@@ -248,7 +248,7 @@ class Submission extends Element
             }
             case 'dateApproved':
             case 'dateRejected': {
-                return '-';
+                return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
             }
             default: {
                 return parent::tableAttributeHtml($attribute);

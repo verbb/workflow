@@ -48,6 +48,24 @@ class SubmissionQuery extends ElementQuery
         return $this;
     }
 
+    public function dateApproved($value)
+    {
+        $this->dateApproved = $value;
+        return $this;
+    }
+
+    public function dateRejected($value)
+    {
+        $this->dateRejected = $value;
+        return $this;
+    }
+
+    public function dateRevoked($value)
+    {
+        $this->dateRevoked = $value;
+        return $this;
+    }
+
     protected function beforePrepare(): bool
     {
         $this->joinElementTable('workflow_submissions');
