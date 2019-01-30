@@ -217,9 +217,9 @@ class Submission extends Element
     {
         return [
             'id' => Craft::t('workflow', 'Entry'),
-            'editor' => Craft::t('workflow', 'Editor'),
+            'editorId' => Craft::t('workflow', 'Editor'),
             'dateCreated' => Craft::t('workflow', 'Date Submitted'),
-            'publisher' => Craft::t('workflow', 'Publisher'),
+            'publisherId' => Craft::t('workflow', 'Publisher'),
             'dateApproved' => Craft::t('workflow', 'Date Approved'),
             'dateRejected' => Craft::t('workflow', 'Date Rejected'),
         ];
