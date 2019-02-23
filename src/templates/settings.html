@@ -19,7 +19,7 @@
 
 {% set sections = [] %}
 {% for section in craft.app.sections.getAllSections() %}
-    {% set sections = [{ value: section.id, label: section.name }] | merge(sections) %}
+    {% set sections = [{ value: section.uid, label: section.name }] | merge(sections) %}
 {% endfor %}
 
 {{ forms.checkboxSelectField({
@@ -36,7 +36,7 @@
 
 {% set groups = [{ label: "None" | t('workflow'), value: '' }] %}
 {% for group in craft.app.userGroups.getAllGroups() %}
-    {% set groups = groups | merge([{ label: group.name, value: group.id }]) %}
+    {% set groups = groups | merge([{ label: group.name, value: group.uid }]) %}
 {% endfor %}
 
 <hr>
