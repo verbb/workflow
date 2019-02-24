@@ -6,7 +6,9 @@ use verbb\workflow\elements\Submission;
 
 use Craft;
 use craft\base\Component;
+use craft\db\Table;
 use craft\elements\User;
+use craft\helpers\Db;
 
 class Submissions extends Component
 {
@@ -22,8 +24,10 @@ class Submissions extends Component
     {
         $settings = Workflow::$plugin->getSettings();
 
+        $groupId = Db::idByUid(Table::USERGROUPS, $settings->publisherUserGroup);
+
         $query = User::find()
-            ->groupId($settings->publisherUserGroup);
+            ->groupId($groupId);
 
         // Check settings to see if we should email all publishers or not
         if (isset($settings->selectedPublishers)) {
@@ -52,8 +56,10 @@ class Submissions extends Component
     {
         $settings = Workflow::$plugin->getSettings();
 
+        $groupId = Db::idByUid(Table::USERGROUPS, $settings->editorUserGroup);
+
         $editor = User::find()
-            ->groupId($settings->editorUserGroup)
+            ->groupId($groupId)
             ->id($submission->editorId)
             ->one();
 

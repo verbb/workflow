@@ -23,8 +23,8 @@ class Service extends Component
             return;
         }
 
-        $editorGroup = Craft::$app->userGroups->getGroupById($settings->editorUserGroup);
-        $publisherGroup = Craft::$app->userGroups->getGroupById($settings->publisherUserGroup);
+        $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
+        $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
 
         if (!$currentUser) {
             Workflow::log('No current user.');
