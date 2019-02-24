@@ -33,7 +33,8 @@ class Install extends Migration
             'editorId' => $this->integer(),
             'publisherId' => $this->integer(),
             'status' => $this->enum('status', ['approved', 'pending', 'rejected', 'revoked']),
-            'notes' => $this->text(),
+            'editorNotes' => $this->text(),
+            'publisherNotes' => $this->text(),
             'dateApproved' => $this->dateTime(),
             'dateRejected' => $this->dateTime(),
             'dateRevoked' => $this->dateTime(),
@@ -61,7 +62,7 @@ class Install extends Migration
     public function addForeignKeys()
     {
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'id'), '{{%workflow_submissions}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'draftId'), '{{%workflow_submissions}}', 'draftId', '{{%entrydrafts}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'draftId'), '{{%workflow_submissions}}', 'draftId', '{{%entrydrafts}}', 'id', 'SET NULL', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'ownerSiteId'), '{{%workflow_submissions}}', 'ownerSiteId', '{{%sites}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'editorId'), '{{%workflow_submissions}}', 'editorId', '{{%users}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'ownerId'), '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'CASCADE', null);

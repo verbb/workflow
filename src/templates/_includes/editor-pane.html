@@ -26,12 +26,15 @@
                 </div>
             </div>
 
-            <br>
+            {{ forms.textareaField({
+                placeholder: 'Notes about your submission.' | t('workflow'),
+                id: 'editorNotes',
+                name: 'editorNotes',
+                rows: 2,
+            }) }}
 
             <div class="btngroup">
-                {% set draftId = context.draftId | default('') %}
-                {% set siteId = context.entry.siteId | default('') %}
-                <a href="{{ actionUrl('workflow/submissions/send', { entryId: context.entry.id, draftId: draftId, siteId: siteId }) }}" class="btn submit">{{ "Submit for review" | t('workflow') }}</a>
+                <a class="formsubmit btn submit" data-param="workflow-action" data-value="save-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Submit for review" | t('workflow') }}</a>
             </div>
         </div>
     </div>
@@ -48,7 +51,9 @@
                 <div class="instructions">
                     <p style="color: #da5a47;">{{ "This entry has been submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
 
-                    <a href="{{ actionUrl('workflow/submissions/revoke', { submissionId: submission.id }) }}" class="btn small">{{ "Revoke submission" | t('workflow') }}</a>
+                    <input type="hidden" name="submissionId" value="{{ submission.id }}">
+
+                    <a class="formsubmit btn small" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Revoke submission" | t('workflow') }}</a>
                 </div>
             </div>
         </div>
@@ -66,8 +71,8 @@
                         <div class="instructions">
                             <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | date('jS M Y g:ia') }) }}</p>
 
-                            {% if submission.notes %}
-                                <p class="code">"{{ submission.notes }}"</p>
+                            {% if submission.publisherNotes %}
+                                <p class="code">"{{ submission.publisherNotes }}"</p>
                             {% endif %}
                         </div>
                     </div>
@@ -80,8 +85,8 @@
                         <div class="instructions">
                             <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
 
-                            {% if submission.notes %}
-                                <p class="code">"{{ submission.notes }}"</p>
+                            {% if submission.publisherNotes %}
+                                <p class="code">"{{ submission.publisherNotes }}"</p>
                             {% endif %}
                         </div>
                     </div>
@@ -110,11 +115,22 @@
                 #main #header .btn.submit { display: none; }
             {% endcss %}
 
-            {% js %} 
+            {% js %}
+                var buttonClicked = false;
+
+                {# Disable any type of form submitting unless we're doing a workflow action #}
                 $('#main-form').on('submit', function(e) {
-                    e.preventDefault();
+                    if (!buttonClicked) {
+                        e.preventDefault();
+                    }
                 });
 
+                {# Allow only workflow actions to submit #}
+                $('[data-param="workflow-action"]').on('click', function(e) {
+                    buttonClicked = true;
+                });
+
+                {# Remove the submit button #}
                 $('#main #header .btn.submit').remove();
             {% endjs %}
 

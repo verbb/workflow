@@ -13,7 +13,8 @@ class SubmissionQuery extends ElementQuery
     public $draftId;
     public $editorId;
     public $publisherId;
-    public $notes;
+    public $editorNotes;
+    public $publisherNotes;
     public $dateApproved;
     public $dateRejected;
     public $dateRevoked;
@@ -94,8 +95,12 @@ class SubmissionQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.publisherId', $this->publisherId));
         }
 
-        if ($this->notes) {
-            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.notes', $this->notes));
+        if ($this->editorNotes) {
+            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.editorNotes', $this->editorNotes));
+        }
+
+        if ($this->publisherNotes) {
+            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.publisherNotes', $this->publisherNotes));
         }
 
         if ($this->dateApproved) {

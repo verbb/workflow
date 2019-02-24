@@ -28,18 +28,23 @@
                 </div>
             </div>
 
+            {% if submission.editorNotes %}
+                <code>{{ 'Editor Notes' | t('workflow') }}: {{ submission.editorNotes }}</code>
+            {% endif %}
+
             {{ forms.textareaField({
                 placeholder: 'Notes about your response.' | t('workflow'),
-                id: 'workflowNotes',
+                id: 'publisherNotes',
+                name: 'publisherNotes',
                 rows: 2,
-                value: submission.notes,
             }) }}
 
-            {% set draftId = context.draftId | default('') %}
+            <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
             <div class="btngroup">
-                <a class="btn submit" href="{{ actionUrl('workflow/submissions/approve', { submissionId: submission.id, draftId: draftId }) }}">{{ "Approve & publish entry" | t('workflow') }}</a>
-                <a class="btn formsubmit" href="{{ actionUrl('workflow/submissions/reject', { submissionId: submission.id, draftId: draftId }) }}">{{ "Reject" | t('workflow') }}</a>
+                <a class="formsubmit btn submit" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ context.saveShortcutRedirect }}" {% if context.isDraft %}data-action="entry-revisions/publish-draft"{% endif %}>{{ "Approve & publish entry" | t('workflow') }}</a>
+
+                <a class="formsubmit btn" data-param="workflow-action" data-value="reject-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Reject" | t('workflow') }}</a>
             </div>
         </div>
     </div>
@@ -56,8 +61,8 @@
                         <div class="instructions">
                             <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | date('jS M Y g:ia') }) }}</p>
 
-                            {% if submission.notes %}
-                                <p class="code">"{{ submission.notes }}"</p>
+                            {% if submission.publisherNotes %}
+                                <p class="code">"{{ submission.publisherNotes }}"</p>
                             {% endif %}
                         </div>
                     </div>
@@ -70,8 +75,8 @@
                         <div class="instructions">
                             <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
 
-                            {% if submission.notes %}
-                                <p class="code">"{{ submission.notes }}"</p>
+                            {% if submission.publisherNotes %}
+                                <p class="code">"{{ submission.publisherNotes }}"</p>
                             {% endif %}
                         </div>
                     </div>
@@ -90,13 +95,3 @@
         {% endfor %}
     </div>
 {% endif %}
-
-{# Because we can't have a form inside the outer entries saving form, we need to append notes onto our button submits #}
-{% js %}
-    $('.workflow-pane .btn').on('click', function(e) {
-        var notes = $('#workflowNotes-field textarea').val();
-        var href = $(this).attr('href');
-
-        $(this).attr('href', href + '&notes=' + notes);
-    });
-{% endjs %}

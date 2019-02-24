@@ -13,7 +13,7 @@ class SubmissionsController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionSend()
+    public function actionSaveSubmission($entry = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -28,6 +28,13 @@ class SubmissionsController extends Controller
         $submission->editorId = $currentUser->id;
         $submission->status = Submission::STATUS_PENDING;
         $submission->dateApproved = null;
+        $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
+        $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
+
+        if ($entry) {
+            $submission->ownerId = $entry->id;
+            $submission->ownerSiteId = $entry->siteId;
+        }
 
         $isNew = !$submission->id;
 
@@ -45,11 +52,10 @@ class SubmissionsController extends Controller
 
         $session->setNotice(Craft::t('workflow', 'Entry submitted for approval.'));
 
-        // Redirect page to the entry as its not a form submission
-        return $this->redirect($request->referrer);
+        return $this->redirectToPostedUrl();
     }
 
-    public function actionRevoke()
+    public function actionRevokeSubmission($entry = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -67,11 +73,10 @@ class SubmissionsController extends Controller
 
         $session->setNotice(Craft::t('workflow', 'Submission revoked.'));
 
-        // Redirect page to the entry as its not a form submission
-        return $this->redirect($request->referrer);
+        return $this->redirectToPostedUrl();
     }
 
-    public function actionApprove()
+    public function actionApproveSubmission($entry = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -83,23 +88,12 @@ class SubmissionsController extends Controller
         $submission->status = Submission::STATUS_APPROVED;
         $submission->publisherId = $currentUser->id;
         $submission->dateApproved = new \DateTime;
-        $submission->notes = $request->getParam('notes');
-
-        $draftId = $request->getParam('draftId');
+        $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
+        $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not approve and publish.'));
             return null;
-        }
-
-        // Check if we're approving a draft - we publish it too.
-        if ($draftId) {
-            $draft = Craft::$app->getEntryRevisions()->getDraftById($draftId);
-            
-            if (!Craft::$app->getEntryRevisions()->publishDraft($draft)) {
-                Craft::$app->getSession()->setError(Craft::t('workflow', 'Couldn’t publish draft.'));
-                return null;
-            }
         }
 
         // Trigger notification to editor
@@ -109,16 +103,10 @@ class SubmissionsController extends Controller
 
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
 
-        // Redirect page to the entry as its not a form submission - check for draft
-        if ($draftId) {
-            // If we've published a draft the url has changed
-            return $this->redirect($draft->cpEditUrl);
-        } else {
-            return $this->redirect($request->referrer);
-        }
+        return $this->redirectToPostedUrl();
     }
 
-    public function actionReject()
+    public function actionRejectSubmission($entry = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -130,7 +118,8 @@ class SubmissionsController extends Controller
         $submission->status = Submission::STATUS_REJECTED;
         $submission->publisherId = $currentUser->id;
         $submission->dateRejected = new \DateTime;
-        $submission->notes = $request->getParam('notes');
+        $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
+        $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not reject submission.'));
@@ -142,8 +131,7 @@ class SubmissionsController extends Controller
             Workflow::$plugin->getSubmissions()->sendEditorNotificationEmail($submission);
         }
 
-        // Redirect page to the entry as its not a form submission
-        return $this->redirect($request->referrer);
+        return $this->redirectToPostedUrl();
     }
 
 

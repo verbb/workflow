@@ -31,7 +31,8 @@ class Submission extends Element
     public $editorId;
     public $publisherId;
     public $status;
-    public $notes;
+    public $editorNotes;
+    public $publisherNotes;
     public $dateApproved;
     public $dateRejected;
     public $dateRevoked;
@@ -185,7 +186,8 @@ class Submission extends Element
         $record->editorId = $this->editorId;
         $record->publisherId = $this->publisherId;
         $record->status = $this->status;
-        $record->notes = $this->notes;
+        $record->editorNotes = $this->editorNotes;
+        $record->publisherNotes = $this->publisherNotes;
         $record->dateApproved = $this->dateApproved;
         $record->dateRejected = $this->dateRejected;
         $record->dateRevoked = $this->dateRevoked;

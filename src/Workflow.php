@@ -9,12 +9,14 @@ use verbb\workflow\widgets\Submissions as SubmissionsWidget;
 
 use Craft;
 use craft\base\Plugin;
+use craft\elements\Entry;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
 use craft\services\Elements;
+use craft\services\EntryRevisions;
 use craft\services\SystemMessages;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
@@ -27,7 +29,7 @@ class Workflow extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '2.0.1';
+    public $schemaVersion = '2.0.3';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 
@@ -52,6 +54,7 @@ class Workflow extends Plugin
         $this->_registerEmailMessages();
         $this->_registerWidgets();
         $this->_registerVariables();
+        $this->_registerCraftEventListeners();
         $this->_registerElementTypes();
 
         Craft::$app->view->hook('cp.entries.edit.details', [$this->getService(), 'renderEntrySidebar']);
@@ -123,5 +126,13 @@ class Workflow extends Plugin
         Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function(RegisterComponentTypesEvent $event) {
             $event->types[] = Submission::class;
         });
+    }
+
+    private function _registerCraftEventListeners()
+    {
+        Event::on(Entry::class, Entry::EVENT_BEFORE_SAVE, [$this->getService(), 'onBeforeSaveEntry']);
+        Event::on(Entry::class, Entry::EVENT_AFTER_SAVE, [$this->getService(), 'onAfterSaveEntry']);
+        Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_SAVE_DRAFT, [$this->getService(), 'onAfterSaveEntryDraft']);
+        Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_PUBLISH_DRAFT, [$this->getService(), 'onAfterPublishEntryDraft']);
     }
 }
