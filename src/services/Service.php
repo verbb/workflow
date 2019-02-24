@@ -58,7 +58,14 @@ class Service extends Component
 
             return;
         }
+
         // Make sure workflow is enabled for this section - or all section
+        if (!$settings->enabledSections) {
+            Workflow::log('New enabled sections.');
+
+            return;
+        }
+
         if ($settings->enabledSections != '*') {
             if (!in_array($context['entry']->sectionId, $settings->enabledSections)) {
                 Workflow::log('Entry not in allowed section.');
