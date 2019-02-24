@@ -20,19 +20,22 @@ class Service extends Component
 
     public function onBeforeSaveEntry(ModelEvent $event)
     {
+        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+
         // Saving an entry doesn't trigger its validation - only when you're trying to publish it.
         // It doesn't make sense to submit a non-validated entry for review (that's what drafts
         // are for), so manually trigger validation for a workflow submission.
-        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
-
-        if ($action !== 'save-submission') {
-            return;
+        if ($action === 'save-submission') {
+            // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
+            // can't publish. We quickly switch it on to make sure the entry validates correctly.
+            $event->sender->setScenario(Element::SCENARIO_LIVE);
+            $event->sender->validate();
         }
 
-        // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
-        // can't publish. We quickly switch it on to make sure the entry validates correctly.
-        $event->sender->setScenario(Element::SCENARIO_LIVE);
-        $event->sender->validate();
+        // If we are approving a submission, make sure to make it live
+        if ($action === 'approve-submission') {
+            $event->sender->enabled = true;
+        }
     }
 
     public function onAfterSaveEntry(ModelEvent $event)
