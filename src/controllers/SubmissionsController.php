@@ -13,7 +13,7 @@ class SubmissionsController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionSaveSubmission($entry = null)
+    public function actionSaveSubmission($entry = null, $draft = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -36,6 +36,10 @@ class SubmissionsController extends Controller
             $submission->ownerSiteId = $entry->siteId;
         }
 
+        if ($draft) {
+            $submission->draftId = $draft->draftId;
+        }
+
         $isNew = !$submission->id;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
@@ -55,7 +59,7 @@ class SubmissionsController extends Controller
         return $this->redirectToPostedUrl();
     }
 
-    public function actionRevokeSubmission($entry = null)
+    public function actionRevokeSubmission($entry = null, $draft = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -76,7 +80,7 @@ class SubmissionsController extends Controller
         return $this->redirectToPostedUrl();
     }
 
-    public function actionApproveSubmission($entry = null)
+    public function actionApproveSubmission($entry = null, $draft = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -106,7 +110,7 @@ class SubmissionsController extends Controller
         return $this->redirectToPostedUrl();
     }
 
-    public function actionRejectSubmission($entry = null)
+    public function actionRejectSubmission($entry = null, $draft = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
