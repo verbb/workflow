@@ -6,6 +6,8 @@ use verbb\workflow\elements\Submission;
 
 use Craft;
 use craft\base\Component;
+use craft\db\Table;
+use craft\helpers\Db;
 
 class Service extends Component
 {
@@ -67,7 +69,9 @@ class Service extends Component
         }
 
         if ($settings->enabledSections != '*') {
-            if (!in_array($context['entry']->sectionId, $settings->enabledSections)) {
+            $enabledSectionIds = Db::idsByUids(Table::SECTIONS, $settings->enabledSections);
+
+            if (!in_array($context['entry']->sectionId, $enabledSectionIds)) {
                 Workflow::log('Entry not in allowed section.');
 
                 return;
