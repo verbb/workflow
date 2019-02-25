@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.1.0 - 2019-02-25
+
+### Added
+- Added editor notes, to send along with a submission.
+- Submissions now listed on entry events, to improve submission workflow.
+- Submit brand-new entries for review (provided they pass validation).
+- Translation to norwegian. (thanks @phoob).
+- Add serialised data to submissions to prepare for entry comparison diffs.
+
+### Changed
+- Updated widget styles to be more compact for entry sidebars.
+- Update min requirement to Craft 3.1.x.
+- Updated plugin settings to use UIDs for Craft 3.1.x.
+- 'Submit for review' now saves entry content, then submits for review. No more clicking 'Save' then 'Submit'.
+- 'Submit for review' now validates entry content before submission.
+- Changed controller action from `workflow/submissions/send` to `workflow/submissions/save-submission`.
+- Changed controller action from `workflow/submissions/revoke` to `workflow/submissions/revoke-submission`.
+- Changed controller action from `workflow/submissions/approve` to `workflow/submissions/approve-submission`.
+- Changed controller action from `workflow/submissions/reject` to `workflow/submissions/reject-submission`.
+
+### Fixed 
+- Fix draft submissions not being retained after approval.
+- Submissions now trigger entry validation, ensuring only 'valid' entries are submitted for review.
+- Fix dateApproved/dateRejected not showing their value.
+- Fix error when sorting by Editor or Publisher in CP.
+- Fix error when no sections are selected.
+- Fix not publishing a submission when approving.
+
 ## 1.0.3 - 2018-11-10
 
 ### Fixed
