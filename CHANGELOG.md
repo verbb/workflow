@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 - 2019-02-26
+
+### Fixed
+- Fix error in Norwegian translation (thanks @phoob).
+- Fix query error when viewing drafts.
+
 ## 1.1.0 - 2019-02-25
 
 ### Added
