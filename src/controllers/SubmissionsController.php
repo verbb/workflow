@@ -1,12 +1,12 @@
 <?php
 namespace verbb\workflow\controllers;
 
+use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 
 use Craft;
+use craft\elements\Entry;
 use craft\web\Controller;
-
-use verbb\workflow\Workflow;
 
 class SubmissionsController extends Controller
 {
@@ -34,10 +34,12 @@ class SubmissionsController extends Controller
         if ($entry) {
             $submission->ownerId = $entry->id;
             $submission->ownerSiteId = $entry->siteId;
+            $submission->data = $this->_getRevisionData($entry);
         }
 
         if ($draft) {
             $submission->draftId = $draft->draftId;
+            $submission->data = $this->_getRevisionData($draft);
         }
 
         $isNew = !$submission->id;
@@ -158,6 +160,31 @@ class SubmissionsController extends Controller
         }
 
         return $submission;
+    }
+
+    private function _getRevisionData(Entry $revision): array
+    {
+        $revisionData = [
+            'typeId' => $revision->typeId,
+            'authorId' => $revision->authorId,
+            'title' => $revision->title,
+            'slug' => $revision->slug,
+            'postDate' => $revision->postDate ? $revision->postDate->getTimestamp() : null,
+            'expiryDate' => $revision->expiryDate ? $revision->expiryDate->getTimestamp() : null,
+            'enabled' => $revision->enabled,
+            'newParentId' => $revision->newParentId,
+            'fields' => [],
+        ];
+
+        $content = $revision->getSerializedFieldValues();
+
+        foreach (Craft::$app->getFields()->getAllFields() as $field) {
+            if (isset($content[$field->handle]) && $content[$field->handle] !== null) {
+                $revisionData['fields'][$field->id] = $content[$field->handle];
+            }
+        }
+
+        return $revisionData;
     }
 
 }

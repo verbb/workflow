@@ -35,6 +35,7 @@ class Install extends Migration
             'status' => $this->enum('status', ['approved', 'pending', 'rejected', 'revoked']),
             'editorNotes' => $this->text(),
             'publisherNotes' => $this->text(),
+            'data' => $this->mediumText(),
             'dateApproved' => $this->dateTime(),
             'dateRejected' => $this->dateTime(),
             'dateRevoked' => $this->dateTime(),
