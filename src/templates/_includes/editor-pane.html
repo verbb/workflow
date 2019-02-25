@@ -83,8 +83,6 @@
 
 {% if nonPendingSubmissions | length %}
     <div class="pane workflow-pane workflow-history-pane">
-        <h4>{{ 'Submissions' | t('workflow') }}</h4>
-
         {% for submission in submissions %}
             {% if submission.status == 'approved' %}
                 <div class="workflow-history">
