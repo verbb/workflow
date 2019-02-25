@@ -17,23 +17,26 @@
 
 {% if not pendingSubmissions | length %}
     <div class="pane workflow-pane">
-        <div class="field">
-            <div class="heading">
+        <div class="workflow-submission">
+            <div class="workflow-submission-heading">
                 <label>{{ "Submit for review" | t('workflow') }}</label>
-
-                <div class="instructions">
-                    <p>{{ "Submitting this entry for review will lock further edits and notify your publisher that this entry is ready for approval." | t('workflow') }}</p>
-                </div>
             </div>
 
-            {{ forms.textareaField({
-                placeholder: 'Notes about your submission.' | t('workflow'),
-                id: 'editorNotes',
-                name: 'editorNotes',
-                rows: 2,
-            }) }}
+            <div class="instructions">
+                <p>{{ "Submitting this entry for review will lock further edits and notify your publisher that this entry is ready for approval." | t('workflow') }}</p>
+            </div>
 
-            <div class="btngroup">
+            <div class="workflow-submission-body">
+                {{ forms.textareaField({
+                    placeholder: 'Notes about your submission.' | t('workflow'),
+                    id: 'editorNotes',
+                    name: 'editorNotes',
+                    class: 'field-notes',
+                    rows: 2,
+                }) }}
+            </div>
+
+            <div class="workflow-submission-footer btngroup">
                 {% if context.canSave %}
                     <a class="formsubmit btn submit" data-param="workflow-action" data-value="save-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Save and submit for review" | t('workflow') }}</a>
                 {% else %}
@@ -48,60 +51,104 @@
     {% set submission = pendingSubmissions[0] %}
 
     <div class="pane workflow-pane">
-        <div class="field">
-            <div class="heading">
+        <div class="workflow-submission">
+            <div class="workflow-submission-heading">
+                <span class="status pending"></span>
                 <label>{{ "Awaiting approval" | t('workflow') }}</label>
+                <a class="fieldtoggle" data-target="workflow-submission-info"></a>
+            </div>
 
+            <div id="workflow-submission-info" class="hidden">
                 <div class="instructions">
                     <p style="color: #da5a47;">{{ "This entry has been submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
 
-                    <input type="hidden" name="submissionId" value="{{ submission.id }}">
+                    {% if submission.editorNotes %}
+                        <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                    {% endif %}
 
-                    <a class="formsubmit btn small" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Revoke submission" | t('workflow') }}</a>
+                    {% if submission.publisherNotes %}
+                        <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
+                    {% endif %}
                 </div>
             </div>
+        </div>
+
+        <input type="hidden" name="submissionId" value="{{ submission.id }}">
+
+        <div class="workflow-submission-footer">
+            <a class="formsubmit btn small" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Revoke submission" | t('workflow') }}</a>
         </div>
     </div>
 {% endif %}
 
 {% if nonPendingSubmissions | length %}
-    <div class="pane workflow-pane workflow-info-pane">
+    <div class="pane workflow-pane workflow-history-pane">
+        <h4>{{ 'Submissions' | t('workflow') }}</h4>
+
         {% for submission in submissions %}
             {% if submission.status == 'approved' %}
-                <div class="field">
-                    <div class="heading">
+                <div class="workflow-history">
+                    <div class="workflow-history-heading">
+                        <span class="status on"></span>
                         <label>{{ "Approved submission" | t('workflow') }}</label>
+                        <a class="fieldtoggle" data-target="history-info-{{ loop.index }}"></a>
+                    </div>
 
+                    <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
                             <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | date('jS M Y g:ia') }) }}</p>
 
+                            {% if submission.editorNotes %}
+                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                            {% endif %}
+
                             {% if submission.publisherNotes %}
-                                <p class="code">"{{ submission.publisherNotes }}"</p>
+                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             {% elseif submission.status == 'rejected' %}
-                <div class="field">
-                    <div class="heading">
+                <div class="workflow-history">
+                    <div class="workflow-history-heading">
+                        <span class="status off"></span>
                         <label>{{ "Rejected submission" | t('workflow') }}</label>
+                        <a class="fieldtoggle" data-target="history-info-{{ loop.index }}"></a>
+                    </div>
 
+                    <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
-                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
+                            <p><a href="{{ submission.publisher.cpEditUrl }}">{{ submission.publisher }}</a> {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | date('jS M Y g:ia') }) }}</p>
+
+                            {% if submission.editorNotes %}
+                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                            {% endif %}
 
                             {% if submission.publisherNotes %}
-                                <p class="code">"{{ submission.publisherNotes }}"</p>
+                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
                             {% endif %}
                         </div>
                     </div>
-                </div>                
+                </div>               
             {% elseif submission.status == 'revoked' %}
-                <div class="field">
-                    <div class="heading">
+                <div class="workflow-history">
+                    <div class="workflow-history-heading">
+                        <span class="status"></span>
                         <label>{{ "Revoked submission" | t('workflow') }}</label>
+                        <a class="fieldtoggle" data-target="history-info-{{ loop.index }}"></a>
+                    </div>
 
+                    <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
                             <p><a href="{{ submission.editor.cpEditUrl }}">{{ submission.editor }}</a> {{ "revoked this entry on {date}." | t('workflow', { date: submission.dateRevoked | date('jS M Y g:ia') }) }}</p>
+
+                            {% if submission.editorNotes %}
+                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                            {% endif %}
+
+                            {% if submission.publisherNotes %}
+                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

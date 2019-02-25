@@ -487,6 +487,13 @@
 		"oAP": "/src/translations/en/workflow.php",
 		"oF": 0
 		},
+	"/src/translations/nb/workflow.php": {
+		"cB": 0,
+		"ft": 8192,
+		"oA": 2,
+		"oAP": "/src/translations/nb/workflow.php",
+		"oF": 0
+		},
 	"/src/variables": {
 		"ft": 65536,
 		"oA": 1,

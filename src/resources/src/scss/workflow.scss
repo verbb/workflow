@@ -34,33 +34,73 @@
     border-radius: 0;
 }
 
-.workflow-pane > .field {
-    margin: 10px 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e3e5e8;
-}
-
-.workflow-pane > .field:last-child {
-    border: 0;
-    padding-bottom: 0;
-}
-
-.workflow-pane #workflowNotes-field {
-    margin: 14px 0;
-}
-
 .workflow-pane .btngroup {
     justify-content: space-between;
 }
 
-.workflow-info-pane {
-    font-size: 12px;
-    line-height: 1.5;
-    padding: 10px 24px;
+.workflow-pane .instructions {
+    color: #8f98a3;
 }
 
-.workflow-info-pane > .field {
-    padding-bottom: 0;
+.workflow-submission-body {
+    margin: 15px 0;
+}
+
+.workflow-submission-footer {
+    margin-top: 10px;
+}
+
+.workflow-submission-heading,
+.workflow-history-heading {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 0 5px;
+}
+
+.workflow-submission-heading label,
+.workflow-history-heading label {
+    font-weight: bold;
+    color: #576575;
+    flex: 1;
+}
+
+.workflow-submission-heading a.fieldtoggle,
+.workflow-history-heading a.fieldtoggle {
+    position: absolute;
+    width: 100%;
+    height: 20px;
+    margin: 0;
+    padding: 0 !important;
+
+    &:before {
+        left: auto !important;
+        right: 0;
+        top: 0;
+    }
+}
+
+.workflow-history-pane {
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 0;
+}
+
+.workflow-history {
+    padding: 10px 24px;
+    border-bottom: 1px solid #e3e5e8;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+}
+
+.workflow-history-heading {
+    padding: 0;
+}
+
+.workflow-history-info {
+    padding-top: 10px;
 }
 
 
