@@ -81,10 +81,13 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
 
+        $editorNotes = Craft::$app->getRequest()->getBodyParam('editorNotes');
+        $publisherNotes = Craft::$app->getRequest()->getBodyParam('publisherNotes');
+
         if ($action === 'save-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->editorNotesRequired && !$editorNotes) {
-                $event->isValid = false;
+                $event->handled = true;
 
                 Craft::$app->getUrlManager()->setRouteParams([
                     'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
@@ -95,11 +98,13 @@ class Service extends Component
         if ($action === 'approve-submission' || $action === 'reject-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->publisherNotesRequired && !$publisherNotes) {
-                $event->isValid = false;
+                $event->handled = true;
 
                 Craft::$app->getUrlManager()->setRouteParams([
                     'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
                 ]);
+
+                return false;
             }
         }
     }
