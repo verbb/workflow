@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.4 - 2019-02-28
+
+### Fixed
+- Fix approved entries not being published correctly in some instances.
+
 ## 1.1.3 - 2019-02-27
 
 ### Fixed
