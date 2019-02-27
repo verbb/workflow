@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.2 - 2019-02-27
+
+### Added
+- Added editor/publisher submission notes required setting
+
+### Changed
+- Ensure editor/publisher URLs are only shown if the current user has permission.
+
+### Fixed
+- Ensure publishers in settings use User Group UID.
+
 ## 1.1.1 - 2019-02-26
 
 ### Fixed
