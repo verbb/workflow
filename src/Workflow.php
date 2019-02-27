@@ -132,6 +132,7 @@ class Workflow extends Plugin
     {
         Event::on(Entry::class, Entry::EVENT_BEFORE_SAVE, [$this->getService(), 'onBeforeSaveEntry']);
         Event::on(Entry::class, Entry::EVENT_AFTER_SAVE, [$this->getService(), 'onAfterSaveEntry']);
+        Event::on(EntryRevisions::class, EntryRevisions::EVENT_BEFORE_SAVE_DRAFT, [$this->getService(), 'onBeforeSaveEntryDraft']);
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_SAVE_DRAFT, [$this->getService(), 'onAfterSaveEntryDraft']);
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_PUBLISH_DRAFT, [$this->getService(), 'onAfterPublishEntryDraft']);
     }

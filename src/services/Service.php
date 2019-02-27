@@ -26,9 +26,6 @@ class Service extends Component
         $editorNotes = Craft::$app->getRequest()->getBodyParam('editorNotes');
         $publisherNotes = Craft::$app->getRequest()->getBodyParam('publisherNotes');
 
-        // Saving an entry doesn't trigger its validation - only when you're trying to publish it.
-        // It doesn't make sense to submit a non-validated entry for review (that's what drafts
-        // are for), so manually trigger validation for a workflow submission.
         if ($action === 'save-submission') {
             // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
             // can't publish. We quickly switch it on to make sure the entry validates correctly.
@@ -45,8 +42,8 @@ class Service extends Component
             }
         }
 
-        // If we are approving a submission, make sure to make it live
         if ($action === 'approve-submission') {
+            // If we are approving a submission, make sure to make it live
             $event->sender->enabled = true;
         }
 
@@ -77,6 +74,34 @@ class Service extends Component
         $url = UrlHelper::url($url);
 
         return Craft::$app->getResponse()->redirect($url, 302)->send();
+    }
+
+    public function onBeforeSaveEntryDraft(DraftEvent $event)
+    {
+        $settings = Workflow::$plugin->getSettings();
+        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+
+        if ($action === 'save-submission') {
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->editorNotesRequired && !$editorNotes) {
+                $event->isValid = false;
+
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
+                ]);
+            }
+        }
+
+        if ($action === 'approve-submission' || $action === 'reject-submission') {
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->publisherNotesRequired && !$publisherNotes) {
+                $event->isValid = false;
+
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
+                ]);
+            }
+        }
     }
 
     public function onAfterSaveEntryDraft(DraftEvent $event)
