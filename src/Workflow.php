@@ -130,6 +130,10 @@ class Workflow extends Plugin
 
     private function _registerCraftEventListeners()
     {
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            return;
+        }
+
         Event::on(Entry::class, Entry::EVENT_BEFORE_SAVE, [$this->getService(), 'onBeforeSaveEntry']);
         Event::on(Entry::class, Entry::EVENT_AFTER_SAVE, [$this->getService(), 'onAfterSaveEntry']);
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_BEFORE_SAVE_DRAFT, [$this->getService(), 'onBeforeSaveEntryDraft']);
