@@ -46,6 +46,11 @@ class SubmissionsController extends Controller
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not submit for approval.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
             return null;
         }
 
@@ -74,6 +79,11 @@ class SubmissionsController extends Controller
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not revoke submission.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
             return null;
         }
 
@@ -99,6 +109,11 @@ class SubmissionsController extends Controller
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not approve and publish.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
             return null;
         }
 
@@ -129,6 +144,11 @@ class SubmissionsController extends Controller
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not reject submission.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
             return null;
         }
 
