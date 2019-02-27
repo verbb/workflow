@@ -159,6 +159,23 @@ class Submission extends Element
         if ($this->editorId !== null) {
             return Craft::$app->getUsers()->getUserById($this->editorId);
         }
+
+        return null;
+    }
+
+    public function getEditorUrl()
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        if ($editor = $this->getEditor()) {
+            if ($currentUser->can('editUsers')) {
+                return "<a href='" . $editor->cpEditUrl . "'>" . $editor . "</a>";
+            } else {
+                return $editor;
+            }
+        }
+
+        return '';
     }
 
     public function getPublisher()
@@ -166,6 +183,23 @@ class Submission extends Element
         if ($this->publisherId !== null) {
             return Craft::$app->getUsers()->getUserById($this->publisherId);
         }
+
+        return null;
+    }
+
+    public function getPublisherUrl()
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        if ($publisher = $this->getPublisher()) {
+            if ($currentUser->can('editUsers')) {
+                return "<a href='" . $publisher->cpEditUrl . "'>" . $publisher . "</a>";
+            } else {
+                return $publisher;
+            }
+        }
+
+        return '';
     }
 
     public function afterSave(bool $isNew)
@@ -233,22 +267,10 @@ class Submission extends Element
     {
         switch ($attribute) {
             case 'publisher': {
-                $publisher = $this->getPublisher();
-
-                if ($publisher) {
-                    return "<a href='" . $publisher->cpEditUrl . "'>" . $publisher . "</a>";
-                } else {
-                    return '-';
-                }
+                return $this->getPublisherUrl() ?? '-';
             }
             case 'editor': {
-                $editor = $this->getEditor();
-
-                if ($editor) {
-                    return "<a href='" . $editor->cpEditUrl . "'>" . $editor . "</a>";
-                } else {
-                    return '-';
-                }
+                return $this->getEditorUrl() ?? '-';
             }
             case 'dateApproved':
             case 'dateRejected': {
