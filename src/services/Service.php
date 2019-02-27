@@ -10,8 +10,11 @@ use craft\base\Element;
 use craft\db\Table;
 use craft\events\DraftEvent;
 use craft\events\ModelEvent;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\UrlHelper;
+
+use DateTime;
 
 class Service extends Component
 {
@@ -21,10 +24,11 @@ class Service extends Component
     public function onBeforeSaveEntry(ModelEvent $event)
     {
         $settings = Workflow::$plugin->getSettings();
-        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+        $request = Craft::$app->getRequest();
+        $action = $request->getBodyParam('workflow-action');
 
-        $editorNotes = Craft::$app->getRequest()->getBodyParam('editorNotes');
-        $publisherNotes = Craft::$app->getRequest()->getBodyParam('publisherNotes');
+        $editorNotes = $request->getBodyParam('editorNotes');
+        $publisherNotes = $request->getBodyParam('publisherNotes');
 
         if ($action === 'save-submission') {
             // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
@@ -47,6 +51,10 @@ class Service extends Component
             $event->sender->enabled = true;
             $event->sender->enabledForSite = true;
             $event->sender->setScenario(Element::SCENARIO_LIVE);
+
+            if (($postDate = $request->getBodyParam('postDate')) !== null) {
+                $event->sender->postDate = DateTimeHelper::toDateTime($postDate) ?: new DateTime();
+            }
         }
 
         if ($action === 'approve-submission' || $action === 'reject-submission') {
