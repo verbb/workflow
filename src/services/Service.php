@@ -20,7 +20,11 @@ class Service extends Component
 
     public function onBeforeSaveEntry(ModelEvent $event)
     {
+        $settings = Workflow::$plugin->getSettings();
         $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+
+        $editorNotes = Craft::$app->getRequest()->getBodyParam('editorNotes');
+        $publisherNotes = Craft::$app->getRequest()->getBodyParam('publisherNotes');
 
         // Saving an entry doesn't trigger its validation - only when you're trying to publish it.
         // It doesn't make sense to submit a non-validated entry for review (that's what drafts
@@ -30,11 +34,31 @@ class Service extends Component
             // can't publish. We quickly switch it on to make sure the entry validates correctly.
             $event->sender->setScenario(Element::SCENARIO_LIVE);
             $event->sender->validate();
+
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->editorNotesRequired && !$editorNotes) {
+                $event->isValid = false;
+
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
+                ]);
+            }
         }
 
         // If we are approving a submission, make sure to make it live
         if ($action === 'approve-submission') {
             $event->sender->enabled = true;
+        }
+
+        if ($action === 'approve-submission' || $action === 'reject-submission') {
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->publisherNotesRequired && !$publisherNotes) {
+                $event->isValid = false;
+
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
+                ]);
+            }
         }
     }
 
@@ -159,10 +183,15 @@ class Service extends Component
 
         Workflow::log('Rendering ' . $template . ' for #' . $context['entry']->id);
 
-        return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, [
+        // Merge any additional route params
+        $routeParams = Craft::$app->getUrlManager()->getRouteParams();
+        unset($routeParams['template'], $routeParams['template']);
+
+        return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, array_merge([
             'context' => $context,
             'submissions' => $submissions,
-        ]);
+            'settings' => $settings,
+        ], $routeParams));
     }
 
 }

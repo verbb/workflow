@@ -27,12 +27,16 @@
             </div>
 
             <div class="workflow-submission-body">
+                {% set required = settings.editorNotesRequired ? ' (required)' : '' %}
+
                 {{ forms.textareaField({
-                    placeholder: 'Notes about your submission.' | t('workflow'),
+                    placeholder: 'Notes about your submission' ~ required ~ '.' | t('workflow'),
                     id: 'editorNotes',
                     name: 'editorNotes',
                     class: 'field-notes',
                     rows: 2,
+                    required: settings.editorNotesRequired,
+                    errors: editorNotesErrors is defined ? editorNotesErrors,
                 }) }}
             </div>
 

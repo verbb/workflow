@@ -14,5 +14,7 @@ class Settings extends Model
     public $editorNotifications = true;
     public $publisherNotifications = true;
     public $selectedPublishers = '*';
+    public $editorNotesRequired = false;
+    public $publisherNotesRequired = false;
     
 }

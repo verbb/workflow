@@ -60,6 +60,14 @@
     on: settings.editorNotifications,
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Editor Submission Notes Required' | t('workflow'),
+    instructions: 'Whether editors are required to enter a note in their submissions.' | t('workflow'),
+    id: 'editorNotesRequired',
+    name: 'editorNotesRequired',
+    on: settings.editorNotesRequired,
+}) }}
+
 <hr>
 
 {{ forms.selectField({
@@ -108,7 +116,14 @@
         </p>
     </div>
 {% endif %}
-    
+
+{{ forms.lightswitchField({
+    label: 'Publisher Submission Notes Required' | t('workflow'),
+    instructions: 'Whether publishers are required to enter a note in their submissions.' | t('workflow'),
+    id: 'publisherNotesRequired',
+    name: 'publisherNotesRequired',
+    on: settings.publisherNotesRequired,
+}) }}
 
 {% endnamespace %}
 
