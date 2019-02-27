@@ -45,6 +45,8 @@ class Service extends Component
         if ($action === 'approve-submission') {
             // If we are approving a submission, make sure to make it live
             $event->sender->enabled = true;
+            $event->sender->enabledForSite = true;
+            $event->sender->setScenario(Element::SCENARIO_LIVE);
         }
 
         if ($action === 'approve-submission' || $action === 'reject-submission') {
