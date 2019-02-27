@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 - 2019-02-27
+
+### Fixed
+- Fix editor/publisher links.
+- Fix errors that can occur when installing via cli.
+
 ## 1.1.2 - 2019-02-27
 
 ### Added
