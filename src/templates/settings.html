@@ -82,11 +82,6 @@
 }) }}
 
 {% if settings.publisherUserGroup %}
-    {% set publishers = [] %}
-    {% for user in craft.users({ groupId: settings.publisherUserGroup }).all() %}
-        {% set publishers = [{ value: user.id, label: user }] | merge(publishers) %}
-    {% endfor %}
-
     {{ forms.checkboxSelectField({
         label: 'Publishers To Receive Notifications' | t('workflow'),
         instructions: 'Select all, or specific publishers to receive email notifications. By default, all will be notified.' | t('workflow'),
