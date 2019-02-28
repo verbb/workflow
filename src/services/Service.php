@@ -71,7 +71,8 @@ class Service extends Component
 
     public function onAfterSaveEntry(ModelEvent $event)
     {
-        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+        $request = Craft::$app->getRequest();
+        $action = $request->getBodyParam('workflow-action');
 
         if (!$action || $event->sender->propagating || isset($event->sender->draftId)) {
             return;
@@ -79,16 +80,19 @@ class Service extends Component
 
         Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
 
-        return $this->redirectToPostedUrl($event->sender);
+        if ($request->getIsCpRequest()) {
+            return $this->redirectToPostedUrl($event->sender);
+        }
     }
 
     public function onBeforeSaveEntryDraft(DraftEvent $event)
     {
         $settings = Workflow::$plugin->getSettings();
-        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+        $request = Craft::$app->getRequest();
+        $action = $request->getBodyParam('workflow-action');
 
-        $editorNotes = Craft::$app->getRequest()->getBodyParam('editorNotes');
-        $publisherNotes = Craft::$app->getRequest()->getBodyParam('publisherNotes');
+        $editorNotes = $request->getBodyParam('editorNotes');
+        $publisherNotes = $request->getBodyParam('publisherNotes');
 
         if ($action === 'save-submission') {
             // We also need to validate notes fields, if required before we save the entry
@@ -117,7 +121,8 @@ class Service extends Component
 
     public function onAfterSaveEntryDraft(DraftEvent $event)
     {
-        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+        $request = Craft::$app->getRequest();
+        $action = $request->getBodyParam('workflow-action');
 
         if (!$action) {
             return;
@@ -125,12 +130,15 @@ class Service extends Component
 
         Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
 
-        return $this->redirectToPostedUrl($event->draft);
+        if ($request->getIsCpRequest()) {
+            return $this->redirectToPostedUrl($event->draft);
+        }
     }
 
     public function onAfterPublishEntryDraft(DraftEvent $event)
     {
-        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+        $request = Craft::$app->getRequest();
+        $action = $request->getBodyParam('workflow-action');
 
         if (!$action) {
             return;
@@ -139,9 +147,11 @@ class Service extends Component
         Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
 
         // Approving a draft should redirect properly
-        $redirect = $event->draft->getCpEditUrl();
+        if ($request->getIsCpRequest()) {
+            $redirect = $event->draft->getCpEditUrl();
 
-        return $this->redirect($redirect);
+            return $this->redirect($redirect);
+        }
     }
 
     public function renderEntrySidebar(&$context)
