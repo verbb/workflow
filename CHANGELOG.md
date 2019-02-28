@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.5 - 2019-03-01
+
+### Fixed
+- Fix potential error on widget when submitted element is missing.
+- Fix redirects for submissions, particularly on the front-end.
+
 ## 1.1.4 - 2019-02-28
 
 ### Fixed
