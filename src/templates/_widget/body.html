@@ -6,7 +6,10 @@
                     <tr>
                         <td>
                             <span class="status {{ submission.status }}"></span>
-                            <a href="{{ submission.owner.cpEditUrl }}">{{ submission.owner.title }}</a>
+                            
+                            {% if submission.owner %}
+                                <a href="{{ submission.owner.cpEditUrl }}">{{ submission.owner.title }}</a>
+                            {% endif %}
 
                             <span class="light">{{ submission.dateCreated | date() }}, {{ submission.editor }}</span>
                         </td>
