@@ -72,7 +72,6 @@ class Service extends Component
     public function onAfterSaveEntry(ModelEvent $event)
     {
         $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
-        $redirect = Craft::$app->getRequest()->getBodyParam('redirect');
 
         if (!$action || $event->sender->propagating || isset($event->sender->draftId)) {
             return;
@@ -80,10 +79,7 @@ class Service extends Component
 
         Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
 
-        $url = Craft::$app->getView()->renderObjectTemplate($redirect, $event->sender);
-        $url = UrlHelper::url($url);
-
-        return Craft::$app->getResponse()->redirect($url, 302)->send();
+        return $this->redirectToPostedUrl($event->sender);
     }
 
     public function onBeforeSaveEntryDraft(DraftEvent $event)
@@ -122,7 +118,6 @@ class Service extends Component
     public function onAfterSaveEntryDraft(DraftEvent $event)
     {
         $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
-        $redirect = Craft::$app->getRequest()->getBodyParam('redirect');
 
         if (!$action) {
             return;
@@ -130,10 +125,7 @@ class Service extends Component
 
         Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
 
-        $url = Craft::$app->getView()->renderObjectTemplate($redirect, $event->draft);
-        $url = UrlHelper::url($url);
-
-        return Craft::$app->getResponse()->redirect($url, 302)->send();
+        return $this->redirectToPostedUrl($event->draft);
     }
 
     public function onAfterPublishEntryDraft(DraftEvent $event)
@@ -149,7 +141,7 @@ class Service extends Component
         // Approving a draft should redirect properly
         $redirect = $event->draft->getCpEditUrl();
 
-        return Craft::$app->getResponse()->redirect($redirect, 302)->send();
+        return $this->redirect($redirect);
     }
 
     public function renderEntrySidebar(&$context)
@@ -232,6 +224,38 @@ class Service extends Component
             'submissions' => $submissions,
             'settings' => $settings,
         ], $routeParams));
+    }
+
+    private function redirectToPostedUrl($object = null, string $default = null)
+    {
+        $url = Craft::$app->getRequest()->getBodyParam('redirect');
+
+        if ($url === null) {
+            if ($default !== null) {
+                $url = $default;
+            } else {
+                $url = Craft::$app->getRequest()->getPathInfo();
+            }
+        }
+
+        if ($object) {
+            $url = Craft::$app->getView()->renderObjectTemplate($url, $object);
+        }
+
+        return $this->redirect($url);
+    }
+
+    private function redirect($url, $statusCode = 302)
+    {
+        if (is_string($url)) {
+            $url = UrlHelper::url($url);
+        }
+
+        if ($url !== null) {
+            return Craft::$app->getResponse()->redirect($url, $statusCode)->send();
+        }
+
+        return $this->goHome();
     }
 
 }
