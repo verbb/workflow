@@ -120,9 +120,11 @@ class Submission extends Element
 
     public function __tostring()
     {
-        if ($this->getOwner()) {
-            return $this->getOwner()->title;
+        if ($owner = $this->getOwner()) {
+            return $owner->title;
         }
+
+        return '[Deleted element]';
     }
 
     public function getStatus()
@@ -132,19 +134,23 @@ class Submission extends Element
 
     public function getCpEditUrl()
     {
-        $cpEditUrl = $url = $this->getOwner()->cpEditUrl;
+        if ($owner = $this->getOwner()) {
+            $cpEditUrl = $url = $owner->cpEditUrl;
 
-        if ($this->draftId) {
-            if (Craft::$app->getIsMultiSite()) {
-                $cpEditUrl = explode('/', $cpEditUrl);
-                array_pop($cpEditUrl);
-                $cpEditUrl = implode('/', $cpEditUrl);
+            if ($this->draftId) {
+                if (Craft::$app->getIsMultiSite()) {
+                    $cpEditUrl = explode('/', $cpEditUrl);
+                    array_pop($cpEditUrl);
+                    $cpEditUrl = implode('/', $cpEditUrl);
+                }
+
+                $url = $cpEditUrl . '/drafts/' . $this->draftId;
             }
 
-            $url = $cpEditUrl . '/drafts/' . $this->draftId;
+            return $url;
         }
 
-        return $url;
+        return '';
     }
 
     public function getOwner()
@@ -152,6 +158,8 @@ class Submission extends Element
         if ($this->ownerId !== null) {
             return Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
         }
+
+        return null;
     }
 
     public function getEditor()
