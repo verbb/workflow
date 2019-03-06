@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.6 - 2019-03-06
+
+### Added
+- Allow non-admins to save plugin settings.
+- Add more permissions to pages in plugin.
+
+### Fixed
+- Add checks around the owner entry and whether it exists.
+- Add missing migration for `ownerSiteId` for Craft 2 > 3 upgrades.
+
 ## 1.1.5 - 2019-03-01
 
 ### Fixed
