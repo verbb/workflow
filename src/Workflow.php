@@ -13,11 +13,13 @@ use craft\elements\Entry;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
 use craft\services\Elements;
 use craft\services\EntryRevisions;
 use craft\services\SystemMessages;
+use craft\services\UserPermissions;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -29,7 +31,7 @@ class Workflow extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '2.0.4';
+    public $schemaVersion = '2.0.5';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 
@@ -56,6 +58,7 @@ class Workflow extends Plugin
         $this->_registerVariables();
         $this->_registerCraftEventListeners();
         $this->_registerElementTypes();
+        $this->_registerPermissions();
 
         Craft::$app->view->hook('cp.entries.edit.details', [$this->getService(), 'renderEntrySidebar']);
     }
@@ -139,5 +142,16 @@ class Workflow extends Plugin
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_BEFORE_SAVE_DRAFT, [$this->getService(), 'onBeforeSaveEntryDraft']);
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_SAVE_DRAFT, [$this->getService(), 'onAfterSaveEntryDraft']);
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_PUBLISH_DRAFT, [$this->getService(), 'onAfterPublishEntryDraft']);
+    }
+
+    private function _registerPermissions()
+    {
+        Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
+            $event->permissions[Craft::t('workflow', 'Workflow')] = [
+                'workflow:overview' => ['label' => Craft::t('workflow', 'Overview')],
+                'workflow:drafts' => ['label' => Craft::t('workflow', 'Drafts')],
+                'workflow:settings' => ['label' => Craft::t('workflow', 'Settings')],
+            ];
+        });
     }
 }

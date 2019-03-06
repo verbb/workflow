@@ -1,6 +1,8 @@
 {% extends 'workflow/_layouts' %}
 {% import '_includes/forms' as forms %}
 
+{% requirePermission 'workflow:drafts' %}
+
 {% set crumbs = [
     { label: 'Workflow' | t('workflow'), url: url('workflow') },
     { label: 'Drafts' | t('workflow'), url: url('workflow/drafts') },
