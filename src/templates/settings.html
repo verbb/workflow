@@ -1,6 +1,8 @@
 {% extends 'workflow/_layouts' %}
 {% import '_includes/forms' as forms %}
 
+{% requirePermission 'workflow:settings' %}
+
 {% set crumbs = [
     { label: 'Workflow' | t('workflow'), url: url('workflow') },
     { label: 'Settings' | t('workflow'), url: url('workflow/settings') },
@@ -12,7 +14,7 @@
 
 {% block blockContent %}
 
-<input type="hidden" name="action" value="plugins/save-plugin-settings">
+<input type="hidden" name="action" value="workflow/base/save-plugin-settings">
 <input type="hidden" name="pluginHandle" value="workflow">
 
 {% namespace 'settings' %}
