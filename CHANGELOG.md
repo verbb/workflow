@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.7 - 2019-03-10
+
+### Fixed
+- Fix errors thrown when calling controller actions from site requests and not from POST submissions.
+
 ## 1.1.6 - 2019-03-06
 
 ### Added
