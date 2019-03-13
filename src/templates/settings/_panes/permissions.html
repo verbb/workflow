@@ -1,0 +1,23 @@
+{% import '_includes/forms' as forms %}
+
+{% set sections = [] %}
+{% for section in craft.app.sections.getAllSections() %}
+    {% set sections = [{ value: section.uid, label: section.name }] | merge(sections) %}
+{% endfor %}
+
+{{ forms.checkboxSelectField({
+    label: 'Enabled Sections' | t('workflow'),
+    instructions: 'Select which sections you require editor-publisher workflow enabled for.' | t('workflow'),
+    id: 'enabledSections',
+    name: 'enabledSections',
+    values: settings.enabledSections,
+    errors: settings.getErrors('enabledSections'),
+    options: sections,
+    first: true,
+    showAllOption: true,
+}) }}
+
+{% set groups = [{ label: "None" | t('workflow'), value: '' }] %}
+{% for group in craft.app.userGroups.getAllGroups() %}
+    {% set groups = groups | merge([{ label: group.name, value: group.uid }]) %}
+{% endfor %}

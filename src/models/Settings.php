@@ -8,13 +8,18 @@ class Settings extends Model
     // Public Properties
     // =========================================================================
 
-    public $enabledSections = '*';
+    // General
     public $editorUserGroup;
     public $publisherUserGroup;
+    public $editorNotesRequired = false;
+    public $publisherNotesRequired = false;
+
+    // Notifications
     public $editorNotifications = true;
     public $publisherNotifications = true;
     public $selectedPublishers = '*';
-    public $editorNotesRequired = false;
-    public $publisherNotesRequired = false;
-    
+
+    // Permissions
+    public $enabledSections = '*';
+
 }

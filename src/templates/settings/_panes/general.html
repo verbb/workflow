@@ -1,0 +1,46 @@
+{% import '_includes/forms' as forms %}
+
+{% set groups = [{ label: "None" | t('workflow'), value: '' }] %}
+{% for group in craft.app.userGroups.getAllGroups() %}
+    {% set groups = groups | merge([{ label: group.name, value: group.uid }]) %}
+{% endfor %}
+
+{{ forms.selectField({
+    label: 'Editor User Group' | t('workflow'),
+    instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t('workflow'),
+    id: 'editorUserGroup',
+    name: 'editorUserGroup',
+    value: settings.editorUserGroup,
+    errors: settings.getErrors('editorUserGroup'),
+    required: true,
+    options: groups,
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Editor Submission Notes Required' | t('workflow'),
+    instructions: 'Whether editors are required to enter a note in their submissions.' | t('workflow'),
+    id: 'editorNotesRequired',
+    name: 'editorNotesRequired',
+    on: settings.editorNotesRequired,
+}) }}
+
+<hr>
+
+{{ forms.selectField({
+    label: 'Publisher User Group' | t('workflow'),
+    instructions: 'Select the user group that your publishers belong to. Publishers are users who are notified when an editor submits content for review, and can approve content to be published live.' | t('workflow'),
+    id: 'publisherUserGroup',
+    name: 'publisherUserGroup',
+    value: settings.publisherUserGroup,
+    errors: settings.getErrors('publisherUserGroup'),
+    required: true,
+    options: groups,
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Publisher Submission Notes Required' | t('workflow'),
+    instructions: 'Whether publishers are required to enter a note in their submissions.' | t('workflow'),
+    id: 'publisherNotesRequired',
+    name: 'publisherNotesRequired',
+    on: settings.publisherNotesRequired,
+}) }}

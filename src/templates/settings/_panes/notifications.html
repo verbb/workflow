@@ -1,0 +1,47 @@
+{% import '_includes/forms' as forms %}
+
+{{ forms.lightswitchField({
+    label: 'Editor Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to individual editors when approved or rejected.' | t('workflow'),
+    id: 'editorNotifications',
+    name: 'editorNotifications',
+    on: settings.editorNotifications,
+}) }}
+
+<hr>
+
+{{ forms.lightswitchField({
+    label: 'Publisher Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to publishers when editors submit an entry for review.' | t('workflow'),
+    id: 'publisherNotifications',
+    name: 'publisherNotifications',
+    on: settings.publisherNotifications,
+}) }}
+
+{% if settings.publisherUserGroup %}
+    {{ forms.checkboxSelectField({
+        label: 'Publishers To Receive Notifications' | t('workflow'),
+        instructions: 'Select all, or specific publishers to receive email notifications. By default, all will be notified.' | t('workflow'),
+        id: 'selectedPublishers',
+        name: 'selectedPublishers',
+        values: settings.selectedPublishers,
+        options: publishers,
+        showAllOption: true,
+    }) }}
+{% else %}
+    <div class="field">
+        <div class="heading">
+            <label>
+                {{ "Publishers To Receive Notifications" | t('workflow') }}
+            </label>
+
+            <div class="instructions">
+                <p>{{ "Select all, or specific publishers to receive email notifications. By default, all will be notified." | t('workflow') }}</p>
+            </div>
+        </div>
+
+        <p class="small warning">
+            {{ "Select a Publisher User Group first." | t('workflow') }}
+        </p>
+    </div>
+{% endif %}

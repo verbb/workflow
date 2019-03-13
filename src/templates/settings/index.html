@@ -1,0 +1,58 @@
+{% extends 'workflow/_layouts' %}
+{% import '_includes/forms' as forms %}
+
+{% requirePermission 'workflow:settings' %}
+
+{% set crumbs = [
+    { label: 'Workflow' | t('workflow'), url: url('workflow') },
+    { label: 'Settings' | t('workflow'), url: url('workflow/settings') },
+] %}
+
+{% set selectedTab = 'settings' %}
+
+{% set fullPageForm = true %}
+
+{% set navItems = {
+    'general': { title: 'General Settings' | t('workflow') },
+    'notifications': { title: 'Notifications' | t('workflow') },
+    'permissions': { title: 'Permissions' | t('workflow') },
+} %}
+
+{% set selectedItem = 'general' %}
+
+{% block sidebar %}
+    <nav class="workflow-settings-tabs" id="tabs">
+        <ul>
+            {% for id, item in navItems %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li>
+                        <a id="tab-{{ loop.index }}" href="#tab-{{ id }}" class="tab {% if id == selectedItem %}sel{% endif %}">
+                            {{ item.title }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block blockContent %}
+
+<input type="hidden" name="action" value="workflow/base/save-plugin-settings">
+<input type="hidden" name="pluginHandle" value="workflow">
+
+{% for id, item in navItems %}
+    {% if item.title is defined %}
+        <div id="tab-{{ id }}" {% if not loop.first %}class="hidden"{% endif %}>
+            <h2>{{ item.title }}</h2>
+
+            {% namespace 'settings' %}
+                {% include 'workflow/settings/_panes/' ~ id ignore missing %}
+            {% endnamespace %}
+        </div>
+    {% endif %}
+{% endfor %}
+
+{% endblock %}
