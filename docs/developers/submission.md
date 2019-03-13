@@ -15,7 +15,8 @@ Attribute | Description
 `publisherId` | The user ID for the editor who made this submission.
 `publisher` | [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) for the publisher who approved this submission (if any).
 `status` | The status of this submission (Approved or Pending).
-`notes` | Any notes left by users on submissions.
+`editorNotes` | Any notes left by editors on submissions.
+`publisherNotes` | Any notes left by publishers on submissions.
 `dateApproved` | The date this submission has been approved (if approved by publisher).
 `dateRejected` | The date this submission has been rejected (if rejected by publisher).
 `dateRevoked` | The date this submission has been revoked (if revoked by editor).
