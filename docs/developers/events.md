@@ -30,3 +30,32 @@ Event::on(Submission::class, Submission::EVENT_AFTER_SAVE, function(Event $e) {
     $submission = $event->sender;
 });
 ```
+
+### The `beforeSendEditorEmail` event
+
+Plugins can get notified before the editor's email is sent
+
+```php
+use verbb\workflow\events\EmailEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_EDITOR_EMAIL, function(EmailEvent $e) {
+
+});
+```
+
+### The `beforeSendPublisherEmail` event
+
+Plugins can get notified before the publisher's email is sent
+
+```php
+use verbb\workflow\events\EmailEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, function(EmailEvent $e) {
+
+});
+```
+

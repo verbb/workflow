@@ -433,6 +433,14 @@
 		"oAP": "/build/src/elements",
 		"oF": 0
 		},
+	"/src/events/EmailEvent.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/events/EmailEvent.php",
+		"oF": 0
+		},
 	"/src/icon-mask.svg": {
 		"ft": 2097152,
 		"miP": 0,

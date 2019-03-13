@@ -12,6 +12,13 @@ use craft\helpers\Db;
 
 class Submissions extends Component
 {
+    // Constants
+    // =========================================================================
+
+    const EVENT_BEFORE_SEND_EDITOR_EMAIL = 'beforeSendEditorEmail';
+    const EVENT_BEFORE_SEND_PUBLISHER_EMAIL = 'beforeSendPublisherEmail';
+
+    
     // Public Methods
     // =========================================================================
 
@@ -40,10 +47,19 @@ class Submissions extends Component
 
         foreach ($publishers as $key => $user) {
             try {
-                Craft::$app->getMailer()
+                $mail = Craft::$app->getMailer()
                     ->composeFromKey('workflow_publisher_notification', ['submission' => $submission])
-                    ->setTo($user)
-                    ->send();
+                    ->setTo($user);
+
+                // Fire a 'beforeSendPublisherEmail' event
+                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL)) {
+                    $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, new EmailEvent([
+                        'mail' => $mail,
+                        'user' => $user,
+                    ]));
+                }
+
+                $mail->send();
 
                 Workflow::log('Sent publisher notification to ' . $user->email);
             } catch (\Throwable $e) {
@@ -66,10 +82,19 @@ class Submissions extends Component
         // Only send to the single user editor - not the whole group
         if ($editor) {
             try {
-                Craft::$app->getMailer()
+                $mail = Craft::$app->getMailer()
                     ->composeFromKey('workflow_editor_notification', ['submission' => $submission])
-                    ->setTo($editor)
-                    ->send();
+                    ->setTo($editor);
+
+                // Fire a 'beforeSendEditorEmail' event
+                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_EDITOR_EMAIL)) {
+                    $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, new EmailEvent([
+                        'mail' => $mail,
+                        'user' => $editor,
+                    ]));
+                }
+
+                $mail->send();
 
                 Workflow::log('Sent editor notification to ' . $editor->email);
             } catch (\Throwable $e) {
