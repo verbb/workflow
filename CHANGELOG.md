@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.8 - 2019-03-13
+
+### Added
+- Add email events `beforeSendEditorEmail` and `beforeSendPublisherEmail`.
+- Add editor notification options for reply-to and cc-ing publisher's email.
+
+### Changed
+- Refactor settings into multiple pages.
+
 ## 1.1.7 - 2019-03-10
 
 ### Fixed
