@@ -8,6 +8,18 @@
     on: settings.editorNotifications,
 }) }}
 
+{{ forms.checkboxGroupField({
+    label: 'Editor Notifications - Additional Options' | t('workflow'),
+    instructions: 'Whether editor notifications should include the publisher\'s email whose triggered the action.' | t('workflow'),
+    id: 'editorNotificationsOptions',
+    name: 'editorNotificationsOptions',
+    on: settings.editorNotificationsOptions,
+    options: {
+        replyTo: 'Reply-To Publisher Email' | t('workflow'),
+        cc: 'CC Publisher Email' | t('workflow'),
+    }
+}) }}
+
 <hr>
 
 {{ forms.lightswitchField({

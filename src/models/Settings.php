@@ -16,6 +16,7 @@ class Settings extends Model
 
     // Notifications
     public $editorNotifications = true;
+    public $editorNotificationsOptions = [];
     public $publisherNotifications = true;
     public $selectedPublishers = '*';
 

@@ -86,6 +86,16 @@ class Submissions extends Component
                     ->composeFromKey('workflow_editor_notification', ['submission' => $submission])
                     ->setTo($editor);
 
+                if ($submission->publisher) {
+                    if (in_array('replyTo', $settings->editorNotificationsOptions)) {
+                        $mail->setReplyTo($submission->publisher->email);
+                    }
+
+                    if (in_array('cc', $settings->editorNotificationsOptions)) {
+                        $mail->setCc($submission->publisher->email);
+                    }
+                }
+
                 // Fire a 'beforeSendEditorEmail' event
                 if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_EDITOR_EMAIL)) {
                     $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, new EmailEvent([
