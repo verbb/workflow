@@ -1,4 +1,5 @@
 {% import '_includes/forms' as forms %}
+{% import 'workflow/_macros' as macros %}
 
 {% set groups = [{ label: "None" | t('workflow'), value: '' }] %}
 {% for group in craft.app.userGroups.getAllGroups() %}
@@ -14,6 +15,7 @@
     errors: settings.getErrors('editorUserGroup'),
     required: true,
     options: groups,
+    warning: macros.configWarning('editorUserGroup', 'workflow'),
 }) }}
 
 {{ forms.lightswitchField({
@@ -22,6 +24,7 @@
     id: 'editorNotesRequired',
     name: 'editorNotesRequired',
     on: settings.editorNotesRequired,
+    warning: macros.configWarning('editorNotesRequired', 'workflow'),
 }) }}
 
 <hr>
@@ -35,6 +38,7 @@
     errors: settings.getErrors('publisherUserGroup'),
     required: true,
     options: groups,
+    warning: macros.configWarning('publisherUserGroup', 'workflow'),
 }) }}
 
 {{ forms.lightswitchField({
@@ -43,4 +47,5 @@
     id: 'publisherNotesRequired',
     name: 'publisherNotesRequired',
     on: settings.publisherNotesRequired,
+    warning: macros.configWarning('publisherNotesRequired', 'workflow'),
 }) }}

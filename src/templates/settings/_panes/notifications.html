@@ -1,4 +1,5 @@
 {% import '_includes/forms' as forms %}
+{% import 'workflow/_macros' as macros %}
 
 {{ forms.lightswitchField({
     label: 'Editor Notifications' | t('workflow'),
@@ -6,6 +7,7 @@
     id: 'editorNotifications',
     name: 'editorNotifications',
     on: settings.editorNotifications,
+    warning: macros.configWarning('editorNotifications', 'workflow'),
 }) }}
 
 {{ forms.checkboxGroupField({
@@ -17,7 +19,8 @@
     options: {
         replyTo: 'Reply-To Publisher Email' | t('workflow'),
         cc: 'CC Publisher Email' | t('workflow'),
-    }
+    },
+    warning: macros.configWarning('editorNotificationsOptions', 'workflow'),
 }) }}
 
 <hr>
@@ -28,6 +31,7 @@
     id: 'publisherNotifications',
     name: 'publisherNotifications',
     on: settings.publisherNotifications,
+    warning: macros.configWarning('publisherNotifications', 'workflow'),
 }) }}
 
 {% if settings.publisherUserGroup %}
@@ -39,6 +43,7 @@
         values: settings.selectedPublishers,
         options: publishers,
         showAllOption: true,
+        warning: macros.configWarning('selectedPublishers', 'workflow'),
     }) }}
 {% else %}
     <div class="field">
