@@ -15,6 +15,7 @@ use craft\events\RegisterEmailMessagesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
+use craft\models\EntryDraft;
 use craft\services\Dashboard;
 use craft\services\Elements;
 use craft\services\EntryRevisions;
@@ -139,7 +140,7 @@ class Workflow extends Plugin
 
         Event::on(Entry::class, Entry::EVENT_BEFORE_SAVE, [$this->getService(), 'onBeforeSaveEntry']);
         Event::on(Entry::class, Entry::EVENT_AFTER_SAVE, [$this->getService(), 'onAfterSaveEntry']);
-        Event::on(EntryRevisions::class, EntryRevisions::EVENT_BEFORE_SAVE_DRAFT, [$this->getService(), 'onBeforeSaveEntryDraft']);
+        Event::on(EntryDraft::class, EntryDraft::EVENT_BEFORE_VALIDATE, [$this->getService(), 'onBeforeDraftValidate']);
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_SAVE_DRAFT, [$this->getService(), 'onAfterSaveEntryDraft']);
         Event::on(EntryRevisions::class, EntryRevisions::EVENT_AFTER_PUBLISH_DRAFT, [$this->getService(), 'onAfterPublishEntryDraft']);
     }

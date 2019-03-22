@@ -16,6 +16,8 @@ use craft\helpers\UrlHelper;
 
 use DateTime;
 
+use yii\base\ModelEvent as YiiModelEvent;
+
 class Service extends Component
 {
     // Public Methods
@@ -85,7 +87,7 @@ class Service extends Component
         }
     }
 
-    public function onBeforeSaveEntryDraft(DraftEvent $event)
+    public function onBeforeDraftValidate(YiiModelEvent $event)
     {
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
@@ -97,7 +99,7 @@ class Service extends Component
         if ($action === 'save-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->editorNotesRequired && !$editorNotes) {
-                $event->handled = true;
+                $event->isValid = false;
 
                 Craft::$app->getUrlManager()->setRouteParams([
                     'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
@@ -108,13 +110,11 @@ class Service extends Component
         if ($action === 'approve-submission' || $action === 'reject-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->publisherNotesRequired && !$publisherNotes) {
-                $event->handled = true;
+                $event->isValid = false;
 
                 Craft::$app->getUrlManager()->setRouteParams([
                     'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
                 ]);
-
-                return false;
             }
         }
     }
