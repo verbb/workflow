@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.9 - 2019-03-23
+
+### Added
+- Add override notice for settings fields, when using config file.
+
+### Fixed
+- Fix validation not triggering when saving drafts.
+
 ## 1.1.8 - 2019-03-13
 
 ### Added
