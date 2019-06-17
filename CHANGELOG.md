@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.10 - 2019-06-18
+
+### Fixed
+- Fix dashboard widget link for submission drafts.
+- Fix redirect error when trying to approve a submission. (thanks @brandonkelly)
+
 ## 1.1.9 - 2019-03-23
 
 ### Added
