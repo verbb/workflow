@@ -57,9 +57,9 @@
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
             <div class="workflow-submission-footer btngroup">
-                <a class="formsubmit btn submit" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ context.saveShortcutRedirect|hash }}" {% if context.isDraft %}data-action="entry-revisions/publish-draft"{% endif %}>{{ "Approve and publish entry" | t('workflow') }}</a>
+                <a class="formsubmit btn submit" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ context.saveShortcutRedirect | hash }}" {% if context.isDraft %}data-action="entry-revisions/publish-draft"{% endif %}>{{ "Approve and publish entry" | t('workflow') }}</a>
 
-                <a class="formsubmit btn" data-param="workflow-action" data-value="reject-submission" data-redirect="{{ context.saveShortcutRedirect|hash }}">{{ "Reject" | t('workflow') }}</a>
+                <a class="formsubmit btn" data-param="workflow-action" data-value="reject-submission" data-redirect="{{ context.saveShortcutRedirect | hash }}">{{ "Reject" | t('workflow') }}</a>
             </div>
         </div>
     </div>
