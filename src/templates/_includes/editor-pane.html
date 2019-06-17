@@ -42,9 +42,9 @@
 
             <div class="workflow-submission-footer btngroup">
                 {% if context.canSave %}
-                    <a class="formsubmit btn submit" data-param="workflow-action" data-value="save-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Save and submit for review" | t('workflow') }}</a>
+                    <a class="formsubmit btn submit" data-param="workflow-action" data-value="save-submission" data-redirect="{{ context.saveShortcutRedirect|hash }}">{{ "Save and submit for review" | t('workflow') }}</a>
                 {% else %}
-                    <a class="formsubmit btn submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission" data-redirect="{{ context.baseCpEditUrl ~ '/drafts/{draftId}' }}">{{ "Save draft and submit for review" | t('workflow') }}</a>
+                    <a class="formsubmit btn submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission" data-redirect="{{ (context.baseCpEditUrl ~ '/drafts/{draftId}')|hash }}">{{ "Save draft and submit for review" | t('workflow') }}</a>
                 {% endif %}
             </div>
         </div>
@@ -80,7 +80,7 @@
         <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
         <div class="workflow-submission-footer">
-            <a class="formsubmit btn small" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ context.saveShortcutRedirect }}">{{ "Revoke submission" | t('workflow') }}</a>
+            <a class="formsubmit btn small" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ context.saveShortcutRedirect|hash }}">{{ "Revoke submission" | t('workflow') }}</a>
         </div>
     </div>
 {% endif %}
@@ -131,7 +131,7 @@
                             {% endif %}
                         </div>
                     </div>
-                </div>               
+                </div>
             {% elseif submission.status == 'revoked' %}
                 <div class="workflow-history">
                     <div class="workflow-history-heading">
