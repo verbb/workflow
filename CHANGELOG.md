@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.11 - 2019-06-18
+
+### Fixed
+- Don’t redirect from submissions unless we have to.
+- Add search attributes for submissions.
+- Fix submission propagation before saving.
+
 ## 1.1.10 - 2019-06-18
 
 ### Fixed
