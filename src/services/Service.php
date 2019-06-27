@@ -80,11 +80,7 @@ class Service extends Component
             return;
         }
 
-        Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
-
-        if ($request->getIsCpRequest()) {
-            return $this->redirectToPostedUrl($event->sender);
-        }
+        $result = Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
     }
 
     public function onBeforeDraftValidate(YiiModelEvent $event)
@@ -128,11 +124,7 @@ class Service extends Component
             return;
         }
 
-        Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
-
-        if ($request->getIsCpRequest()) {
-            return $this->redirectToPostedUrl($event->draft);
-        }
+        $result = Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
     }
 
     public function onAfterPublishEntryDraft(DraftEvent $event)
@@ -144,7 +136,7 @@ class Service extends Component
             return;
         }
 
-        Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
+        $result = Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
 
         // Approving a draft should redirect properly
         if ($request->getIsCpRequest()) {

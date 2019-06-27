@@ -63,7 +63,7 @@ class SubmissionsController extends Controller
 
         $session->setNotice(Craft::t('workflow', 'Entry submitted for approval.'));
 
-        return $this->_handleRequest();
+        return $this->_handleRequest($submission);
     }
 
     public function actionRevokeSubmission($entry = null, $draft = null)
@@ -89,7 +89,7 @@ class SubmissionsController extends Controller
 
         $session->setNotice(Craft::t('workflow', 'Submission revoked.'));
 
-        return $this->_handleRequest();
+        return $this->_handleRequest($submission);
     }
 
     public function actionApproveSubmission($entry = null, $draft = null)
@@ -124,7 +124,7 @@ class SubmissionsController extends Controller
 
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
 
-        return $this->_handleRequest();
+        return $this->_handleRequest($submission);
     }
 
     public function actionRejectSubmission($entry = null, $draft = null)
@@ -157,7 +157,7 @@ class SubmissionsController extends Controller
             Workflow::$plugin->getSubmissions()->sendEditorNotificationEmail($submission);
         }
 
-        return $this->_handleRequest();
+        return $this->_handleRequest($submission);
     }
 
 
@@ -207,7 +207,7 @@ class SubmissionsController extends Controller
         return $revisionData;
     }
 
-    private function _handleRequest()
+    private function _handleRequest($submission = null)
     {
         $request = Craft::$app->getRequest();
 
@@ -219,7 +219,7 @@ class SubmissionsController extends Controller
             return $this->redirect($request->referrer ?: Craft::$app->homeUrl);
         }
 
-        return $this->redirectToPostedUrl();
+        return $this->redirectToPostedUrl($submission);
     }
 
 }
