@@ -210,6 +210,21 @@ class Submission extends Element
         return '';
     }
 
+    public function getOwnerTitle()
+    {
+        return $this->getOwner()->title ?? '';
+    }
+
+    public function getEditorName()
+    {
+        return $this->getEditor()->fullName ?? '';
+    }
+
+    public function getPublisherName()
+    {
+        return $this->getPublisher()->fullName ?? '';
+    }
+
     public function afterSave(bool $isNew)
     {
         if (!$isNew) {
@@ -251,6 +266,8 @@ class Submission extends Element
     {
         return [
             'id' => ['label' => Craft::t('workflow', 'Entry')],
+            'title' => ['label' => Craft::t('app', 'Title')],
+            'name' => ['label' => Craft::t('workflow', 'name')],
             'editor' => ['label' => Craft::t('workflow', 'Editor')],
             'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
             'publisher' => ['label' => Craft::t('workflow', 'Publisher')],
@@ -269,6 +286,11 @@ class Submission extends Element
             'dateApproved' => Craft::t('workflow', 'Date Approved'),
             'dateRejected' => Craft::t('workflow', 'Date Rejected'),
         ];
+    }
+
+    protected static function defineSearchableAttributes(): array
+    {
+        return ['ownerTitle', 'editorName', 'publisherName'];
     }
 
     protected function tableAttributeHtml(string $attribute): string
