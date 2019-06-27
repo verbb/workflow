@@ -10,7 +10,7 @@ class SubmissionQuery extends ElementQuery
 {
     public $ownerId;
     public $ownerSiteId;
-    public $draftId;
+    public $ownerDraftId;
     public $editorId;
     public $publisherId;
     public $editorNotes;
@@ -26,9 +26,9 @@ class SubmissionQuery extends ElementQuery
         return $this;
     }
 
-    public function draftId($value)
+    public function ownerDraftId($value)
     {
-        $this->draftId = $value;
+        $this->ownerDraftId = $value;
         return $this;
     }
 
@@ -80,8 +80,8 @@ class SubmissionQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerId', $this->ownerId));
         }
 
-        if ($this->draftId) {
-            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.draftId', $this->draftId));
+        if ($this->ownerDraftId) {
+            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerDraftId', $this->ownerDraftId));
         }
 
         if ($this->ownerSiteId) {

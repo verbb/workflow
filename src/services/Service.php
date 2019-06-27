@@ -8,6 +8,7 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\db\Table;
+use craft\elements\Entry;
 use craft\events\DraftEvent;
 use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
@@ -86,74 +87,37 @@ class Service extends Component
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
 
-        if (!$action || $event->sender->propagating || isset($event->sender->draftId)) {
+        // When approving, we don't want to perform an action here - wait until the draft has been applied
+        if (!$action || $event->sender->propagating || $event->isNew || $action === 'approve-submission') {
             return;
         }
 
-        $result = Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
-    }
+        Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
 
-    public function onBeforeDraftValidate(YiiModelEvent $event)
-    {
-        $settings = Workflow::$plugin->getSettings();
-        $request = Craft::$app->getRequest();
-        $action = $request->getBodyParam('workflow-action');
-
-        $editorNotes = $request->getBodyParam('editorNotes');
-        $publisherNotes = $request->getBodyParam('publisherNotes');
-
-        if ($action === 'save-submission') {
-            // We also need to validate notes fields, if required before we save the entry
-            if ($settings->editorNotesRequired && !$editorNotes) {
-                $event->isValid = false;
-
-                Craft::$app->getUrlManager()->setRouteParams([
-                    'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
-                ]);
-            }
-        }
-
-        if ($action === 'approve-submission' || $action === 'reject-submission') {
-            // We also need to validate notes fields, if required before we save the entry
-            if ($settings->publisherNotesRequired && !$publisherNotes) {
-                $event->isValid = false;
-
-                Craft::$app->getUrlManager()->setRouteParams([
-                    'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
-                ]);
-            }
-        }
-    }
-
-    public function onAfterSaveEntryDraft(DraftEvent $event)
-    {
-        $request = Craft::$app->getRequest();
-        $action = $request->getBodyParam('workflow-action');
-
-        if (!$action) {
-            return;
-        }
-
-        $result = Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
-    }
-
-    public function onAfterPublishEntryDraft(DraftEvent $event)
-    {
-        $request = Craft::$app->getRequest();
-        $action = $request->getBodyParam('workflow-action');
-
-        if (!$action) {
-            return;
-        }
-
-        $result = Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
-
-        // Approving a draft should redirect properly
+        // Redirect to the proper URL
         if ($request->getIsCpRequest()) {
-            $redirect = $event->draft->getCpEditUrl();
+            $url = $event->sender->getCpEditUrl();
 
-            return $this->redirect($redirect);
+            // Craft::dd($event->sender->draftId);
+
+            if ($event->sender->draftId) {
+                $url .= '&draftId=' . $event->sender->draftId;
+            }
+
+            $this->redirect($url);
         }
+    }
+
+    public function onAfterApplyDraft(DraftEvent $event)
+    {
+        $request = Craft::$app->getRequest();
+        $action = $request->getBodyParam('workflow-action');
+
+        if (!$action || $action !== 'approve-submission') {
+            return;
+        }
+
+        Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
     }
 
     public function renderEntrySidebar(&$context)
@@ -222,7 +186,7 @@ class Service extends Component
         $submissions = Submission::find()
             ->ownerId($ownerId)
             ->ownerSiteId($siteId)
-            ->draftId($draftId)
+            ->ownerDraftId($draftId)
             ->all();
 
         Workflow::log('Rendering ' . $template . ' for #' . $context['entry']->id);
@@ -240,7 +204,7 @@ class Service extends Component
 
     private function redirectToPostedUrl($object = null, string $default = null)
     {
-        $url = Craft::$app->getRequest()->getBodyParam('redirect');
+        $url = Craft::$app->getRequest()->getValidatedBodyParam('redirect');
 
         if ($url === null) {
             if ($default !== null) {

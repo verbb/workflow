@@ -33,7 +33,7 @@
                             {% set url = segments | without(segments | last) | join('/') %}
                         {% endif %}
 
-                        <a href="{{ url }}/drafts/{{ entry.draftId }}">{{ entry.title }}</a>
+                        <a href="{{ url }}/drafts/{{ entry.ownerDraftId }}">{{ entry.title }}</a>
                     </th>
 
                     <td data-title="{{ 'Date created' | t('workflow') }}">

@@ -27,7 +27,7 @@ class Submission extends Element
 
     public $ownerId;
     public $ownerSiteId;
-    public $draftId;
+    public $ownerDraftId;
     public $editorId;
     public $publisherId;
     public $status;
@@ -135,16 +135,10 @@ class Submission extends Element
     public function getCpEditUrl()
     {
         if ($owner = $this->getOwner()) {
-            $cpEditUrl = $url = $owner->cpEditUrl;
+            $url = $owner->getCpEditUrl();
 
-            if ($this->draftId) {
-                if (Craft::$app->getIsMultiSite()) {
-                    $cpEditUrl = explode('/', $cpEditUrl);
-                    array_pop($cpEditUrl);
-                    $cpEditUrl = implode('/', $cpEditUrl);
-                }
-
-                $url = $cpEditUrl . '/drafts/' . $this->draftId;
+            if ($this->ownerDraftId) {
+                $url .= '&draftId=' . $this->ownerDraftId;
             }
 
             return $url;
@@ -240,7 +234,7 @@ class Submission extends Element
 
         $record->ownerId = $this->ownerId;
         $record->ownerSiteId = $this->ownerSiteId;
-        $record->draftId = $this->draftId;
+        $record->ownerDraftId = $this->ownerDraftId;
         $record->editorId = $this->editorId;
         $record->publisherId = $this->publisherId;
         $record->status = $this->status;

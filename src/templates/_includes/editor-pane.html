@@ -41,11 +41,7 @@
             </div>
 
             <div class="workflow-submission-footer btngroup">
-                {% if context.canSave %}
-                    <a class="formsubmit btn submit" data-param="workflow-action" data-value="save-submission" data-redirect="{{ context.saveShortcutRedirect | hash }}">{{ "Save and submit for review" | t('workflow') }}</a>
-                {% else %}
-                    <a class="formsubmit btn submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission" data-redirect="{{ (context.baseCpEditUrl ~ '/drafts/{draftId}') | hash }}">{{ "Save draft and submit for review" | t('workflow') }}</a>
-                {% endif %}
+                <a class="formsubmit btn submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission">{{ "Save draft and submit for review" | t('workflow') }}</a>
             </div>
         </div>
     </div>
@@ -80,7 +76,7 @@
         <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
         <div class="workflow-submission-footer">
-            <a class="formsubmit btn small" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ context.saveShortcutRedirect | hash }}">{{ "Revoke submission" | t('workflow') }}</a>
+            <a class="formsubmit btn small" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Revoke submission" | t('workflow') }}</a>
         </div>
     </div>
 {% endif %}
@@ -157,36 +153,4 @@
             {% endif %}
         {% endfor %}
     </div>
-{% endif %}
-
-{# Disable saving if there's a submission #}
-{% if submissions | length %}
-    {% for submission in submissions %}
-        {% if submission.status == 'pending' %}
-            {# Hide first so we don't see a flicker #}
-            {% css %}
-                #main #header .btn.submit { display: none; }
-            {% endcss %}
-
-            {% js %}
-                var buttonClicked = false;
-
-                {# Disable any type of form submitting unless we're doing a workflow action #}
-                $('#main-form').on('submit', function(e) {
-                    if (!buttonClicked) {
-                        e.preventDefault();
-                    }
-                });
-
-                {# Allow only workflow actions to submit #}
-                $('[data-param="workflow-action"]').on('click', function(e) {
-                    buttonClicked = true;
-                });
-
-                {# Remove the submit button #}
-                $('#main #header .btn.submit').remove();
-            {% endjs %}
-
-        {% endif %}
-    {% endfor %}
 {% endif %}

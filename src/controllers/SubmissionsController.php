@@ -24,7 +24,7 @@ class SubmissionsController extends Controller
         $submission = $this->_setSubmissionFromPost();
         $submission->ownerId = $request->getParam('entryId');
         $submission->ownerSiteId = $request->getParam('siteId', Craft::$app->getSites()->getCurrentSite()->id);
-        $submission->draftId = $request->getParam('draftId');
+        $submission->ownerDraftId = $request->getParam('draftId');
         $submission->editorId = $currentUser->id;
         $submission->status = Submission::STATUS_PENDING;
         $submission->dateApproved = null;
@@ -37,8 +37,15 @@ class SubmissionsController extends Controller
             $submission->data = $this->_getRevisionData($entry);
         }
 
+        if (!$draft && $entry->draftId) {
+            $draft = Entry::find()
+                ->draftId($entry->draftId)
+                ->anyStatus()
+                ->one();
+        }
+
         if ($draft) {
-            $submission->draftId = $draft->draftId;
+            $submission->ownerDraftId = $draft->draftId;
             $submission->data = $this->_getRevisionData($draft);
         }
 
