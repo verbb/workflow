@@ -1,6 +1,11 @@
 # Changelog
 
-## 1.1.11 - 2019-06-18
+## 1.1.12 - 2019-06-28
+
+### Fixed
+- Fix incorrect element table attributes.
+
+## 1.1.11 - 2019-06-27
 
 ### Fixed
 - Don’t redirect from submissions unless we have to.
