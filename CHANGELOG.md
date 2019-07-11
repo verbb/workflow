@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 - 2019-07-11
+
+### Added
+- Add support for Craft 3.2.0+.
+- Fix incorrect element table attributes.
+
 ## 1.1.11 - 2019-06-18
 
 ### Fixed
