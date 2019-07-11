@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## 1.2.0 - 2019-07-11
 
 ### Added
@@ -7,6 +8,14 @@
 - Fix incorrect element table attributes.
 
 ## 1.1.11 - 2019-06-18
+=======
+## 1.1.12 - 2019-06-28
+
+### Fixed
+- Fix incorrect element table attributes.
+
+## 1.1.11 - 2019-06-27
+>>>>>>> e8b789be77ca9c33c758f8cef7404c715b1ca089
 
 ### Fixed
 - Don’t redirect from submissions unless we have to.
