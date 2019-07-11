@@ -260,8 +260,6 @@ class Submission extends Element
     {
         return [
             'id' => ['label' => Craft::t('workflow', 'Entry')],
-            'title' => ['label' => Craft::t('app', 'Title')],
-            'name' => ['label' => Craft::t('workflow', 'name')],
             'editor' => ['label' => Craft::t('workflow', 'Editor')],
             'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
             'publisher' => ['label' => Craft::t('workflow', 'Publisher')],
