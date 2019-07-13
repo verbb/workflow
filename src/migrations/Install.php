@@ -63,7 +63,7 @@ class Install extends Migration
     public function addForeignKeys()
     {
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'id'), '{{%workflow_submissions}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'ownerDraftId'), '{{%workflow_submissions}}', 'ownerDraftId', '{{%entrydrafts}}', 'id', 'SET NULL', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'ownerDraftId'), '{{%workflow_submissions}}', 'ownerDraftId', '{{%drafts}}', 'id', 'SET NULL', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'ownerSiteId'), '{{%workflow_submissions}}', 'ownerSiteId', '{{%sites}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'editorId'), '{{%workflow_submissions}}', 'editorId', '{{%users}}', 'id', 'CASCADE', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'ownerId'), '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'CASCADE', null);
