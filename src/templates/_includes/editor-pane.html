@@ -41,7 +41,7 @@
             </div>
 
             <div class="workflow-submission-footer btngroup">
-                <a class="formsubmit btn submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission">{{ "Save draft and submit for review" | t('workflow') }}</a>
+                <input data-workflow-btn type="submit" class="btn submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission" value="{{ "Save draft and submit for review" | t('workflow') }}">
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@
         <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
         <div class="workflow-submission-footer">
-            <a class="formsubmit btn small" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Revoke submission" | t('workflow') }}</a>
+            <input data-workflow-btn type="submit" class="btn" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ craft.app.request.url | hash }}" value="{{ "Revoke submission" | t('workflow') }}">
         </div>
     </div>
 {% endif %}

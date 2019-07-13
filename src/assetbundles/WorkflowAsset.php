@@ -18,6 +18,10 @@ class WorkflowAsset extends AssetBundle
             CpAsset::class,
         ];
 
+        $this->js = [
+            'js/workflow.js',
+        ];
+
         $this->css = [
             'css/workflow.css',
         ];
