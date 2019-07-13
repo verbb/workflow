@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 - 2019-07-13
+
+### Fixed
+- Fix offload warning when submitting actions.
+- Fix integrity error for drafts when trying to submit an entry.
+
 ## 1.2.0 - 2019-07-11
 
 ### Added
