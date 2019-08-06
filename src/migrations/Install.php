@@ -27,7 +27,7 @@ class Install extends Migration
     {
         $this->createTable('{{%workflow_submissions}}', [
             'id' => $this->primaryKey(),
-            'ownerId' => $this->integer()->notNull(),
+            'ownerId' => $this->integer(),
             'ownerSiteId' => $this->integer(),
             'ownerDraftId' => $this->integer(),
             'editorId' => $this->integer(),
