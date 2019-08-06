@@ -98,8 +98,6 @@ class Service extends Component
         if ($request->getIsCpRequest()) {
             $url = $event->sender->getCpEditUrl();
 
-            // Craft::dd($event->sender->draftId);
-
             if ($event->sender->draftId) {
                 $url .= '&draftId=' . $event->sender->draftId;
             }

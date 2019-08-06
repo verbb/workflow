@@ -3,6 +3,7 @@ namespace verbb\workflow\controllers;
 
 use Craft;
 use craft\db\Table;
+use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\Db;
 use craft\web\Controller;
@@ -16,7 +17,7 @@ class BaseController extends Controller
 
     public function actionDrafts()
     {
-        $drafts = Workflow::$plugin->getDrafts()->getAllDrafts();
+        $drafts = Entry::find()->drafts(true)->all();
 
         return $this->renderTemplate('workflow/drafts', [
             'entries' => $drafts,
