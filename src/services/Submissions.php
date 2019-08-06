@@ -86,6 +86,10 @@ class Submissions extends Component
                     ->composeFromKey('workflow_editor_notification', ['submission' => $submission])
                     ->setTo($editor);
 
+                if (!is_array($settings->editorNotificationsOptions)) {
+                    $settings->editorNotificationsOptions = [];
+                }
+
                 if ($submission->publisher) {
                     if (in_array('replyTo', $settings->editorNotificationsOptions)) {
                         $mail->setReplyTo($submission->publisher->email);
