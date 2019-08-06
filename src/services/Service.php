@@ -117,7 +117,9 @@ class Service extends Component
             return;
         }
 
-        Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->draft]);
+        // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
+        // We want to keep the link, so we need to supply the source, not the draft.
+        Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->source]);
     }
 
     public function renderEntrySidebar(&$context)

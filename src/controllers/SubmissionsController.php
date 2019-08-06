@@ -114,6 +114,12 @@ class SubmissionsController extends Controller
         $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
         $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
+        // Update the owner to be the newly published entry, and remove the ownerDraftId - it no longer exists!
+        if ($draft) {
+            $submission->ownerId = $draft->id;
+            $submission->ownerDraftId = null;
+        }
+
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not approve and publish.'));
 
