@@ -1,12 +1,17 @@
 # Changelog
 
+## 1.2.2.1 - 2019-08-15
+
+### Fixed
+- Fix issue for new Workflow installs having incorrect foreign key constraints.
+
 ## 1.2.2 - 2019-08-06
 
 ### Changed
 - Now requires Craft 3.2.8+.
 
 ### Fixed
-- Fixed issues with submitting and approving on latest Craft 3.2.x changes.
+- Fix issues with submitting and approving on latest Craft 3.2.x changes.
 - Fix error when approving a brand new entry submission.
 - Fix errors with drafts index.
 - Fix editor emails not sending when no `Additional Options` were checked.
