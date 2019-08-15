@@ -14,7 +14,7 @@ class m190806_000000_removeOwnerForeignKey extends Migration
     public function safeUp()
     {
         $queryBuilder = $this->db->getSchema()->getQueryBuilder();
-        $this->execute($queryBuilder->checkIntegrity(false));
+        $this->execute($queryBuilder->checkIntegrity(false, '', '{{%workflow_submissions}}'));
 
         $this->alterColumn('{{%workflow_submissions}}', 'ownerId', $this->integer());
 
@@ -23,7 +23,7 @@ class m190806_000000_removeOwnerForeignKey extends Migration
         $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'SET NULL', null);
         
         // Re-enable FK checks
-        $this->execute($queryBuilder->checkIntegrity(true));
+        $this->execute($queryBuilder->checkIntegrity(true, '', '{{%workflow_submissions}}'));
     }
 
     public function safeDown()
