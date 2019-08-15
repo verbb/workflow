@@ -26,7 +26,7 @@
             {% for entry in entries %}
                 <tr data-id="{{ entry.id }}">
                     <th scope="row" data-title="{{ 'Name' | t('workflow') }}">
-                        <a href="{{ entry.getCpEditUrl() }}">{{ entry.title }}</a>
+                        <a href="{{ entry.getCpEditUrl() }}">{{ entry.title ?: ('Entry #' ~ entry.id) }}</a>
                     </th>
 
                     <td data-title="{{ 'Date created' | t('workflow') }}">
