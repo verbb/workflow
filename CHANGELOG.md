@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.3 - 2019-08-16
+
+### Fixed
+- Fix incorrect redirect URL after workflow actions. (thanks @mattrothenberg).
+- Fix draft’s not showing correctly when no title has been set.
+- Fix lack of publishing when approving submission from Overview.
+
 ## 1.2.2.1 - 2019-08-15
 
 ### Fixed
