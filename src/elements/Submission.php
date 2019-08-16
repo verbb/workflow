@@ -138,7 +138,7 @@ class Submission extends Element
             $url = $owner->getCpEditUrl();
 
             if ($this->ownerDraftId) {
-                $url .= '&draftId=' . $this->ownerDraftId;
+                $url = UrlHelper::cpUrl($url, ['draftId' => $this->ownerDraftId]);
             }
 
             return $url;

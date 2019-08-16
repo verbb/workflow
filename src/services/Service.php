@@ -99,7 +99,7 @@ class Service extends Component
             $url = $event->sender->getCpEditUrl();
 
             if ($event->sender->draftId) {
-                $url .= '&draftId=' . $event->sender->draftId;
+                $url = UrlHelper::cpUrl($url, ['draftId' => $event->sender->draftId]);
             }
 
             $this->redirect($url);
