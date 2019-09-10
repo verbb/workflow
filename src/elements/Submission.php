@@ -124,7 +124,7 @@ class Submission extends Element
             return $owner->title;
         }
 
-        return '[Deleted element]';
+        return Craft::t('workflow', '[Deleted element]');
     }
 
     public function getStatus()
