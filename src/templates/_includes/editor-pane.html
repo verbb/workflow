@@ -30,7 +30,7 @@
                 {% set required = settings.editorNotesRequired ? ' (required)' : '' %}
 
                 {{ forms.textareaField({
-                    placeholder: 'Notes about your submission' ~ required ~ '.' | t('workflow'),
+                    placeholder: ('Notes about your submission' ~ required ~ '.') | t('workflow'),
                     id: 'editorNotes',
                     name: 'editorNotes',
                     class: 'field-notes',
