@@ -3,6 +3,7 @@ namespace verbb\workflow\services;
 
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
+use verbb\workflow\events\EmailEvent;
 
 use Craft;
 use craft\base\Component;
