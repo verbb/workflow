@@ -8,10 +8,6 @@
     {% set tabs = tabs | merge({ workflow: { label: 'Overview' | t('workflow'), url: url('workflow') } }) %}
 {% endif %}
 
-{% if currentUser.can('workflow:drafts') %}
-    {% set tabs = tabs | merge({ drafts: { label: 'Drafts' | t('workflow'), url: url('workflow/drafts') } }) %}
-{% endif %}
-
 {% if currentUser.can('workflow:settings') %}
     {% set tabs = tabs | merge({ settings: { label: 'Settings' | t('workflow'), url: url('workflow/settings') } }) %}
 {% endif %}

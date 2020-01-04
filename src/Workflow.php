@@ -87,7 +87,6 @@ class Workflow extends Plugin
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
-                'workflow/drafts' => 'workflow/base/drafts',
                 'workflow/settings' => 'workflow/base/settings',
             ]);
         });
@@ -150,7 +149,6 @@ class Workflow extends Plugin
         Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
             $event->permissions[Craft::t('workflow', 'Workflow')] = [
                 'workflow:overview' => ['label' => Craft::t('workflow', 'Overview')],
-                'workflow:drafts' => ['label' => Craft::t('workflow', 'Drafts')],
                 'workflow:settings' => ['label' => Craft::t('workflow', 'Settings')],
             ];
         });

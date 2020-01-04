@@ -15,15 +15,6 @@ class BaseController extends Controller
     // Public Methods
     // =========================================================================
 
-    public function actionDrafts()
-    {
-        $drafts = Entry::find()->drafts(true)->all();
-
-        return $this->renderTemplate('workflow/drafts', [
-            'entries' => $drafts,
-        ]);
-    }
-
     public function actionSettings()
     {
         $settings = Workflow::$plugin->getSettings();
