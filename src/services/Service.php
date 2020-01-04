@@ -13,6 +13,7 @@ use craft\events\DraftEvent;
 use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use craft\helpers\ElementHelper;
 use craft\helpers\UrlHelper;
 
 use DateTime;
@@ -32,6 +33,26 @@ class Service extends Component
 
         $editorNotes = $request->getBodyParam('editorNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
+
+        // Disable auto-save for an entry that has been submitted. Only real way to do this.
+        // Check to see if this is a draft first
+        if (!$action && $event->sender->getIsDraft()) {
+            // Check to see if there's a matching pending (submitted) Workflow submission
+            $submission = Submission::find()
+                ->ownerId($event->sender->id)
+                ->ownerSiteId($event->sender->siteId)
+                ->ownerDraftId($event->sender->draftId)
+                ->limit(1)
+                ->status('pending')
+                ->orderBy('dateCreated desc')
+                ->exists();
+
+            if ($submission) {
+                $event->isValid = false;
+
+                $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
+            }
+        }
 
         if ($action === 'save-submission') {
             // Don't trigger for propagating elements
