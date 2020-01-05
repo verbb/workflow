@@ -220,7 +220,7 @@ class SubmissionsController extends Controller
             throw new ForbiddenHttpException($message);
         } 
 
-        if ($role == 'editor' && !$currentUser->isInGroup($publisherGroup)) {
+        if ($role == 'editor' && !$currentUser->isInGroup($editorGroup)) {
             throw new ForbiddenHttpException($message);
         }
     }
