@@ -14,6 +14,7 @@ use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 
 use DateTime;
@@ -113,7 +114,10 @@ class Service extends Component
             return;
         }
 
-        Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
+        $action = StringHelper::toCamelCase($action);
+
+        Workflow::$plugin->getSubmissions()->$action($event->sender);
+        // Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
 
         // Redirect to the proper URL
         if ($request->getIsCpRequest()) {
@@ -138,7 +142,10 @@ class Service extends Component
 
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
-        Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->source]);
+        $action = StringHelper::toCamelCase($action);
+
+        Workflow::$plugin->getSubmissions()->$action(null, $event->source);
+        // Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->source]);
     }
 
     public function renderEntrySidebar(&$context)
