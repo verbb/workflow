@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.3.0 - 2020-01-05
+
+### Added
+- Add approve-only option for publishers.
+- Ensure publishers can't approve their own entries.
+
+### Changed
+- Remove Drafts - now that its handled in Craft core. Use the element index to look for draft entries.
+- Remove submissions controller and actions, refactoring to service. These shouldn't have been used (not documented), but this removes all `workflow/submissions/*` actions.
+- Refactor and cleanup workflow flow. Particularly for new, unsaved drafts, fixing a few issues.
+- Now required Craft 3.3.0+.
+
+### Fixed
+- Fix some incorrect translations (thanks @Alxmerino and @watarutmnh).
+- Fix before-send notification events not working.
+- Disable auto-saving when entry has been submitted for review.
+- Fix/improve front-end submissions.
+
+### Security
+- Protect against potential XSS.
+
 ## 1.2.3 - 2019-08-16
 
 ### Fixed
