@@ -110,14 +110,21 @@ class Service extends Component
         $action = $request->getBodyParam('workflow-action');
 
         // When approving, we don't want to perform an action here - wait until the draft has been applied
-        if (!$action || $event->sender->propagating || $event->isNew || $action === 'approve-submission') {
+        if (!$action || $event->sender->propagating || $event->isNew) {
             return;
         }
 
-        $action = StringHelper::toCamelCase($action);
+        if ($action == 'save-submission') {
+            Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
+        }
 
-        Workflow::$plugin->getSubmissions()->$action($event->sender);
-        // Craft::$app->runAction('workflow/submissions/' . $action, ['entry' => $event->sender]);
+        if ($action == 'revoke-submission') {
+            Workflow::$plugin->getSubmissions()->revokeSubmission($event->sender);
+        }
+
+        if ($action == 'reject-submission') {
+            Workflow::$plugin->getSubmissions()->rejectSubmission($event->sender);
+        }
 
         // Redirect to the proper URL
         if ($request->getIsCpRequest()) {
@@ -136,16 +143,15 @@ class Service extends Component
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
 
-        if (!$action || $action !== 'approve-submission') {
+        if (!$action) {
             return;
         }
 
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
-        $action = StringHelper::toCamelCase($action);
-
-        Workflow::$plugin->getSubmissions()->$action(null, $event->source);
-        // Craft::$app->runAction('workflow/submissions/' . $action, ['draft' => $event->source]);
+        if ($action == 'approve-submission') {
+            Workflow::$plugin->getSubmissions()->approveSubmission(null, $event->source);
+        }
     }
 
     public function renderEntrySidebar(&$context)
