@@ -29,7 +29,7 @@ class Submissions extends Component
         return Craft::$app->getElements()->getElementById($id, Submission::class);
     }
 
-    public function saveSubmission($entry = null, $draft = null)
+    public function saveSubmission($entry = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -38,32 +38,19 @@ class Submissions extends Component
         $session = Craft::$app->getSession();
 
         $submission = $this->_setSubmissionFromPost();
-        $submission->ownerId = $request->getParam('entryId');
-        $submission->ownerSiteId = $request->getParam('siteId', Craft::$app->getSites()->getCurrentSite()->id);
-        $submission->ownerDraftId = $request->getParam('draftId');
+        $submission->ownerId = $entry->id;
+        $submission->ownerSiteId = $entry->siteId;
         $submission->editorId = $currentUser->id;
         $submission->status = Submission::STATUS_PENDING;
         $submission->dateApproved = null;
         $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
         $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
-        if ($entry) {
-            $submission->ownerId = $entry->id;
-            $submission->ownerSiteId = $entry->siteId;
-            $submission->data = $this->_getRevisionData($entry);
+        if ($entry->draftId) {
+            $submission->ownerDraftId = $entry->draftId;
         }
 
-        if (!$draft && $entry->draftId) {
-            $draft = Entry::find()
-                ->draftId($entry->draftId)
-                ->anyStatus()
-                ->one();
-        }
-
-        if ($draft) {
-            $submission->ownerDraftId = $draft->draftId;
-            $submission->data = $this->_getRevisionData($draft);
-        }
+        $submission->data = $this->_getRevisionData($entry);
 
         $isNew = !$submission->id;
 
@@ -87,7 +74,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Entry submitted for approval.'));
     }
 
-    public function revokeSubmission($entry = null, $draft = null)
+    public function revokeSubmission()
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -111,7 +98,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Submission revoked.'));
     }
 
-    public function approveSubmission($entry = null, $draft = null)
+    public function approveSubmission($entry = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -127,8 +114,8 @@ class Submissions extends Component
         $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
         // Update the owner to be the newly published entry, and remove the ownerDraftId - it no longer exists!
-        if ($draft) {
-            $submission->ownerId = $draft->id;
+        if ($entry) {
+            $submission->ownerId = $entry->id;
             $submission->ownerDraftId = null;
         }
 
@@ -150,7 +137,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
     }
 
-    public function rejectSubmission($entry = null, $draft = null)
+    public function rejectSubmission()
     {
         $settings = Workflow::$plugin->getSettings();
 

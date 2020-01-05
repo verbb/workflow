@@ -114,28 +114,29 @@ class Service extends Component
             return;
         }
 
-        if ($action == 'save-submission') {
+        // Check if we're submitting a new submission on an existing entry - different to a brand-new, unsaved draft
+        if ($action == 'save-submission' && !$event->sender->getIsUnsavedDraft()) {
             Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
+
+            // This doesn't seem to redirect properly, which is annoying!
+            if ($request->getIsCpRequest()) {
+                $url = $event->sender->getCpEditUrl();
+
+                if ($event->sender->draftId) {
+                    $url = UrlHelper::cpUrl($url, ['draftId' => $event->sender->draftId]);
+                }
+
+                Craft::$app->getResponse()->redirect($url)->send();
+            }
         }
 
         if ($action == 'revoke-submission') {
-            Workflow::$plugin->getSubmissions()->revokeSubmission($event->sender);
+            Workflow::$plugin->getSubmissions()->revokeSubmission();
         }
 
         if ($action == 'reject-submission') {
-            Workflow::$plugin->getSubmissions()->rejectSubmission($event->sender);
+            Workflow::$plugin->getSubmissions()->rejectSubmission();
         }
-
-        // Redirect to the proper URL
-        // if ($request->getIsCpRequest()) {
-        //     $url = $event->sender->getCpEditUrl();
-
-        //     if ($event->sender->draftId) {
-        //         $url = UrlHelper::cpUrl($url, ['draftId' => $event->sender->draftId]);
-        //     }
-
-        //     $this->redirect($url);
-        // }
     }
 
     public function onAfterApplyDraft(DraftEvent $event)
@@ -150,7 +151,7 @@ class Service extends Component
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
         if ($action == 'approve-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission(null, $event->source);
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->source);
         }
     }
 
@@ -234,38 +235,6 @@ class Service extends Component
             'submissions' => $submissions,
             'settings' => $settings,
         ], $routeParams));
-    }
-
-    private function redirectToPostedUrl($object = null, string $default = null)
-    {
-        $url = Craft::$app->getRequest()->getValidatedBodyParam('redirect');
-
-        if ($url === null) {
-            if ($default !== null) {
-                $url = $default;
-            } else {
-                $url = Craft::$app->getRequest()->getPathInfo();
-            }
-        }
-
-        if ($object) {
-            $url = Craft::$app->getView()->renderObjectTemplate($url, $object);
-        }
-
-        return $this->redirect($url);
-    }
-
-    private function redirect($url, $statusCode = 302)
-    {
-        if (is_string($url)) {
-            $url = UrlHelper::url($url);
-        }
-
-        if ($url !== null) {
-            return Craft::$app->getResponse()->redirect($url, $statusCode)->send();
-        }
-
-        return $this->goHome();
     }
 
 }
