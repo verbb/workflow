@@ -41,7 +41,7 @@
             </div>
 
             <div class="workflow-submission-footer btngroup">
-                <a class="btn formsubmit submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission">{{ "Save draft and submit for review" | t('workflow') }}</a>
+                <a class="btn formsubmit submit" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="save-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ "Save draft and submit for review" | t('workflow') }}</a>
             </div>
         </div>
     </div>

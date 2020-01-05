@@ -127,15 +127,15 @@ class Service extends Component
         }
 
         // Redirect to the proper URL
-        if ($request->getIsCpRequest()) {
-            $url = $event->sender->getCpEditUrl();
+        // if ($request->getIsCpRequest()) {
+        //     $url = $event->sender->getCpEditUrl();
 
-            if ($event->sender->draftId) {
-                $url = UrlHelper::cpUrl($url, ['draftId' => $event->sender->draftId]);
-            }
+        //     if ($event->sender->draftId) {
+        //         $url = UrlHelper::cpUrl($url, ['draftId' => $event->sender->draftId]);
+        //     }
 
-            $this->redirect($url);
-        }
+        //     $this->redirect($url);
+        // }
     }
 
     public function onAfterApplyDraft(DraftEvent $event)
