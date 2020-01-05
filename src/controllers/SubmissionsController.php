@@ -8,6 +8,8 @@ use Craft;
 use craft\elements\Entry;
 use craft\web\Controller;
 
+use yii\web\ForbiddenHttpException;
+
 class SubmissionsController extends Controller
 {
     // Public Methods
@@ -16,6 +18,8 @@ class SubmissionsController extends Controller
     public function actionSaveSubmission($entry = null, $draft = null)
     {
         $settings = Workflow::$plugin->getSettings();
+
+        $this->_enforceRolePermissions('editor');
 
         $currentUser = Craft::$app->getUser()->getIdentity();
         $request = Craft::$app->getRequest();
@@ -77,6 +81,8 @@ class SubmissionsController extends Controller
     {
         $settings = Workflow::$plugin->getSettings();
 
+        $this->_enforceRolePermissions('editor');
+
         $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
@@ -102,6 +108,8 @@ class SubmissionsController extends Controller
     public function actionApproveSubmission($entry = null, $draft = null)
     {
         $settings = Workflow::$plugin->getSettings();
+
+        $this->_enforceRolePermissions('publisher');
 
         $currentUser = Craft::$app->getUser()->getIdentity();
         $request = Craft::$app->getRequest();
@@ -143,6 +151,8 @@ class SubmissionsController extends Controller
     public function actionRejectSubmission($entry = null, $draft = null)
     {
         $settings = Workflow::$plugin->getSettings();
+
+        $this->_enforceRolePermissions('publisher');
 
         $currentUser = Craft::$app->getUser()->getIdentity();
         $request = Craft::$app->getRequest();
@@ -193,6 +203,26 @@ class SubmissionsController extends Controller
         }
 
         return $submission;
+    }
+
+    private function _enforceRolePermissions($role)
+    {
+        $settings = Workflow::$plugin->getSettings();
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
+        $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
+
+        $message = Craft::t('workflow', 'User is not permitted to perform this action');
+
+        if ($role == 'publisher' &&!$currentUser->isInGroup($publisherGroup)) {
+            throw new ForbiddenHttpException($message);
+        } 
+
+        if ($role == 'editor' && !$currentUser->isInGroup($publisherGroup)) {
+            throw new ForbiddenHttpException($message);
+        }
     }
 
     private function _getRevisionData(Entry $revision): array
