@@ -9,6 +9,7 @@ use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
+use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 
 class Submission extends Element
@@ -289,14 +290,20 @@ class Submission extends Element
     {
         switch ($attribute) {
             case 'publisher': {
-                return $this->getPublisherUrl() ?? '-';
+                $value = $this->getPublisherUrl() ?? '-';
+
+                return Html::encode($value);
             }
             case 'editor': {
-                return $this->getEditorUrl() ?? '-';
+                $value = $this->getEditorUrl() ?? '-';
+
+                return Html::encode($value);
             }
             case 'dateApproved':
             case 'dateRejected': {
-                return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
+                $value = ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
+
+                return Html::encode($value);
             }
             default: {
                 return parent::tableAttributeHtml($attribute);
