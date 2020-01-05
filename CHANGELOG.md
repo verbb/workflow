@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1 - 2020-01-05
+
+### Changed
+- Add submission notes and site to submission element index.
+
 ## 1.3.0 - 2020-01-05
 
 ### Added
