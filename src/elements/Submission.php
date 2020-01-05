@@ -172,7 +172,7 @@ class Submission extends Element
 
         if ($editor = $this->getEditor()) {
             if ($currentUser->can('editUsers')) {
-                return "<a href='" . $editor->cpEditUrl . "'>" . $editor . "</a>";
+                return Html::a($editor, $editor->cpEditUrl);
             } else {
                 return $editor;
             }
@@ -196,7 +196,7 @@ class Submission extends Element
 
         if ($publisher = $this->getPublisher()) {
             if ($currentUser->can('editUsers')) {
-                return "<a href='" . $publisher->cpEditUrl . "'>" . $publisher . "</a>";
+                return Html::a($publisher, $publisher->cpEditUrl);
             } else {
                 return $publisher;
             }
@@ -290,20 +290,14 @@ class Submission extends Element
     {
         switch ($attribute) {
             case 'publisher': {
-                $value = $this->getPublisherUrl() ?? '-';
-
-                return Html::encode($value);
+                return $this->getPublisherUrl() ?: '-';
             }
             case 'editor': {
-                $value = $this->getEditorUrl() ?? '-';
-
-                return Html::encode($value);
+                return $this->getEditorUrl() ?: '-';
             }
             case 'dateApproved':
             case 'dateRejected': {
-                $value = ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
-
-                return Html::encode($value);
+                return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
             }
             default: {
                 return parent::tableAttributeHtml($attribute);
