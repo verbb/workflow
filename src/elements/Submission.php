@@ -261,9 +261,12 @@ class Submission extends Element
     {
         return [
             'id' => ['label' => Craft::t('workflow', 'Entry')],
+            'siteId' => ['label' => Craft::t('workflow', 'Site')],
             'editor' => ['label' => Craft::t('workflow', 'Editor')],
             'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
             'publisher' => ['label' => Craft::t('workflow', 'Publisher')],
+            'editorNotes' => ['label' => Craft::t('workflow', 'Editor Notes')],
+            'publisherNotes' => ['label' => Craft::t('workflow', 'Publisher Notes')],
             'dateApproved' => ['label' => Craft::t('workflow', 'Date Approved')],
             'dateRejected' => ['label' => Craft::t('workflow', 'Date Rejected')],
         ];
@@ -298,6 +301,11 @@ class Submission extends Element
             case 'dateApproved':
             case 'dateRejected': {
                 return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
+            }
+            case 'siteId': {
+                $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId);
+
+                return $site->name ?? '';
             }
             default: {
                 return parent::tableAttributeHtml($attribute);
