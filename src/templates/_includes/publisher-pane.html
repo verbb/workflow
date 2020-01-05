@@ -57,7 +57,21 @@
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
             <div class="workflow-submission-footer btngroup">
-                <a class="btn formsubmit submit" data-action="entry-revisions/publish-draft" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve and publish entry" | t('workflow') }}</a>
+                <div id="save-btn-container" class="btngroup submit">
+                    <a class="btn formsubmit submit" data-action="entry-revisions/publish-draft" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve and publish" | t('workflow') }}</a>
+
+                    <div class="btn submit menubtn"></div>
+
+                    <div class="menu" data-align="right">
+                        <ul>
+                            <li>
+                                <a class="formsubmit" data-action="entry-revisions/publish-draft" data-param="workflow-action" data-value="approve-only-submission" data-redirect="{{ craft.app.request.url | hash }}">
+                                    {{ "Approve only" | t('workflow') }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
                 <a class="formsubmit btn" data-action="entry-revisions/save-draft" data-param="workflow-action" data-value="reject-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Reject" | t('workflow') }}</a>
             </div>

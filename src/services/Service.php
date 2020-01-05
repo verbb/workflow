@@ -92,7 +92,7 @@ class Service extends Component
             }
         }
 
-        if ($action === 'approve-submission' || $action === 'reject-submission') {
+        if ($action === 'approve-submission' || $action === 'approve-only-submission' || $action === 'reject-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->publisherNotesRequired && !$publisherNotes) {
                 $event->isValid = false;
@@ -150,7 +150,7 @@ class Service extends Component
 
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
-        if ($action == 'approve-submission') {
+        if ($action == 'approve-submission' || $action == 'approve-only-submission') {
             Workflow::$plugin->getSubmissions()->approveSubmission($event->source);
         }
     }
