@@ -15,7 +15,7 @@
 - Remove Drafts - now that its handled in Craft core. Use the element index to look for draft entries.
 - Remove submissions controller and actions, refactoring to service. These shouldn't have been used (not documented), but this removes all `workflow/submissions/*` actions.
 - Refactor and cleanup workflow flow. Particularly for new, unsaved drafts, fixing a few issues.
-- Now required Craft 3.3.0+.
+- Now requires Craft 3.3.0+.
 
 ### Fixed
 - Fix some incorrect translations (thanks @Alxmerino and @watarutmnh).
