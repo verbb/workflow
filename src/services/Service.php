@@ -109,6 +109,12 @@ class Service extends Component
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
 
+        // Special-handling for front-end requests to keep things simple for user templates
+        // and without having to deal with entry revisions/drafts
+        if ($request->getIsSiteRequest()) {
+            $this->handleSiteRequest($event, $action);
+        }
+
         // When approving, we don't want to perform an action here - wait until the draft has been applied
         if (!$action || $event->sender->propagating || $event->isNew) {
             return;
@@ -152,6 +158,23 @@ class Service extends Component
         // We want to keep the link, so we need to supply the source, not the draft.
         if ($action == 'approve-submission' || $action == 'approve-only-submission') {
             Workflow::$plugin->getSubmissions()->approveSubmission($event->source);
+        }
+    }
+
+    public function handleSiteRequest($event, $action)
+    {
+        if (!$action || $event->sender->propagating || ElementHelper::isDraftOrRevision($event->sender)) {
+            return;
+        }
+
+        // When we're saving a brand new entry for submission, we need to create a new draft
+        // and work with that, as opposed to the original entry.
+        if ($action == 'save-submission') {
+            // Craft::dump('test');
+            $draft = Craft::$app->getDrafts()->createDraft($event->sender, Craft::$app->getUser()->getId());
+
+            // // Perform the Workflow submission on this new draft
+            Workflow::$plugin->getSubmissions()->saveSubmission($draft);
         }
     }
 
