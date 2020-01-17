@@ -5,12 +5,8 @@
 
 {% set crumbs = [
     { label: 'Workflow' | t('workflow'), url: url('workflow') },
-    { label: 'Settings' | t('workflow'), url: url('workflow/settings') },
+    { label: 'Settings' | t('app'), url: url('workflow/settings') },
 ] %}
-
-{% set selectedTab = 'settings' %}
-
-{% set fullPageForm = true %}
 
 {% set navItems = {
     'general': { title: 'General Settings' | t('workflow') },
@@ -18,10 +14,12 @@
     'permissions': { title: 'Permissions' | t('workflow') },
 } %}
 
+{% set selectedTab = 'settings' %}
 {% set selectedItem = 'general' %}
+{% set fullPageForm = true %}
 
 {% block sidebar %}
-    <nav class="workflow-settings-tabs" id="tabs">
+    <nav class="workflow-settings-tabs" data-vui-tabs>
         <ul>
             {% for id, item in navItems %}
                 {% if item.heading is defined %}

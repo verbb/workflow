@@ -5,6 +5,8 @@ use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
+use verbb\base\assetbundles\CpAsset as VerbbCpAsset;
+
 class WorkflowAsset extends AssetBundle
 {
     // Public Methods
@@ -15,6 +17,7 @@ class WorkflowAsset extends AssetBundle
         $this->sourcePath = "@verbb/workflow/resources/dist";
 
         $this->depends = [
+            VerbbCpAsset::class,
             CpAsset::class,
         ];
 

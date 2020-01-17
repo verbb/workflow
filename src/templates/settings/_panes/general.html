@@ -1,5 +1,5 @@
 {% import '_includes/forms' as forms %}
-{% import 'workflow/_macros' as macros %}
+{% import 'verbb-base/_macros' as macros %}
 
 {% set groups = [{ label: "None" | t('workflow'), value: '' }] %}
 {% for group in craft.app.userGroups.getAllGroups() %}
