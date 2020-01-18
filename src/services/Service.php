@@ -170,11 +170,8 @@ class Service extends Component
         // When we're saving a brand new entry for submission, we need to create a new draft
         // and work with that, as opposed to the original entry.
         if ($action == 'save-submission') {
-            // Craft::dump('test');
-            $draft = Craft::$app->getDrafts()->createDraft($event->sender, Craft::$app->getUser()->getId());
-
-            // // Perform the Workflow submission on this new draft
-            Workflow::$plugin->getSubmissions()->saveSubmission($draft);
+            // Perform the Workflow submission on this new entry
+            Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
         }
     }
 
