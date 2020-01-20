@@ -58,16 +58,12 @@ class SetStatus extends ElementAction
                         $draft->setScenario(Element::SCENARIO_LIVE);
                         $draft->enabled = true;
 
-                        if (!$elementsService->saveElement($draft)) {
-                            $failCount++;
-                        } else {
-                            // Publish Draft
-                            $newEntry = Craft::$app->getDrafts()->applyDraft($draft);
+                        // Publish Draft
+                        $newEntry = Craft::$app->getDrafts()->applyDraft($draft);
 
-                            // Update the submission info now the draft is gone
-                            $submission->ownerId = $newEntry->id;
-                            $submission->ownerDraftId = null;
-                        }
+                        // Update the submission info now the draft is gone
+                        $submission->ownerId = $newEntry->id;
+                        $submission->ownerDraftId = null;
                     }
                 }
             }
