@@ -24,6 +24,41 @@ class SubmissionsController extends BaseEntriesController
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action)
+    {
+        // Until I can find a better way to handle firing this before an action...
+        $settings = Workflow::$plugin->getSettings();
+        $request = Craft::$app->getRequest();
+        $action = $request->getBodyParam('workflow-action');
+
+        $editorNotes = $request->getBodyParam('editorNotes');
+        $publisherNotes = $request->getBodyParam('publisherNotes');
+
+        if ($action === 'save-submission') {
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->editorNotesRequired && !$editorNotes) {
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
+                ]);
+
+                return null;
+            }
+        }
+
+        if ($action === 'approve-submission' || $action === 'approve-only-submission' || $action === 'reject-submission') {
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->publisherNotesRequired && !$publisherNotes) {
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
+                ]);
+
+                return null;
+            }
+        }
+
+        return parent::beforeAction($action);
+    }
+
     public function actionUnsavedDraftSubmission()
     {
         // For an unsaved entry (brand new), we want to publish the draft first, then also submit
@@ -35,6 +70,10 @@ class SubmissionsController extends BaseEntriesController
         // resulting published entry (easily), which we need to redirect properly and create the new draft from.
         $entry = $this->_publishDraft();
 
+        if (!$entry) {
+            return null;
+        }
+
         // Create a new draft, based on the one published
         $draft = Craft::$app->getDrafts()->createDraft($entry, Craft::$app->getUser()->getId());
 
@@ -45,6 +84,24 @@ class SubmissionsController extends BaseEntriesController
         return $this->redirect(UrlHelper::url($draft->getCpEditUrl(), [
             'draftId' => $draft->draftId,
         ]));
+    }
+
+    public function actionSaveDraft()
+    {
+        // We're already checking validation in our beforeAction
+        return Craft::$app->runAction('entry-revisions/save-draft')->send();
+    }
+
+    public function actionPublishDraft()
+    {
+        // We're already checking validation in our beforeAction
+        return Craft::$app->runAction('entry-revisions/publish-draft')->send();
+    }
+
+    public function actionPublishEntry()
+    {
+        // We're already checking validation in our beforeAction
+        return Craft::$app->runAction('entries/save-entry')->send();
     }
 
 

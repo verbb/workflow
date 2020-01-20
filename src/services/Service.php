@@ -55,27 +55,6 @@ class Service extends Component
             }
         }
 
-        if ($action === 'save-submission') {
-            // Don't trigger for propagating elements
-            if ($event->sender->propagating) {
-                return;
-            }
-
-            // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
-            // can't publish. We quickly switch it on to make sure the entry validates correctly.
-            $event->sender->setScenario(Element::SCENARIO_LIVE);
-            $valid = $event->sender->validate();
-
-            // We also need to validate notes fields, if required before we save the entry
-            if ($settings->editorNotesRequired && !$editorNotes) {
-                $event->isValid = false;
-
-                Craft::$app->getUrlManager()->setRouteParams([
-                    'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
-                ]);
-            }
-        }
-
         if ($action === 'approve-submission') {
             // Don't trigger for propagating elements
             if ($event->sender->propagating) {
@@ -89,17 +68,6 @@ class Service extends Component
 
             if (($postDate = $request->getBodyParam('postDate')) !== null) {
                 $event->sender->postDate = DateTimeHelper::toDateTime($postDate) ?: new DateTime();
-            }
-        }
-
-        if ($action === 'approve-submission' || $action === 'approve-only-submission' || $action === 'reject-submission') {
-            // We also need to validate notes fields, if required before we save the entry
-            if ($settings->publisherNotesRequired && !$publisherNotes) {
-                $event->isValid = false;
-
-                Craft::$app->getUrlManager()->setRouteParams([
-                    'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
-                ]);
             }
         }
     }
@@ -142,6 +110,10 @@ class Service extends Component
 
         if ($action == 'reject-submission') {
             Workflow::$plugin->getSubmissions()->rejectSubmission();
+        }
+
+        if ($action === 'approve-submission') {
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->sender);
         }
     }
 
