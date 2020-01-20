@@ -2,7 +2,7 @@
 
 ## 1.3.4 - 2020-01-20
 
-- Fixed
+### Fixed
 - Fix editor/publisher notes enforcement.
 - Fix being unable to approve front-end submissions.
 - Fix being unable to approve submissions in some circumstances.
