@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.3 - 2020-01-20
+
+### Fixed
+- Fix error when trying to approve submissions with element actions.
+
 ## 1.3.2 - 2020-01-19
 
 ### Fixed
