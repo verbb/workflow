@@ -10,6 +10,8 @@ use craft\log\FileTarget;
 
 use yii\log\Logger;
 
+use verbb\base\BaseHelper;
+
 trait PluginTrait
 {
     // Static Properties
@@ -31,22 +33,6 @@ trait PluginTrait
         return $this->get('submissions');
     }
 
-    private function _setPluginComponents()
-    {
-        $this->setComponents([
-            'service' => Service::class,
-            'submissions' => Submissions::class,
-        ]);
-    }
-
-    private function _setLogging()
-    {
-        Craft::getLogger()->dispatcher->targets[] = new FileTarget([
-            'logFile' => Craft::getAlias('@storage/logs/workflow.log'),
-            'categories' => ['workflow'],
-        ]);
-    }
-
     public static function log($message)
     {
         Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'workflow');
@@ -55,6 +41,28 @@ trait PluginTrait
     public static function error($message)
     {
         Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'workflow');
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _setPluginComponents()
+    {
+        $this->setComponents([
+            'service' => Service::class,
+            'submissions' => Submissions::class,
+        ]);
+
+        BaseHelper::registerModule();
+    }
+
+    private function _setLogging()
+    {
+        Craft::getLogger()->dispatcher->targets[] = new FileTarget([
+            'logFile' => Craft::getAlias('@storage/logs/workflow.log'),
+            'categories' => ['workflow'],
+        ]);
     }
 
 }
