@@ -112,8 +112,14 @@ class Service extends Component
             Workflow::$plugin->getSubmissions()->rejectSubmission();
         }
 
+        // For the cases where its been submitted from the front-end, its not a draft!
         if ($action === 'approve-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->sender);
+            // Probably a better way to deal with this, but at this point, its no longer a draft
+            // its now a fully realised entry. We rely on the query param to determine if this was
+            // a draft that was approved and saved, or a regular entry that was approved.
+            if (!$request->getParam('draftId')) {
+                Workflow::$plugin->getSubmissions()->approveSubmission($event->sender);
+            }
         }
     }
 
