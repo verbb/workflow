@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1 - 2020-01-31
+
+### Fixed
+- Fix multiple approvals firing for draft submissions.
+
 ## 1.4.0 - 2020-01-29
 
 ### Added
