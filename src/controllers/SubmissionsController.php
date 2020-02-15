@@ -153,8 +153,13 @@ class SubmissionsController extends BaseEntriesController
         $this->_setDraftAttributesFromPost($draft);
 
         // Even more permission enforcement
-        if ($draft->enabled) {
-            $this->requirePermission('publishEntries:' . $section->uid);
+        if ($draft->enabled && !Craft::$app->getUser()->checkPermission("publishEntries:{$section->uid}")) {
+            if ($draft->getIsUnsavedDraft()) {
+                // Just disable it
+                $draft->enabled = false;
+            } else {
+                throw new ForbiddenHttpException('User is not permitted to perform this action');
+            }
         }
 
         // Populate the field content
