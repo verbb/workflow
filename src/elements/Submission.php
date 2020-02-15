@@ -303,9 +303,13 @@ class Submission extends Element
                 return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
             }
             case 'siteId': {
-                $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId);
+                if ($this->ownerSiteId) {
+                    if ($site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
+                        return $site->name;
+                    }
+                }
 
-                return $site->name ?? '';
+                return '';
             }
             default: {
                 return parent::tableAttributeHtml($attribute);
