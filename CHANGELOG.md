@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.2 - 2020-02-15
+
+### Fixed
+- Fix error when trying to submit on a single-type section.
+- Fix error in index screen for Craft 2 upgrades, where a site may not have been set.
+
 ## 1.4.1 - 2020-01-31
 
 ### Fixed
