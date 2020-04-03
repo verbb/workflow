@@ -39,6 +39,7 @@ class SubmissionsController extends BaseEntriesController
             if ($settings->editorNotesRequired && !$editorNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
                     'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
+                    'entry' => $this->getDraftEntry(),
                 ]);
 
                 return null;
@@ -50,6 +51,7 @@ class SubmissionsController extends BaseEntriesController
             if ($settings->publisherNotesRequired && !$publisherNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
                     'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
+                    'entry' => $this->getDraftEntry(),
                 ]);
 
                 return null;
@@ -107,6 +109,43 @@ class SubmissionsController extends BaseEntriesController
 
     // Private Methods
     // =========================================================================
+
+    private function getDraftEntry()
+    {
+        $request = Craft::$app->getRequest();
+
+        $draftId = $request->getBodyParam('draftId');
+        $entryId = $request->getBodyParam('entryId');
+        $siteId = $request->getBodyParam('siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+        $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
+
+        $entry = null;
+
+        if ($draftId) {
+            $entry = Entry::find()
+                ->draftId($draftId)
+                ->siteId($siteId)
+                ->anyStatus()
+                ->one();
+        }
+
+        if ($entryId) {
+            $entry = Entry::find()
+                ->id($entryId)
+                ->siteId($siteId)
+                ->anyStatus()
+                ->one();
+        }
+
+        if ($entry) {
+            $this->_setDraftAttributesFromPost($entry);
+            $entry->setFieldValuesFromRequest($fieldsLocation);
+            $entry->updateTitle();
+            $entry->setScenario(Element::SCENARIO_ESSENTIALS);
+
+            return $entry;
+        }
+    }
 
     private function _publishDraft()
     {
