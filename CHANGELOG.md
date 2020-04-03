@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.3 - 2020-04-03
+
+### Fixed
+- Fix draft changes not being saved when notes validation fails.
+
 ## 1.4.2 - 2020-02-15
 
 ### Fixed
