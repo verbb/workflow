@@ -59,10 +59,7 @@ trait PluginTrait
 
     private function _setLogging()
     {
-        Craft::getLogger()->dispatcher->targets[] = new FileTarget([
-            'logFile' => Craft::getAlias('@storage/logs/workflow.log'),
-            'categories' => ['workflow'],
-        ]);
+        BaseHelper::setFileLogging('workflow');
     }
 
 }
