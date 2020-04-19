@@ -2,7 +2,6 @@
 namespace verbb\workflow\services;
 
 use craft\models\UserGroup;
-use verbb\workflow\models\Review;
 use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
@@ -149,7 +148,7 @@ class Submissions extends Component
             return null;
         }
 
-        $review = new Review([
+        $review = new ReviewRecord([
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => true,
@@ -194,7 +193,7 @@ class Submissions extends Component
             return null;
         }
 
-        $review = new Review([
+        $review = new ReviewRecord([
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => false,
@@ -309,7 +308,10 @@ class Submissions extends Component
         foreach ($reviewers as $key => $user) {
             try {
                 $mail = Craft::$app->getMailer()
-                    ->composeFromKey('workflow_reviewer_notification', ['submission' => $submission])
+                    ->composeFromKey('workflow_reviewer_notification', [
+                        'submission' => $submission,
+                        'review' => $submission->getLastReview(),
+                    ])
                     ->setTo($user);
 
                 // Fire a 'beforeSendPublisherEmail' event

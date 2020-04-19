@@ -36,7 +36,7 @@
 
                     {% set reviews = submission.getReviews() %}
                     {% for review in reviews %}
-                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
                     {% endfor %}
                 </div>
             </div>
@@ -54,7 +54,7 @@
 
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
-            <div class="workflow-submission-footer">
+            <div class="workflow-submission-footer btngroup">
                 <div id="save-btn-container" class="submit">
                     <a class="btn formsubmit submit" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="approve-review" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve" | t('workflow') }}</a>
                 </div>
@@ -86,7 +86,7 @@
 
                             {% set reviews = submission.getReviews() %}
                             {% for review in reviews %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
@@ -113,7 +113,7 @@
 
                             {% set reviews = submission.getReviews() %}
                             {% for review in reviews %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
@@ -140,7 +140,7 @@
 
                             {% set reviews = submission.getReviews() %}
                             {% for review in reviews %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
