@@ -6,7 +6,7 @@ use craft\records\User;
 
 use yii\db\ActiveQueryInterface;
 
-class Approval extends ActiveRecord
+class Review extends ActiveRecord
 {
     // Public Methods
     // =========================================================================

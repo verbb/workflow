@@ -1,7 +1,6 @@
 <?php
 namespace verbb\workflow\services;
 
-use verbb\workflow\records\Approval;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 
@@ -9,18 +8,14 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\db\Table;
-use craft\elements\Entry;
 use craft\events\DraftEvent;
 use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
-use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 
 use DateTime;
-
-use yii\base\ModelEvent as YiiModelEvent;
 
 class Service extends Component
 {

@@ -18,11 +18,32 @@ table.editable tbody tr td:first-of-type:before {
     vertical-align: middle;
     margin-right: 5px;
 }
-table.editable tbody tr:first-of-type td:first-of-type:before {
-    content: 'disabled';
-}
 {% endcss %}
 
+
+{% set groupsWithNone = [{ label: "None" | t('workflow'), value: '' }] | merge(groups) %}
+
+{{ forms.selectField({
+    label: 'Editor User Group' | t('workflow'),
+    instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t('workflow'),
+    id: 'editorUserGroup',
+    name: 'editorUserGroup',
+    value: settings.editorUserGroup,
+    errors: settings.getErrors('editorUserGroup'),
+    options: groupsWithNone,
+    warning: macros.configWarning('editorUserGroup', 'workflow'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Editor Submission Notes Required' | t('workflow'),
+    instructions: 'Whether editors are required to enter a note in their submissions.' | t('workflow'),
+    id: 'editorNotesRequired',
+    name: 'editorNotesRequired',
+    on: settings.editorNotesRequired,
+    warning: macros.configWarning('editorNotesRequired', 'workflow'),
+}) }}
+
+<hr>
 
 {% set cols = [
     {
@@ -33,27 +54,16 @@ table.editable tbody tr:first-of-type td:first-of-type:before {
 ] %}
 
 {{ forms.editableTableField({
-    label: 'Editor User Groups' | t('workflow'),
-    instructions: 'Select the user groups that your editors belong to. The approval process will flow from the first user group to the last in the table below. Editors are users that can edit content and request approval, but not publish live.' | t('workflow'),
-    name: 'editorUserGroups',
-    id: 'editorUserGroups',
+    label: 'Reviewer User Groups' | t('workflow'),
+    instructions: 'Select the user groups that your reviewers belong to. Reviewers are users that can review submissions, edit them and pass them along for approval, but not publish live. The review process flows from the first to the last user group in the table.' | t('workflow'),
+    name: 'reviewerUserGroups',
+    id: 'reviewerUserGroups',
     cols: cols,
-    rows: settings.editorUserGroups,
+    rows: settings.reviewerUserGroups,
     addRowLabel: 'Add a user group' | t('workflow'),
-    errors: settings.getErrors('editorUserGroups'),
-    required: true,
-    warning: macros.configWarning('editorUserGroups', 'workflow') ?: 'Changing this may result in content being moved or lost in the approval process.' | t('workflow'),
+    errors: settings.getErrors('reviewerUserGroups'),
+    warning: macros.configWarning('reviewerUserGroups', 'workflow') ?: 'Changing this may result in content being moved or lost in the review process.' | t('workflow'),
 })|spaceless }}
-
-
-{{ forms.lightswitchField({
-    label: 'Editor Submission Notes Required' | t('workflow'),
-    instructions: 'Whether editors are required to enter a note in their submissions.' | t('workflow'),
-    id: 'editorNotesRequired',
-    name: 'editorNotesRequired',
-    on: settings.editorNotesRequired,
-    warning: macros.configWarning('editorNotesRequired', 'workflow'),
-}) }}
 
 <hr>
 

@@ -12,7 +12,7 @@ class Settings extends Model
 
     // General
     public $editorUserGroup;
-    public $editorUserGroups = [];
+    public $reviewerUserGroups = [];
     public $publisherUserGroup;
     public $editorNotesRequired = false;
     public $publisherNotesRequired = false;
@@ -34,13 +34,13 @@ class Settings extends Model
      *
      * @return UserGroup[]
      */
-    public function getEditorUserGroups(): array
+    public function getReviewerUserGroups(): array
     {
         $userGroups = [];
 
-        foreach ($this->editorUserGroups as $editorUserGroup) {
-            // Get UI from first element in array
-            $uid = $editorUserGroup[0] ?? null;
+        foreach ($this->reviewerUserGroups as $reviewerUserGroup) {
+            // Get UID from first element in array
+            $uid = $reviewerUserGroup[0] ?? null;
 
             if ($uid === null) {
                 continue;

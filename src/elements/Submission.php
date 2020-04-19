@@ -3,8 +3,8 @@ namespace verbb\workflow\elements;
 
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
-use verbb\workflow\models\Approval;
-use verbb\workflow\records\Approval as ApprovalRecord;
+use verbb\workflow\models\Review;
+use verbb\workflow\records\Review as ApprovalRecord;
 use verbb\workflow\records\Submission as SubmissionRecord;
 
 use Craft;
@@ -177,7 +177,7 @@ class Submission extends Element
             ->all();
 
         foreach ($records as $record) {
-            $approval = new Approval();
+            $approval = new Review();
             $approval->setAttributes($record->getAttributes(), false);
             $approvals[] = $approval;
         }
