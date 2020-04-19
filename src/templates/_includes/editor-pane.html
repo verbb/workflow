@@ -23,7 +23,7 @@
             </div>
 
             <div class="instructions">
-                <p>{{ "Submitting this entry for review will lock further edits and notify your publisher that this entry is ready for approval." | t('workflow') }}</p>
+                <p>{{ "Submitting this entry for review will lock further edits and notify the next editors in the approval process that this entry is ready for approval." | t('workflow') }}</p>
             </div>
 
             <div class="workflow-submission-body">
@@ -49,9 +49,8 @@
             </div>
         </div>
     </div>
-{% endif %}
 
-{% if pendingSubmissions | length %}
+{% else %}
     {% set submission = pendingSubmissions[0] %}
 
     <div class="pane workflow-pane">
@@ -64,7 +63,7 @@
 
             <div id="workflow-submission-info" class="hidden">
                 <div class="instructions">
-                    <p style="color: #da5a47;">{{ "This entry has been submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
+                    <p style="color: #da5a47;">{{ "This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
 
                     {% if submission.editorNotes %}
                         <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>

@@ -1,6 +1,7 @@
 <?php
 namespace verbb\workflow\services;
 
+use verbb\workflow\records\Approval;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 
@@ -60,7 +61,7 @@ class Service extends Component
             if ($event->sender->propagating) {
                 return;
             }
-            
+
             // If we are approving a submission, make sure to make it live
             $event->sender->enabled = true;
             $event->sender->enabledForSite = true;
@@ -158,14 +159,11 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        if (!$settings->editorUserGroup || !$settings->publisherUserGroup) {
+        if (empty($settings->editorUserGroups) || !$settings->publisherUserGroup) {
             Workflow::log('Editor and Publisher groups not set in settings.');
 
             return;
         }
-
-        $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
-        $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
 
         if (!$currentUser) {
             Workflow::log('No current user.');
@@ -173,10 +171,15 @@ class Service extends Component
             return;
         }
 
-        // Only show the sidebar submission button for editors
-        if ($currentUser->isInGroup($editorGroup)) {
-            return $this->_renderEntrySidebarPanel($context, 'editor-pane');
+        // Only show the sidebar submission button for editors in the current user group
+
+        foreach ($settings->getEditorUserGroups() as $editorUserGroup) {
+            if ($currentUser->isInGroup($editorUserGroup)) {
+                return $this->_renderEntrySidebarPanel($context, 'editor-pane');
+            }
         }
+
+        $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
 
         // Show another information panel for publishers (if there's submission info)
         if ($currentUser->isInGroup($publisherGroup)) {
@@ -191,6 +194,7 @@ class Service extends Component
     private function _renderEntrySidebarPanel($context, $template)
     {
         $settings = Workflow::$plugin->getSettings();
+        $currentUser = Craft::$app->getUser()->getIdentity();
 
         Workflow::log('Try to render ' . $template);
 
@@ -228,6 +232,7 @@ class Service extends Component
         $routeParams = Craft::$app->getUrlManager()->getRouteParams();
         unset($routeParams['template'], $routeParams['template']);
 
+        // Get the editor user groups that can approve
         return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, array_merge([
             'context' => $context,
             'submissions' => $submissions,

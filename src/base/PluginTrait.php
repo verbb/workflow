@@ -17,17 +17,26 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
+    /**
+     * @var Workflow $plugin
+     */
     public static $plugin;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return Service
+     */
     public function getService()
     {
         return $this->get('service');
     }
 
+    /**
+     * @return Submissions
+     */
     public function getSubmissions()
     {
         return $this->get('submissions');

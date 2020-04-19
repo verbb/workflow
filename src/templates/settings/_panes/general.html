@@ -1,22 +1,50 @@
 {% import '_includes/forms' as forms %}
 {% import 'verbb-base/_macros' as macros %}
 
-{% set groups = [{ label: "None" | t('workflow'), value: '' }] %}
+{% set groups = [] %}
 {% for group in craft.app.userGroups.getAllGroups() %}
     {% set groups = groups | merge([{ label: group.name, value: group.uid }]) %}
 {% endfor %}
 
-{{ forms.selectField({
-    label: 'Editor User Group' | t('workflow'),
-    instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t('workflow'),
-    id: 'editorUserGroup',
-    name: 'editorUserGroup',
-    value: settings.editorUserGroup,
-    errors: settings.getErrors('editorUserGroup'),
+{# TODO: add to Sass file #}
+{% css %}
+table.editable tbody tr td {
+    text-align: left;
+}
+table.editable tbody tr td:first-of-type:before {
+    font-family: 'Craft';
+    content: 'rarr';
+    color: #9aa5b1;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+table.editable tbody tr:first-of-type td:first-of-type:before {
+    content: 'disabled';
+}
+{% endcss %}
+
+
+{% set cols = [
+    {
+        type: 'select',
+        heading: 'User Group' | t('workflow'),
+        options: groups,
+    },
+] %}
+
+{{ forms.editableTableField({
+    label: 'Editor User Groups' | t('workflow'),
+    instructions: 'Select the user groups that your editors belong to. The approval process will flow from the first user group to the last in the table below. Editors are users that can edit content and request approval, but not publish live.' | t('workflow'),
+    name: 'editorUserGroups',
+    id: 'editorUserGroups',
+    cols: cols,
+    rows: settings.editorUserGroups,
+    addRowLabel: 'Add a user group' | t('workflow'),
+    errors: settings.getErrors('editorUserGroups'),
     required: true,
-    options: groups,
-    warning: macros.configWarning('editorUserGroup', 'workflow'),
-}) }}
+    warning: macros.configWarning('editorUserGroups', 'workflow') ?: 'Changing this may result in content being moved or lost in the approval process.' | t('workflow'),
+})|spaceless }}
+
 
 {{ forms.lightswitchField({
     label: 'Editor Submission Notes Required' | t('workflow'),

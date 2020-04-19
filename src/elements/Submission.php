@@ -3,6 +3,8 @@ namespace verbb\workflow\elements;
 
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
+use verbb\workflow\models\Approval;
+use verbb\workflow\records\Approval as ApprovalRecord;
 use verbb\workflow\records\Submission as SubmissionRecord;
 
 use Craft;
@@ -96,7 +98,7 @@ class Submission extends Element
                 'label' => Craft::t('workflow', 'All submissions'),
             ]
         ];
-        
+
         return $sources;
     }
 
@@ -114,7 +116,7 @@ class Submission extends Element
 
         return $actions;
     }
-    
+
 
     // Public Methods
     // -------------------------------------------------------------------------
@@ -164,6 +166,23 @@ class Submission extends Element
         }
 
         return null;
+    }
+
+    public function getApprovals()
+    {
+        $approvals = [];
+
+        $records = ApprovalRecord::find()
+            ->where(['submissionId' => $this->id])
+            ->all();
+
+        foreach ($records as $record) {
+            $approval = new Approval();
+            $approval->setAttributes($record->getAttributes(), false);
+            $approvals[] = $approval;
+        }
+
+        return $approvals;
     }
 
     public function getEditorUrl()

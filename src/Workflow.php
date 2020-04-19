@@ -28,6 +28,9 @@ use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 use yii\web\User;
 
+/**
+ * @method Settings getSettings()
+ */
 class Workflow extends Plugin
 {
     // Public Properties
