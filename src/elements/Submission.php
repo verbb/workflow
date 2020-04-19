@@ -4,7 +4,7 @@ namespace verbb\workflow\elements;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
 use verbb\workflow\models\Review;
-use verbb\workflow\records\Review as ApprovalRecord;
+use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\records\Submission as SubmissionRecord;
 
 use Craft;
@@ -168,23 +168,6 @@ class Submission extends Element
         return null;
     }
 
-    public function getApprovals()
-    {
-        $approvals = [];
-
-        $records = ApprovalRecord::find()
-            ->where(['submissionId' => $this->id])
-            ->all();
-
-        foreach ($records as $record) {
-            $approval = new Review();
-            $approval->setAttributes($record->getAttributes(), false);
-            $approvals[] = $approval;
-        }
-
-        return $approvals;
-    }
-
     public function getEditorUrl()
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
@@ -237,6 +220,48 @@ class Submission extends Element
     public function getPublisherName()
     {
         return $this->getPublisher()->fullName ?? '';
+    }
+
+    /**
+     * Returns the reviews, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return Review[]
+     */
+    public function getReviews(bool $approved = null): array
+    {
+        $reviews = [];
+
+        $query = ReviewRecord::find()
+            ->where(['submissionId' => $this->id])
+            ->orderBy('dateCreated');
+
+        if ($approved !== null) {
+            $query->andWhere(['approved' => $approved]);
+        }
+
+        $records = $query->all();
+
+        foreach ($records as $record) {
+            $review = new Review();
+            $review->setAttributes($record->getAttributes(), false);
+            $reviews[] = $review;
+        }
+
+        return $reviews;
+    }
+
+    /**
+     * Returns the last reviews, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return Review|null
+     */
+    public function getLastReview(bool $approved = null)
+    {
+        $reviews = $this->getReviews($approved);
+
+        return end($reviews) ?: null;
     }
 
     public function afterSave(bool $isNew)

@@ -22,64 +22,44 @@
         <div class="workflow-submission">
             <div class="workflow-submission-heading">
                 <span class="status pending"></span>
-                <label>{{ "Awaiting approval" | t('workflow') }}</label>
+                <label>{{ "Awaiting review" | t('workflow') }}</label>
                 <a class="fieldtoggle" data-target="workflow-submission-info"></a>
             </div>
 
             <div id="workflow-submission-info" class="hidden">
                 <div class="instructions">
-                    <p>{{ submission.editorUrl | raw }} {{ "submitted this entry for review on {date}. Please review this entry before publishing." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
+                    <p>{{ submission.editorUrl | raw }} {{ "submitted this entry for review on {date}. Please review this entry before approving." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
 
                     {% if submission.editorNotes %}
                         <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                     {% endif %}
 
-                    {% if submission.publisherNotes %}
-                        <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
-                    {% endif %}
+                    {% set reviews = submission.getReviews() %}
+                    {% for review in reviews %}
+                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                    {% endfor %}
                 </div>
             </div>
 
             <div class="workflow-submission-body">
-                {% set required = settings.publisherNotesRequired ? ' (required)' : '' %}
-
                 {{ forms.textareaField({
-                    placeholder: 'Notes about your response' ~ required ~ '.' | t('workflow'),
-                    id: 'publisherNotes',
-                    name: 'publisherNotes',
+                    placeholder: 'Notes about your response.' | t('workflow'),
+                    id: 'notes',
+                    name: 'notes',
                     class: 'field-notes',
                     rows: 2,
-                    required: settings.publisherNotesRequired,
-                    errors: publisherNotesErrors is defined ? publisherNotesErrors,
+                    errors: notesErrors is defined ? notesErrors,
                 }) }}
             </div>
 
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
-            {% set endpoint = 'workflow/submissions/publish-entry' %}
-
-            {% if context.entry.getIsDraft() %}
-                {% set endpoint = 'workflow/submissions/publish-draft' %}
-            {% endif %}
-
-            <div class="workflow-submission-footer btngroup">
-                <div id="save-btn-container" class="btngroup submit">
-                    <a class="btn formsubmit submit" data-action="{{ endpoint }}" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve and publish" | t('workflow') }}</a>
-
-                    <div class="btn submit menubtn"></div>
-
-                    <div class="menu" data-align="right">
-                        <ul>
-                            <li>
-                                <a class="formsubmit" data-action="{{ endpoint }}" data-param="workflow-action" data-value="approve-only-submission" data-redirect="{{ craft.app.request.url | hash }}">
-                                    {{ "Approve only" | t('workflow') }}
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="workflow-submission-footer">
+                <div id="save-btn-container" class="submit">
+                    <a class="btn formsubmit submit" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="approve-review" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve" | t('workflow') }}</a>
                 </div>
 
-                <a class="formsubmit btn" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="reject-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Reject" | t('workflow') }}</a>
+                <a class="formsubmit btn" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="reject-review" data-redirect="{{ craft.app.request.url | hash }}">{{ "Reject" | t('workflow') }}</a>
             </div>
         </div>
     </div>
@@ -104,6 +84,11 @@
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                             {% endif %}
 
+                            {% set reviews = submission.getReviews() %}
+                            {% for review in reviews %}
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                            {% endfor %}
+
                             {% if submission.publisherNotes %}
                                 <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
                             {% endif %}
@@ -126,6 +111,11 @@
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                             {% endif %}
 
+                            {% set reviews = submission.getReviews() %}
+                            {% for review in reviews %}
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                            {% endfor %}
+
                             {% if submission.publisherNotes %}
                                 <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
                             {% endif %}
@@ -147,6 +137,11 @@
                             {% if submission.editorNotes %}
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                             {% endif %}
+
+                            {% set reviews = submission.getReviews() %}
+                            {% for review in reviews %}
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ reviewer.notes }}"</p>
+                            {% endfor %}
 
                             {% if submission.publisherNotes %}
                                 <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>

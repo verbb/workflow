@@ -1,6 +1,9 @@
 <?php
 namespace verbb\workflow\services;
 
+use craft\models\UserGroup;
+use verbb\workflow\models\Review;
+use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 use verbb\workflow\events\EmailEvent;
@@ -20,13 +23,41 @@ class Submissions extends Component
     const EVENT_BEFORE_SEND_EDITOR_EMAIL = 'beforeSendEditorEmail';
     const EVENT_BEFORE_SEND_PUBLISHER_EMAIL = 'beforeSendPublisherEmail';
 
-    
+
     // Public Methods
     // =========================================================================
 
     public function getSubmissionById(int $id)
     {
         return Craft::$app->getElements()->getElementById($id, Submission::class);
+    }
+
+    /**
+     * Returns the next reviewer user group for the given submission.
+     *
+     * @param Submission $submission
+     * @return UserGroup|null
+     */
+    public function getNextReviewerUserGroup(Submission $submission)
+    {
+        $reviewerUserGroups = Workflow::$plugin->getSettings()->getReviewerUserGroups();
+
+        $lastApprovedReview = $submission->getLastReview(true);
+
+        if ($lastApprovedReview === null) {
+            return $reviewerUserGroups[0] ?? null;
+        }
+
+        $reviewer = Craft::$app->getUsers()->getUserById($lastApprovedReview->userId);
+        $nextUserGroup = null;
+
+        foreach ($reviewerUserGroups as $key => $reviewerUserGroup) {
+            if ($reviewer->isInGroup($reviewerUserGroup)) {
+                $nextUserGroup = $reviewerUserGroups[$key + 1] ?? $nextUserGroup;
+            }
+        }
+
+        return $nextUserGroup;
     }
 
     public function saveSubmission($entry = null)
@@ -65,9 +96,9 @@ class Submissions extends Component
         }
 
         if ($isNew) {
-            // Trigger notification to publisher
-            if ($settings->publisherNotifications) {
-                Workflow::$plugin->getSubmissions()->sendPublisherNotificationEmail($submission);
+            // Trigger notification to reviewer
+            if ($settings->reviewerNotifications) {
+                $this->sendReviewerNotificationEmail($submission);
             }
         }
 
@@ -96,6 +127,96 @@ class Submissions extends Component
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission revoked.'));
+    }
+
+    public function approveReview()
+    {
+        $settings = Workflow::$plugin->getSettings();
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $request = Craft::$app->getRequest();
+        $session = Craft::$app->getSession();
+
+        $submission = $this->_setSubmissionFromPost();
+
+        if (!Craft::$app->getElements()->saveElement($submission)) {
+            $session->setError(Craft::t('workflow', 'Could not approve submission.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
+            return null;
+        }
+
+        $review = new Review([
+            'submissionId' => $submission->id,
+            'userId' => $currentUser->id,
+            'approved' => true,
+            'notes' => $request->getParam('notes'),
+        ]);
+
+        if (!$review->save()) {
+            $session->setError(Craft::t('workflow', 'Could not approve submission.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
+            return null;
+        }
+
+        // Trigger notification to editor
+        if ($settings->editorNotifications) {
+            $this->sendEditorNotificationEmail($submission);
+        }
+
+        $session->setNotice(Craft::t('workflow', 'Submission approved.'));
+    }
+
+    public function rejectReview()
+    {
+        $settings = Workflow::$plugin->getSettings();
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $request = Craft::$app->getRequest();
+        $session = Craft::$app->getSession();
+
+        $submission = $this->_setSubmissionFromPost();
+
+        if (!Craft::$app->getElements()->saveElement($submission)) {
+            $session->setError(Craft::t('workflow', 'Could not approve submission.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
+            return null;
+        }
+
+        $review = new Review([
+            'submissionId' => $submission->id,
+            'userId' => $currentUser->id,
+            'approved' => false,
+            'notes' => $request->getParam('notes'),
+        ]);
+
+        if (!$review->save()) {
+            $session->setError(Craft::t('workflow', 'Could not reject submission.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+            ]);
+
+            return null;
+        }
+
+        // Trigger notification to editor
+        if ($settings->editorNotifications) {
+            $this->sendEditorNotificationEmail($submission);
+        }
+
+        $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
     }
 
     public function approveSubmission($entry = null)
@@ -131,7 +252,7 @@ class Submissions extends Component
 
         // Trigger notification to editor
         if ($settings->editorNotifications) {
-            Workflow::$plugin->getSubmissions()->sendEditorNotificationEmail($submission);
+            $this->sendEditorNotificationEmail($submission);
         }
 
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
@@ -164,7 +285,47 @@ class Submissions extends Component
 
         // Trigger notification to editor
         if ($settings->editorNotifications) {
-            Workflow::$plugin->getSubmissions()->sendEditorNotificationEmail($submission);
+            $this->sendEditorNotificationEmail($submission);
+        }
+
+        $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
+    }
+
+    public function sendReviewerNotificationEmail($submission)
+    {
+        $reviewerUserGroup = $this->getNextReviewerUserGroup($submission);
+
+        // If there is no next reviewer user group then send publisher notification email
+        if ($reviewerUserGroup === null) {
+            $this->sendPublisherNotificationEmail($submission);
+
+            return;
+        }
+
+        $reviewers = User::find()
+            ->groupId($reviewerUserGroup->id)
+            ->all();
+
+        foreach ($reviewers as $key => $user) {
+            try {
+                $mail = Craft::$app->getMailer()
+                    ->composeFromKey('workflow_reviewer_notification', ['submission' => $submission])
+                    ->setTo($user);
+
+                // Fire a 'beforeSendPublisherEmail' event
+                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL)) {
+                    $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, new EmailEvent([
+                        'mail' => $mail,
+                        'user' => $user,
+                    ]));
+                }
+
+                $mail->send();
+
+                Workflow::log('Sent reviewer notification to ' . $user->email);
+            } catch (\Throwable $e) {
+                Workflow::log('Failed to send reviewer notification to ' . $user->email . ' - ' . $e->getMessage());
+            }
         }
     }
 
@@ -268,7 +429,7 @@ class Submissions extends Component
         $submissionId = $request->getParam('submissionId');
 
         if ($submissionId) {
-            $submission = Workflow::$plugin->getSubmissions()->getSubmissionById($submissionId);
+            $submission = $this->getSubmissionById($submissionId);
 
             if (!$submission) {
                 throw new \Exception(Craft::t('workflow', 'No submission with the ID “{id}”', ['id' => $submissionId]));

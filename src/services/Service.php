@@ -100,6 +100,14 @@ class Service extends Component
             }
         }
 
+        if ($action == 'approve-review') {
+            Workflow::$plugin->getSubmissions()->approveReview();
+        }
+
+        if ($action == 'reject-review') {
+            Workflow::$plugin->getSubmissions()->rejectReview();
+        }
+
         if ($action == 'revoke-submission') {
             Workflow::$plugin->getSubmissions()->revokeSubmission();
         }
@@ -154,7 +162,7 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        if (empty($settings->editorUserGroups) || !$settings->publisherUserGroup) {
+        if (!$settings->editorUserGroup || !$settings->publisherUserGroup) {
             Workflow::log('Editor and Publisher groups not set in settings.');
 
             return;
@@ -166,19 +174,24 @@ class Service extends Component
             return;
         }
 
-        // Only show the sidebar submission button for editors in the current user group
-
-        foreach ($settings->getEditorUserGroups() as $editorUserGroup) {
-            if ($currentUser->isInGroup($editorUserGroup)) {
-                return $this->_renderEntrySidebarPanel($context, 'editor-pane');
-            }
-        }
-
+        $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
         $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
+
+        // Show the sidebar submission button for editors
+        if ($currentUser->isInGroup($editorGroup)) {
+            return $this->_renderEntrySidebarPanel($context, 'editor-pane');
+        }
 
         // Show another information panel for publishers (if there's submission info)
         if ($currentUser->isInGroup($publisherGroup)) {
             return $this->_renderEntrySidebarPanel($context, 'publisher-pane');
+        }
+
+        // Show the sidebar submission button for reviewers
+        foreach ($settings->getReviewerUserGroups() as $reviewerUserGroup) {
+            if ($currentUser->isInGroup($reviewerUserGroup)) {
+                return $this->_renderEntrySidebarPanel($context, 'reviewer-pane');
+            }
         }
     }
 

@@ -26,6 +26,17 @@
 <hr>
 
 {{ forms.lightswitchField({
+    label: 'Reviewer Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to reviewers when editors submit an entry for review.' | t('workflow'),
+    id: 'reviewerNotifications',
+    name: 'reviewerNotifications',
+    on: settings.reviewerNotifications,
+    warning: macros.configWarning('reviewerNotifications', 'workflow'),
+}) }}
+
+<hr>
+
+{{ forms.lightswitchField({
     label: 'Publisher Notifications' | t('workflow'),
     instructions: 'Whether email notifications should be delivered to publishers when editors submit an entry for review.' | t('workflow'),
     id: 'publisherNotifications',

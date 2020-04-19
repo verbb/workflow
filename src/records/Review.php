@@ -4,8 +4,17 @@ namespace verbb\workflow\records;
 use craft\db\ActiveRecord;
 use craft\records\User;
 
+use DateTime;
 use yii\db\ActiveQueryInterface;
 
+/**
+ * @property int $id
+ * @property int $submissionId
+ * @property int $userId
+ * @property bool $approved
+ * @property string $notes
+ * @property DateTime $dateCreated
+ **/
 class Review extends ActiveRecord
 {
     // Public Methods
@@ -13,7 +22,7 @@ class Review extends ActiveRecord
 
     public static function tableName(): string
     {
-        return '{{%workflow_submission_history}}';
+        return '{{%workflow_reviews}}';
     }
 
     public function getSubmission(): ActiveQueryInterface

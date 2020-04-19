@@ -12,4 +12,5 @@ class Review extends Model
     public $userId;
     public $approved = true;
     public $notes = '';
+    public $dateCreated = '';
 }

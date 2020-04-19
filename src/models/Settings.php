@@ -20,6 +20,7 @@ class Settings extends Model
     // Notifications
     public $editorNotifications = true;
     public $editorNotificationsOptions = [];
+    public $reviewerNotifications = true;
     public $publisherNotifications = true;
     public $selectedPublishers = '*';
 
@@ -30,7 +31,7 @@ class Settings extends Model
     // =========================================================================
 
     /**
-     * Returns an array of user groups that are editors in the multi-step approval process.
+     * Returns the reviewer user groups.
      *
      * @return UserGroup[]
      */
@@ -54,23 +55,5 @@ class Settings extends Model
         }
 
         return $userGroups;
-    }
-
-    /**
-     * Returns an array of approval steps with user group IDs as keys.
-     *
-     * @return array
-     */
-    public function getUserGroupApprovalSteps(): array
-    {
-        $approvalSteps = [];
-        $count = 0;
-
-        foreach ($this->getEditorUserGroups() as $userGroup) {
-            $count++;
-            $approvalSteps[$userGroup->id] = $count;
-        }
-
-        return $approvalSteps;
     }
 }

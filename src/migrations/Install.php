@@ -1,7 +1,6 @@
 <?php
 namespace verbb\workflow\migrations;
 
-use Craft;
 use craft\db\Migration;
 use craft\helpers\MigrationHelper;
 
@@ -30,7 +29,6 @@ class Install extends Migration
             'ownerId' => $this->integer(),
             'ownerSiteId' => $this->integer(),
             'ownerDraftId' => $this->integer(),
-            'userGroupId' => $this->integer(),
             'editorId' => $this->integer(),
             'publisherId' => $this->integer(),
             'status' => $this->enum('status', ['approved', 'pending', 'rejected', 'revoked']),
@@ -45,10 +43,10 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
-        $this->createTable('{{%workflow_approvals}}', [
+        $this->createTable('{{%workflow_reviews}}', [
             'id' => $this->primaryKey(),
             'submissionId' => $this->integer(),
-            'editorId' => $this->integer(),
+            'userId' => $this->integer(),
             'approved' => $this->boolean(),
             'notes' => $this->text(),
             'dateCreated' => $this->dateTime()->notNull(),
@@ -60,7 +58,7 @@ class Install extends Migration
     public function dropTables()
     {
         $this->dropTable('{{%workflow_submissions}}');
-        $this->dropTable('{{%workflow_approvals}}');
+        $this->dropTable('{{%workflow_reviews}}');
     }
 
     public function createIndexes()
@@ -82,8 +80,8 @@ class Install extends Migration
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'ownerId'), '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'SET NULL', null);
         $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_submissions}}', 'publisherId'), '{{%workflow_submissions}}', 'publisherId', '{{%users}}', 'id', 'CASCADE', null);
 
-        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_approvals}}', 'submissionId'), '{{%workflow_approvals}}', 'submissionId', '{{%workflow_submissions}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_approvals}}', 'editorId'), '{{%workflow_approvals}}', 'editorId', '{{%users}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_reviews}}', 'submissionId'), '{{%workflow_reviews}}', 'submissionId', '{{%workflow_submissions}}', 'id', 'CASCADE', null);
+        $this->addForeignKey($this->db->getForeignKeyName('{{%workflow_reviews}}', 'userId'), '{{%workflow_reviews}}', 'userId', '{{%users}}', 'id', 'CASCADE', null);
     }
 
     public function dropForeignKeys()
@@ -95,7 +93,7 @@ class Install extends Migration
         MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId'], $this);
         MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['publisherId'], $this);
 
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_approvals}}', ['submissionId'], $this);
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_approvals}}', ['editorId'], $this);
+        MigrationHelper::dropForeignKeyIfExists('{{%workflow_reviews}}', ['submissionId'], $this);
+        MigrationHelper::dropForeignKeyIfExists('{{%workflow_reviews}}', ['userId'], $this);
     }
 }
