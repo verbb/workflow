@@ -2,6 +2,7 @@
 namespace verbb\workflow\services;
 
 use craft\models\UserGroup;
+use verbb\workflow\models\Review;
 use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
@@ -20,6 +21,7 @@ class Submissions extends Component
     // =========================================================================
 
     const EVENT_BEFORE_SEND_EDITOR_EMAIL = 'beforeSendEditorEmail';
+    const EVENT_BEFORE_SEND_REVIEWER_EMAIL = 'beforeSendReviewerEmail';
     const EVENT_BEFORE_SEND_PUBLISHER_EMAIL = 'beforeSendPublisherEmail';
 
 
@@ -148,14 +150,14 @@ class Submissions extends Component
             return null;
         }
 
-        $review = new ReviewRecord([
+        $reviewRecord = new ReviewRecord([
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => true,
             'notes' => $request->getParam('notes'),
         ]);
 
-        if (!$review->save()) {
+        if (!$reviewRecord->save()) {
             $session->setError(Craft::t('workflow', 'Could not approve submission.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
@@ -165,9 +167,11 @@ class Submissions extends Component
             return null;
         }
 
+        $review = Review::populateModel($reviewRecord);
+
         // Trigger notification to editor
         if ($settings->editorNotifications) {
-            $this->sendEditorNotificationEmail($submission);
+            $this->sendEditorNotificationEmail($submission, $review);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
@@ -193,14 +197,14 @@ class Submissions extends Component
             return null;
         }
 
-        $review = new ReviewRecord([
+        $reviewRecord = new ReviewRecord([
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => false,
             'notes' => $request->getParam('notes'),
         ]);
 
-        if (!$review->save()) {
+        if (!$reviewRecord->save()) {
             $session->setError(Craft::t('workflow', 'Could not reject submission.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
@@ -210,9 +214,11 @@ class Submissions extends Component
             return null;
         }
 
+        $review = Review::populateModel($reviewRecord);
+
         // Trigger notification to editor
         if ($settings->editorNotifications) {
-            $this->sendEditorNotificationEmail($submission);
+            $this->sendEditorNotificationEmail($submission, $review);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
@@ -308,15 +314,12 @@ class Submissions extends Component
         foreach ($reviewers as $key => $user) {
             try {
                 $mail = Craft::$app->getMailer()
-                    ->composeFromKey('workflow_reviewer_notification', [
-                        'submission' => $submission,
-                        'review' => $submission->getLastReview(),
-                    ])
+                    ->composeFromKey('workflow_reviewer_notification', ['submission' => $submission])
                     ->setTo($user);
 
                 // Fire a 'beforeSendPublisherEmail' event
-                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL)) {
-                    $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, new EmailEvent([
+                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL)) {
+                    $this->trigger(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL, new EmailEvent([
                         'mail' => $mail,
                         'user' => $user,
                     ]));
@@ -372,7 +375,7 @@ class Submissions extends Component
         }
     }
 
-    public function sendEditorNotificationEmail($submission)
+    public function sendEditorNotificationEmail($submission, $review = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -386,21 +389,31 @@ class Submissions extends Component
         // Only send to the single user editor - not the whole group
         if ($editor) {
             try {
-                $mail = Craft::$app->getMailer()
-                    ->composeFromKey('workflow_editor_notification', ['submission' => $submission])
-                    ->setTo($editor);
+                $mail = Craft::$app->getMailer()->setTo($editor);
+
+                if ($review === null) {
+                    $mail->composeFromKey('workflow_editor_notification', ['submission' => $submission]);
+                }
+                else {
+                    $mail->composeFromKey('workflow_editor_review_notification', [
+                        'submission' => $submission,
+                        'review' => $review,
+                    ]);
+                }
 
                 if (!is_array($settings->editorNotificationsOptions)) {
                     $settings->editorNotificationsOptions = [];
                 }
 
-                if ($submission->publisher) {
-                    if (in_array('replyTo', $settings->editorNotificationsOptions)) {
-                        $mail->setReplyTo($submission->publisher->email);
-                    }
+                if ($review === null) {
+                    if ($submission->publisher) {
+                        if (in_array('replyTo', $settings->editorNotificationsOptions)) {
+                            $mail->setReplyTo($submission->publisher->email);
+                        }
 
-                    if (in_array('cc', $settings->editorNotificationsOptions)) {
-                        $mail->setCc($submission->publisher->email);
+                        if (in_array('cc', $settings->editorNotificationsOptions)) {
+                            $mail->setCc($submission->publisher->email);
+                        }
                     }
                 }
 

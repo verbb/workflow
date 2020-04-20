@@ -13,4 +13,25 @@ class Review extends Model
     public $approved = true;
     public $notes = '';
     public $dateCreated = '';
+
+    // Static Methods
+    // =========================================================================
+
+    /**
+     * Populates a new model instance with a given set of attributes.
+     *
+     * @param mixed $values
+     * @return Review
+     */
+    public static function populateModel($values): Review
+    {
+        if ($values instanceof Model) {
+            $values = $values->getAttributes();
+        }
+
+        $review = new Review();
+        $review->setAttributes($values, false);
+
+        return $review;
+    }
 }

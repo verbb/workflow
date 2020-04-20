@@ -114,6 +114,11 @@ class Workflow extends Plugin
                     'heading' => Craft::t('workflow', 'workflow_editor_notification_heading'),
                     'subject' => Craft::t('workflow', 'workflow_editor_notification_subject'),
                     'body' => Craft::t('workflow', 'workflow_editor_notification_body'),
+                ], [
+                    'key' => 'workflow_editor_review_notification_heading',
+                    'heading' => Craft::t('workflow', 'workflow_editor_review_notification_heading_heading'),
+                    'subject' => Craft::t('workflow', 'workflow_editor_review_notification_heading_subject'),
+                    'body' => Craft::t('workflow', 'workflow_editor_review_notification_heading_body'),
                 ]
             ]);
         });

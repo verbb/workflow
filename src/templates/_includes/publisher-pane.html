@@ -34,6 +34,10 @@
                         <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                     {% endif %}
 
+                    {% for review in submission.getReviews() %}
+                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                    {% endfor %}
+
                     {% if submission.publisherNotes %}
                         <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
                     {% endif %}
@@ -104,6 +108,10 @@
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                             {% endif %}
 
+                            {% for review in submission.getReviews() %}
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                            {% endfor %}
+
                             {% if submission.publisherNotes %}
                                 <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
                             {% endif %}
@@ -126,6 +134,10 @@
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                             {% endif %}
 
+                            {% for review in submission.getReviews() %}
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                            {% endfor %}
+
                             {% if submission.publisherNotes %}
                                 <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
                             {% endif %}
@@ -147,6 +159,10 @@
                             {% if submission.editorNotes %}
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
                             {% endif %}
+
+                            {% for review in submission.getReviews() %}
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                            {% endfor %}
 
                             {% if submission.publisherNotes %}
                                 <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
