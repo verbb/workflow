@@ -188,8 +188,8 @@ class Service extends Component
         }
 
         // Show the sidebar submission button for reviewers
-        foreach ($settings->getReviewerUserGroups() as $reviewerUserGroup) {
-            if ($currentUser->isInGroup($reviewerUserGroup)) {
+        foreach ($settings->getReviewerUserGroups() as $userGroup) {
+            if ($currentUser->isInGroup($userGroup)) {
                 return $this->_renderEntrySidebarPanel($context, 'reviewer-pane');
             }
         }

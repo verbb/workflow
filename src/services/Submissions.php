@@ -43,18 +43,17 @@ class Submissions extends Component
     {
         $reviewerUserGroups = Workflow::$plugin->getSettings()->getReviewerUserGroups();
 
-        $lastApprovedReview = $submission->getLastReview(true);
+        $lastReviewer = $submission->getLastReviewer(true);
 
-        if ($lastApprovedReview === null) {
+        if ($lastReviewer === null) {
             return $reviewerUserGroups[0] ?? null;
         }
 
-        $reviewer = Craft::$app->getUsers()->getUserById($lastApprovedReview->userId);
         $nextUserGroup = null;
 
-        foreach ($reviewerUserGroups as $key => $reviewerUserGroup) {
-            if ($reviewer->isInGroup($reviewerUserGroup)) {
-                $nextUserGroup = $reviewerUserGroups[$key + 1] ?? $nextUserGroup;
+        foreach ($reviewerUserGroups as $key => $userGroup) {
+            if ($lastReviewer->isInGroup($userGroup)) {
+                $nextUserGroup = $userGroups[$key + 1] ?? $nextUserGroup;
             }
         }
 
@@ -186,6 +185,8 @@ class Submissions extends Component
         $session = Craft::$app->getSession();
 
         $submission = $this->_setSubmissionFromPost();
+        $submission->status = Submission::STATUS_REJECTED;
+        $submission->dateRejected = new \DateTime;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not approve submission.'));

@@ -128,7 +128,8 @@
 
                     <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
-                            <p>{{ submission.publisherUrl | raw }} {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
+                            {% set url = submission.publisherUrl ?: submission.lastReviewerUrl %}
+                            <p>{{ url | raw }} {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
 
                             {% if submission.editorNotes %}
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>

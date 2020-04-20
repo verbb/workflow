@@ -18,50 +18,81 @@
 {% if pendingSubmissions | length %}
     {% set submission = pendingSubmissions[0] %}
 
-    <div class="pane workflow-pane">
-        <div class="workflow-submission">
-            <div class="workflow-submission-heading">
-                <span class="status pending"></span>
-                <label>{{ "Awaiting review" | t('workflow') }}</label>
-                <a class="fieldtoggle" data-target="workflow-submission-info"></a>
-            </div>
-
-            <div id="workflow-submission-info" class="hidden">
-                <div class="instructions">
-                    <p>{{ submission.editorUrl | raw }} {{ "submitted this entry for review on {date}. Please review this entry before approving." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
-
-                    {% if submission.editorNotes %}
-                        <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
-                    {% endif %}
-
-                    {% for review in submission.getReviews() %}
-                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="workflow-submission-body">
-                {{ forms.textareaField({
-                    placeholder: 'Notes about your response.' | t('workflow'),
-                    id: 'notes',
-                    name: 'notes',
-                    class: 'field-notes',
-                    rows: 2,
-                    errors: notesErrors is defined ? notesErrors,
-                }) }}
-            </div>
-
-            <input type="hidden" name="submissionId" value="{{ submission.id }}">
-
-            <div class="workflow-submission-footer btngroup">
-                <div id="save-btn-container" class="submit">
-                    <a class="btn formsubmit submit" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="approve-review" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve" | t('workflow') }}</a>
+    {% if submission.canReviewerReview(currentUser) %}
+        <div class="pane workflow-pane">
+            <div class="workflow-submission">
+                <div class="workflow-submission-heading">
+                    <span class="status pending"></span>
+                    <label>{{ "Awaiting review" | t('workflow') }}</label>
+                    <a class="fieldtoggle" data-target="workflow-submission-info"></a>
                 </div>
 
-                <a class="formsubmit btn" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="reject-review" data-redirect="{{ craft.app.request.url | hash }}">{{ "Reject" | t('workflow') }}</a>
+                <div id="workflow-submission-info" class="hidden">
+                    <div class="instructions">
+                        <p>{{ submission.editorUrl | raw }} {{ "submitted this entry for review on {date}. Please review this entry before approving." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
+
+                        {% if submission.editorNotes %}
+                            <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                        {% endif %}
+
+                        {% for review in submission.getReviews() %}
+                            <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="workflow-submission-body">
+                    {{ forms.textareaField({
+                        placeholder: 'Notes about your response.' | t('workflow'),
+                        id: 'notes',
+                        name: 'notes',
+                        class: 'field-notes',
+                        rows: 2,
+                        errors: notesErrors is defined ? notesErrors,
+                    }) }}
+                </div>
+
+                <input type="hidden" name="submissionId" value="{{ submission.id }}">
+
+                <div class="workflow-submission-footer btngroup">
+                    <div id="save-btn-container" class="submit">
+                        <a class="btn formsubmit submit" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="approve-review" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve" | t('workflow') }}</a>
+                    </div>
+
+                    <a class="formsubmit btn" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="reject-review" data-redirect="{{ craft.app.request.url | hash }}">{{ "Reject" | t('workflow') }}</a>
+                </div>
             </div>
         </div>
-    </div>
+
+    {% else %}
+        <div class="pane workflow-pane">
+            <div class="workflow-submission">
+                <div class="workflow-submission-heading">
+                    <span class="status pending"></span>
+                    <label>{{ "Awaiting approval" | t('workflow') }}</label>
+                    <a class="fieldtoggle" data-target="workflow-submission-info"></a>
+                </div>
+
+                <div id="workflow-submission-info" class="hidden">
+                    <div class="instructions">
+                        <p style="color: #da5a47;">{{ "This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
+
+                        {% if submission.editorNotes %}
+                            <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                        {% endif %}
+
+                        {% for review in submission.getReviews() %}
+                            <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                        {% endfor %}
+
+                        {% if submission.publisherNotes %}
+                            <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endif %}
 
 {% if nonPendingSubmissions | length %}
@@ -103,7 +134,8 @@
 
                     <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
-                            <p>{{ submission.publisherUrl | raw }} {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
+                            {% set url = submission.publisherUrl ?: submission.lastReviewerUrl %}
+                            <p>{{ url | raw }} {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
 
                             {% if submission.editorNotes %}
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>

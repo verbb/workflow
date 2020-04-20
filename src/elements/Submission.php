@@ -14,6 +14,7 @@ use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
+use verbb\workflow\Workflow;
 
 class Submission extends Element
 {
@@ -280,6 +281,55 @@ class Submission extends Element
         }
 
         return Craft::$app->getUsers()->getUserById($lastReview->userId);
+    }
+
+    /**
+     * Returns the URL of the last reviewer, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return User|string
+     */
+    public function getLastReviewerUrl(bool $approved = null)
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        if ($lastReviewer = $this->getLastReviewer($approved)) {
+            if ($currentUser->can('editUsers')) {
+                return Html::a($lastReviewer, $lastReviewer->cpEditUrl);
+            } else {
+                return $lastReviewer;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns whether a reviewer is allowed to review this submission.
+     *
+     * @param User $reviewer
+     * @return bool
+     */
+    public function canReviewerReview(User $reviewer): bool
+    {
+        $lastReviewer = $this->getLastReviewer();
+
+        if ($lastReviewer === null) {
+            return true;
+        }
+
+        $canReview = false;
+
+        foreach (Workflow::$plugin->getSettings()->getReviewerUserGroups() as $key => $userGroup) {
+            if ($lastReviewer->isInGroup($userGroup)) {
+                $canReview = false;
+            }
+            elseif ($reviewer->isInGroup($userGroup)) {
+                $canReview = true;
+            }
+        }
+
+        return $canReview;
     }
 
     public function afterSave(bool $isNew)
