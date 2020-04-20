@@ -314,7 +314,7 @@ class Submissions extends Component
         foreach ($reviewers as $key => $user) {
             try {
                 $mail = Craft::$app->getMailer()
-                    ->composeFromKey('workflow_reviewer_notification', ['submission' => $submission])
+                    ->composeFromKey('workflow_publisher_notification', ['submission' => $submission])
                     ->setTo($user);
 
                 // Fire a 'beforeSendPublisherEmail' event

@@ -105,20 +105,15 @@ class Workflow extends Plugin
                     'subject' => Craft::t('workflow', 'workflow_publisher_notification_subject'),
                     'body' => Craft::t('workflow', 'workflow_publisher_notification_body'),
                 ], [
-                    'key' => 'workflow_reviewer_notification',
-                    'heading' => Craft::t('workflow', 'workflow_reviewer_notification_heading'),
-                    'subject' => Craft::t('workflow', 'workflow_reviewer_notification_subject'),
-                    'body' => Craft::t('workflow', 'workflow_reviewer_notification_body'),
+                    'key' => 'workflow_editor_review_notification',
+                    'heading' => Craft::t('workflow', 'workflow_editor_review_notification_heading'),
+                    'subject' => Craft::t('workflow', 'workflow_editor_review_notification_subject'),
+                    'body' => Craft::t('workflow', 'workflow_editor_review_notification_body'),
                 ], [
                     'key' => 'workflow_editor_notification',
                     'heading' => Craft::t('workflow', 'workflow_editor_notification_heading'),
                     'subject' => Craft::t('workflow', 'workflow_editor_notification_subject'),
                     'body' => Craft::t('workflow', 'workflow_editor_notification_body'),
-                ], [
-                    'key' => 'workflow_editor_review_notification_heading',
-                    'heading' => Craft::t('workflow', 'workflow_editor_review_notification_heading_heading'),
-                    'subject' => Craft::t('workflow', 'workflow_editor_review_notification_heading_subject'),
-                    'body' => Craft::t('workflow', 'workflow_editor_review_notification_heading_body'),
                 ]
             ]);
         });
