@@ -375,7 +375,13 @@ class Submissions extends Component
         }
     }
 
-    public function sendEditorNotificationEmail($submission, $review = null)
+    /**
+     * Sends a notification email to the editor.
+     *
+     * @param Submission $submission
+     * @param Review|null $review
+     */
+    public function sendEditorNotificationEmail($submission, Review $review = null)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -413,6 +419,19 @@ class Submissions extends Component
 
                         if (in_array('cc', $settings->editorNotificationsOptions)) {
                             $mail->setCc($submission->publisher->email);
+                        }
+                    }
+                }
+                else {
+                    $reviewer = $submission->getLastReviewer();
+
+                    if ($reviewer !== null) {
+                        if (in_array('replyToReviewer', $settings->editorNotificationsOptions)) {
+                            $mail->setReplyTo($reviewer->email);
+                        }
+
+                        if (in_array('ccReviewer', $settings->editorNotificationsOptions)) {
+                            $mail->setCc($reviewer->email);
                         }
                     }
                 }

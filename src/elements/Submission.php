@@ -1,6 +1,7 @@
 <?php
 namespace verbb\workflow\elements;
 
+use craft\elements\User;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
 use verbb\workflow\models\Review;
@@ -262,6 +263,23 @@ class Submission extends Element
         $reviews = $this->getReviews($approved);
 
         return end($reviews) ?: null;
+    }
+
+    /**
+     * Returns the last reviewer, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return User|null
+     */
+    public function getLastReviewer(bool $approved = null)
+    {
+        $lastReview = $this->getLastReview($approved);
+
+        if ($lastReview === null) {
+            return null;
+        }
+
+        return Craft::$app->getUsers()->getUserById($lastReview->userId);
     }
 
     public function afterSave(bool $isNew)
