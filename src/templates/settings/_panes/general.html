@@ -55,14 +55,14 @@ table.editable tbody tr td:first-of-type:before {
 
 {{ forms.editableTableField({
     label: 'Reviewer User Groups' | t('workflow'),
-    instructions: 'Select the user groups that your reviewers belong to. Reviewers are users that can review submissions, edit them and pass them along for approval, but not publish live. The review process flows from the first to the last user group in the table.' | t('workflow'),
+    instructions: 'Select the user groups that your reviewers belong to. Reviewers are users that can review and edit submissions and pass them along for approval, but not publish live. The review process flows from the first to the last user group in the table.' | t('workflow'),
     name: 'reviewerUserGroups',
     id: 'reviewerUserGroups',
     cols: cols,
     rows: settings.reviewerUserGroups,
     addRowLabel: 'Add a user group' | t('workflow'),
     errors: settings.getErrors('reviewerUserGroups'),
-    warning: macros.configWarning('reviewerUserGroups', 'workflow') ?: 'Changing this may result in content being moved or lost in the review process.' | t('workflow'),
+    warning: macros.configWarning('reviewerUserGroups', 'workflow') ?: 'Changing this may result in submissions being lost in the review process.' | t('workflow'),
 })|spaceless }}
 
 <hr>
