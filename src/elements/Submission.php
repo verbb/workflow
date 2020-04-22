@@ -2,6 +2,7 @@
 namespace verbb\workflow\elements;
 
 use craft\elements\User;
+use craft\i18n\Locale;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
 use verbb\workflow\models\Review;
@@ -374,13 +375,29 @@ class Submission extends Element
         return [
             'id' => ['label' => Craft::t('workflow', 'Entry')],
             'siteId' => ['label' => Craft::t('workflow', 'Site')],
-            'editor' => ['label' => Craft::t('workflow', 'Editor')],
             'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
+            'editor' => ['label' => Craft::t('workflow', 'Editor')],
+            'lastReviewDate' => ['label' => Craft::t('workflow', 'Last Reviewed')],
+            'reviewer' => ['label' => Craft::t('workflow', 'Last Reviewed By')],
             'publisher' => ['label' => Craft::t('workflow', 'Publisher')],
             'editorNotes' => ['label' => Craft::t('workflow', 'Editor Notes')],
             'publisherNotes' => ['label' => Craft::t('workflow', 'Publisher Notes')],
             'dateApproved' => ['label' => Craft::t('workflow', 'Date Approved')],
             'dateRejected' => ['label' => Craft::t('workflow', 'Date Rejected')],
+        ];
+    }
+
+    protected static function defineDefaultTableAttributes(string $source): array
+    {
+        return [
+            'id',
+            'editor',
+            'dateCreated',
+            'reviewer',
+            'lastReviewDate',
+            'publisher',
+            'dateApproved',
+            'dateRejected',
         ];
     }
 
@@ -409,6 +426,21 @@ class Submission extends Element
             }
             case 'editor': {
                 return $this->getEditorUrl() ?: '-';
+            }
+            case 'reviewer': {
+                return $this->getLastReviewerUrl() ?: '-';
+            }
+            case 'lastReviewDate': {
+                $lastReview = $this->getLastReview();
+
+                if ($lastReview === null) {
+                    return '-';
+                }
+
+                $formatter = Craft::$app->getFormatter();
+                    return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
+                        'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT)
+                    ]);
             }
             case 'dateApproved':
             case 'dateRejected': {
