@@ -306,13 +306,19 @@ class Submission extends Element
     }
 
     /**
-     * Returns whether a reviewer is allowed to review this submission.
+     * Returns whether a user is allowed to review this submission.
      *
-     * @param User $reviewer
+     * @param User $user
      * @return bool
      */
-    public function canReviewerReview(User $reviewer): bool
+    public function canUserReview(User $user): bool
     {
+        $publisherGroup = Craft::$app->userGroups->getGroupByUid(Workflow::$plugin->getSettings()->publisherUserGroup);
+
+        if ($user->isInGroup($publisherGroup)) {
+            return true;
+        }
+
         $lastReviewer = $this->getLastReviewer();
 
         if ($lastReviewer === null) {
@@ -325,7 +331,7 @@ class Submission extends Element
             if ($lastReviewer->isInGroup($userGroup)) {
                 $canReview = false;
             }
-            elseif ($reviewer->isInGroup($userGroup)) {
+            elseif ($user->isInGroup($userGroup)) {
                 $canReview = true;
             }
         }

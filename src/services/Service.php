@@ -42,12 +42,18 @@ class Service extends Component
                 ->limit(1)
                 ->status('pending')
                 ->orderBy('dateCreated desc')
-                ->exists();
+                ->one();
 
-            if ($submission) {
-                $event->isValid = false;
+            if ($submission !== null) {
+                $currentUser = Craft::$app->getUser()->getIdentity();
 
-                $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
+                // Ensure current user is allowed to review the submission
+                /** @var Submission $submission */
+                if (!$submission->canUserReview($currentUser)) {
+                    $event->isValid = false;
+
+                    $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
+                }
             }
         }
 

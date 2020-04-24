@@ -169,8 +169,8 @@ class Submissions extends Component
         $review = Review::populateModel($reviewRecord);
 
         // Trigger notification to editor
-        if ($settings->editorNotifications) {
-            $this->sendEditorNotificationEmail($submission, $review);
+        if ($settings->reviewerNotifications) {
+            $this->sendReviewerNotificationEmail($submission, $review);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
@@ -386,10 +386,7 @@ class Submissions extends Component
     {
         $settings = Workflow::$plugin->getSettings();
 
-        $groupId = Db::idByUid(Table::USERGROUPS, $settings->editorUserGroup);
-
         $editor = User::find()
-            ->groupId($groupId)
             ->id($submission->editorId)
             ->one();
 
