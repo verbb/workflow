@@ -166,11 +166,9 @@ class Submissions extends Component
             return null;
         }
 
-        $review = Review::populateModel($reviewRecord);
-
         // Trigger notification to editor
         if ($settings->reviewerNotifications) {
-            $this->sendReviewerNotificationEmail($submission, $review);
+            $this->sendReviewerNotificationEmail($submission);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
