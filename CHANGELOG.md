@@ -3,7 +3,7 @@
 ## 1.4.6 - 2020-04-28
 
 ### Fixed
-- Fix logging error `Call to undefined method setFileLogging()`.
+- Prevent access to settings when `allowAdminChanges` is false
 
 ## 1.4.5 - 2020-04-16
 
