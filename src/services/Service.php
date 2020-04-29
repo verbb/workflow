@@ -194,7 +194,10 @@ class Service extends Component
         }
 
         // Show the sidebar submission button for reviewers
-        foreach ($settings->getReviewerUserGroups() as $userGroup) {
+        $submissions = $this->_getSubmissionsFromContext($context);
+        $lastSubmission = empty($submissions) ? null : end($submissions);
+
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($lastSubmission) as $userGroup) {
             if ($currentUser->isInGroup($userGroup)) {
                 return $this->_renderEntrySidebarPanel($context, 'reviewer-pane');
             }
@@ -208,7 +211,6 @@ class Service extends Component
     private function _renderEntrySidebarPanel($context, $template)
     {
         $settings = Workflow::$plugin->getSettings();
-        $currentUser = Craft::$app->getUser()->getIdentity();
 
         Workflow::log('Try to render ' . $template);
 
@@ -229,16 +231,8 @@ class Service extends Component
             }
         }
 
-        // See if there's an existing submission
-        $ownerId = $context['entry']->id ?? ':empty:';
-        $draftId = $context['draftId'] ?? ':empty:';
-        $siteId = $context['entry']['siteId'] ?? Craft::$app->getSites()->getCurrentSite()->id;
-
-        $submissions = Submission::find()
-            ->ownerId($ownerId)
-            ->ownerSiteId($siteId)
-            ->ownerDraftId($draftId)
-            ->all();
+        // Get existing submissions
+        $submissions = $this->_getSubmissionsFromContext($context);
 
         Workflow::log('Rendering ' . $template . ' for #' . $context['entry']->id);
 
@@ -246,7 +240,6 @@ class Service extends Component
         $routeParams = Craft::$app->getUrlManager()->getRouteParams();
         unset($routeParams['template'], $routeParams['template']);
 
-        // Get the editor user groups that can approve
         return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, array_merge([
             'context' => $context,
             'submissions' => $submissions,
@@ -254,4 +247,17 @@ class Service extends Component
         ], $routeParams));
     }
 
+    private function _getSubmissionsFromContext($context)
+    {
+        // Get existing submissions
+        $ownerId = $context['entry']->id ?? ':empty:';
+        $draftId = $context['draftId'] ?? ':empty:';
+        $siteId = $context['entry']['siteId'] ?? Craft::$app->getSites()->getCurrentSite()->id;
+
+        return Submission::find()
+            ->ownerId($ownerId)
+            ->ownerSiteId($siteId)
+            ->ownerDraftId($draftId)
+            ->all();
+    }
 }

@@ -2,6 +2,7 @@
 namespace verbb\workflow\services;
 
 use craft\models\UserGroup;
+use verbb\workflow\events\ReviewerUserGroupsEvent;
 use verbb\workflow\models\Review;
 use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\Workflow;
@@ -23,6 +24,7 @@ class Submissions extends Component
     const EVENT_BEFORE_SEND_EDITOR_EMAIL = 'beforeSendEditorEmail';
     const EVENT_BEFORE_SEND_REVIEWER_EMAIL = 'beforeSendReviewerEmail';
     const EVENT_BEFORE_SEND_PUBLISHER_EMAIL = 'beforeSendPublisherEmail';
+    const EVENT_AFTER_GET_REVIEWER_USER_GROUPS = 'afterGetReviewerUserGroups';
 
 
     // Public Methods
@@ -34,6 +36,44 @@ class Submissions extends Component
     }
 
     /**
+     * Returns the reviewer user groups for the given submission.
+     *
+     * @param Submission|null $submission
+     * @return UserGroup[]
+     */
+    public function getReviewerUserGroups(Submission $submission = null): array
+    {
+        $userGroups = [];
+
+        foreach (Workflow::$plugin->getSettings()->reviewerUserGroups as $reviewerUserGroup) {
+            // Get UID from first element in array
+            $uid = $reviewerUserGroup[0] ?? null;
+
+            if ($uid === null) {
+                continue;
+            }
+
+            $userGroup = Craft::$app->getUserGroups()->getGroupByUid($uid);
+
+            if ($userGroup !== null) {
+                $userGroups[] = $userGroup;
+            }
+        }
+
+        // Fire an 'afterGetReviewerUserGroups' event
+        if ($this->hasEventHandlers(self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS)) {
+            $this->trigger(self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
+                new ReviewerUserGroupsEvent([
+                    'submission' => $submission,
+                    'userGroups' => $userGroups,
+                ])
+            );
+        }
+
+        return $userGroups;
+    }
+
+    /**
      * Returns the next reviewer user group for the given submission.
      *
      * @param Submission $submission
@@ -41,7 +81,7 @@ class Submissions extends Component
      */
     public function getNextReviewerUserGroup(Submission $submission)
     {
-        $reviewerUserGroups = Workflow::$plugin->getSettings()->getReviewerUserGroups();
+        $reviewerUserGroups = $this->getReviewerUserGroups($submission);
 
         $lastReviewer = $submission->getLastReviewer(true);
 

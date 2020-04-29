@@ -327,7 +327,7 @@ class Submission extends Element
 
         $canReview = false;
 
-        foreach (Workflow::$plugin->getSettings()->getReviewerUserGroups() as $key => $userGroup) {
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($this) as $key => $userGroup) {
             if ($lastReviewer->isInGroup($userGroup)) {
                 $canReview = false;
             }

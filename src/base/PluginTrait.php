@@ -6,7 +6,6 @@ use verbb\workflow\services\Service;
 use verbb\workflow\services\Submissions;
 
 use Craft;
-use craft\log\FileTarget;
 
 use yii\log\Logger;
 
