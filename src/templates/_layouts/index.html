@@ -8,7 +8,7 @@
     {% set tabs = tabs | merge({ workflow: { label: 'Overview' | t('workflow'), url: url('workflow') } }) %}
 {% endif %}
 
-{% if currentUser.can('workflow:settings') %}
+{% if currentUser.can('workflow:settings') and craft.app.config.general.allowAdminChanges %}
     {% set tabs = tabs | merge({ settings: { label: 'Settings' | t('workflow'), url: url('workflow/settings') } }) %}
 {% endif %}
 

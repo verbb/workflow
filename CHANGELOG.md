@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.6 - 2020-04-28
+
+### Fixed
+- Prevent access to settings when `allowAdminChanges` is false
+
 ## 1.4.5 - 2020-04-16
 
 ### Fixed
