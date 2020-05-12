@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.7 - 2020-05-12
+
+### Fixed
+- Fix incorrect response sent for some actions, causing `send()` errors.
+- Improve handling of `enabledForSite` when approving and publishing submissions.
+
 ## 1.4.6 - 2020-04-28
 
 ### Fixed
