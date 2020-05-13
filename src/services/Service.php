@@ -60,10 +60,23 @@ class Service extends Component
             if ($event->sender->propagating) {
                 return;
             }
-            
-            // If we are approving a submission, make sure to make it live
+
+            // For multi-sites, we only want to act on the current site's entry. Returning early will respect the 
+            // section defaults for enabling the entry per-site.
+            if (Craft::$app->getIsMultiSite()) {
+                $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id;
+
+                if ($siteHandle = $request->getParam('site')) {
+                    $currentSiteId = Craft::$app->getSites()->getSiteByHandle($siteHandle)->id;
+                }
+
+                if ($event->sender->siteId != $currentSiteId) {
+                    return;
+                }
+            }
+
             $event->sender->enabled = true;
-            $event->sender->enabledForSite = $this->_getEnabledForSite();
+            $event->sender->enabledForSite = true;
             $event->sender->setScenario(Element::SCENARIO_LIVE);
 
             if (($postDate = $request->getBodyParam('postDate')) !== null) {
@@ -233,38 +246,6 @@ class Service extends Component
             'submissions' => $submissions,
             'settings' => $settings,
         ], $routeParams));
-    }
-
-    private function _getEnabledForSite()
-    {
-        $request = Craft::$app->getRequest();
-
-        $enabledForSite = $request->getParam('enabledForSite', []);
-        $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id;
-
-        if ($siteHandle = $request->getParam('site')) {
-            $currentSiteId = Craft::$app->getSites()->getSiteByHandle($siteHandle)->id;
-        }
-
-        if (!is_array($enabledForSite)) {
-            $enabledForSite = [];
-        }
-
-        // If there are no sites picked to be enabled, we want to just enable it for the current site.
-        if (!array_filter($enabledForSite)) {
-            $enabledForSite = [];
-            $editableSiteIds = Craft::$app->getSites()->getEditableSiteIds();
-
-            foreach ($editableSiteIds as $editableSiteId) {
-                if ($editableSiteId == $currentSiteId) {
-                    $enabledForSite[$editableSiteId] = true;
-                } else {
-                    $enabledForSite[$editableSiteId] = false;
-                }
-            }
-        }
-
-        return $enabledForSite;
     }
 
 }
