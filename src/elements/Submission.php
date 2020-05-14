@@ -133,6 +133,16 @@ class Submission extends Element
         return Craft::t('workflow', '[Deleted element]');
     }
 
+    public function datetimeAttributes(): array
+    {
+        $attributes = parent::datetimeAttributes();
+        $attributes[] = 'dateApproved';
+        $attributes[] = 'dateRejected';
+        $attributes[] = 'dateRevoked';
+
+        return $attributes;
+    }
+
     public function getStatus()
     {
         return $this->status;

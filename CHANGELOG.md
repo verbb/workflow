@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.8 - 2020-05-13
+
+### Fixed
+- Fix multi-site entries and their approval overriding the status of other-site entries.
+- Approving new entries respects section default status settings.
+- Fix date attributes for submissions not being localised.
+
+## 1.4.7 - 2020-05-12
+
+### Fixed
+- Fix incorrect response sent for some actions, causing `send()` errors.
+- Improve handling of `enabledForSite` when approving and publishing submissions.
+
 ## 1.4.6 - 2020-04-28
 
 ### Fixed
