@@ -60,8 +60,21 @@ class Service extends Component
             if ($event->sender->propagating) {
                 return;
             }
-            
-            // If we are approving a submission, make sure to make it live
+
+            // For multi-sites, we only want to act on the current site's entry. Returning early will respect the 
+            // section defaults for enabling the entry per-site.
+            if (Craft::$app->getIsMultiSite()) {
+                $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id;
+
+                if ($siteHandle = $request->getParam('site')) {
+                    $currentSiteId = Craft::$app->getSites()->getSiteByHandle($siteHandle)->id;
+                }
+
+                if ($event->sender->siteId != $currentSiteId) {
+                    return;
+                }
+            }
+
             $event->sender->enabled = true;
             $event->sender->enabledForSite = true;
             $event->sender->setScenario(Element::SCENARIO_LIVE);

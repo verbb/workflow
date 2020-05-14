@@ -91,19 +91,19 @@ class SubmissionsController extends BaseEntriesController
     public function actionSaveDraft()
     {
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('entry-revisions/save-draft')->send();
+        return Craft::$app->runAction('entry-revisions/save-draft');
     }
 
     public function actionPublishDraft()
     {
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('entry-revisions/publish-draft')->send();
+        return Craft::$app->runAction('entry-revisions/publish-draft');
     }
 
     public function actionPublishEntry()
     {
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('entries/save-entry')->send();
+        return Craft::$app->runAction('entries/save-entry');
     }
 
 
