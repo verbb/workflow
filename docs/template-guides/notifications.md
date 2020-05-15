@@ -38,7 +38,7 @@ Hey {{ user.friendlyName }},
 Variable | Description
 --- | ---
 `submission` | A [Submission](docs:developers/submission) element.
-`review` | A [Submission](docs:developers/review) model.
+`review` | A [Review](docs:developers/review) model.
 `user` | A [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) element.
 
 #### Example Subject
