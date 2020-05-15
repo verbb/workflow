@@ -23,11 +23,11 @@ Where there are two Reviewer groups - Reviewers 1 and Reviewers 2. Submissions w
 
 Visually, this process would look similar to:
 
-- Editor creates and submits entry
-- Reviewers 1 receives & reviews submission
-  - If rejected, back to Editor
-- Reviewers 2 receives & reviews submission
-  - If rejected, back to Reviewers 1
-- Publisher receives & reviews submission
-  - If rejected, back to Reviewers 2
+- "Editor" creates and submits entry
+- "Reviewers 1" receives & reviews submission
+  - If rejected, back to "Editor"
+- "Reviewers 2" receives & reviews submission
+  - If rejected, back to "Reviewers 1"
+- "Publisher" receives & reviews submission
+  - If rejected, back to "Reviewers 2"
   - If approved, publishes entry
