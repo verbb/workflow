@@ -8,18 +8,14 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\db\Table;
-use craft\elements\Entry;
 use craft\events\DraftEvent;
 use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
-use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 
 use DateTime;
-
-use yii\base\ModelEvent as YiiModelEvent;
 
 class Service extends Component
 {
@@ -46,12 +42,18 @@ class Service extends Component
                 ->limit(1)
                 ->status('pending')
                 ->orderBy('dateCreated desc')
-                ->exists();
+                ->one();
 
-            if ($submission) {
-                $event->isValid = false;
+            if ($submission !== null) {
+                $currentUser = Craft::$app->getUser()->getIdentity();
 
-                $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
+                // Ensure current user is allowed to review the submission
+                /** @var Submission $submission */
+                if (!$submission->canUserReview($currentUser)) {
+                    $event->isValid = false;
+
+                    $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
+                }
             }
         }
 
@@ -61,7 +63,7 @@ class Service extends Component
                 return;
             }
 
-            // For multi-sites, we only want to act on the current site's entry. Returning early will respect the 
+            // For multi-sites, we only want to act on the current site's entry. Returning early will respect the
             // section defaults for enabling the entry per-site.
             if (Craft::$app->getIsMultiSite()) {
                 $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id;
@@ -115,6 +117,14 @@ class Service extends Component
 
                 Craft::$app->getResponse()->redirect($url)->send();
             }
+        }
+
+        if ($action == 'approve-review') {
+            Workflow::$plugin->getSubmissions()->approveReview();
+        }
+
+        if ($action == 'reject-review') {
+            Workflow::$plugin->getSubmissions()->rejectReview();
         }
 
         if ($action == 'revoke-submission') {
@@ -177,16 +187,16 @@ class Service extends Component
             return;
         }
 
-        $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
-        $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
-
         if (!$currentUser) {
             Workflow::log('No current user.');
 
             return;
         }
 
-        // Only show the sidebar submission button for editors
+        $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
+        $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
+
+        // Show the sidebar submission button for editors
         if ($currentUser->isInGroup($editorGroup)) {
             return $this->_renderEntrySidebarPanel($context, 'editor-pane');
         }
@@ -194,6 +204,16 @@ class Service extends Component
         // Show another information panel for publishers (if there's submission info)
         if ($currentUser->isInGroup($publisherGroup)) {
             return $this->_renderEntrySidebarPanel($context, 'publisher-pane');
+        }
+
+        // Show the sidebar submission button for reviewers
+        $submissions = $this->_getSubmissionsFromContext($context);
+        $lastSubmission = empty($submissions) ? null : end($submissions);
+
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($lastSubmission) as $userGroup) {
+            if ($currentUser->isInGroup($userGroup)) {
+                return $this->_renderEntrySidebarPanel($context, 'reviewer-pane');
+            }
         }
     }
 
@@ -224,16 +244,8 @@ class Service extends Component
             }
         }
 
-        // See if there's an existing submission
-        $ownerId = $context['entry']->id ?? ':empty:';
-        $draftId = $context['draftId'] ?? ':empty:';
-        $siteId = $context['entry']['siteId'] ?? Craft::$app->getSites()->getCurrentSite()->id;
-
-        $submissions = Submission::find()
-            ->ownerId($ownerId)
-            ->ownerSiteId($siteId)
-            ->ownerDraftId($draftId)
-            ->all();
+        // Get existing submissions
+        $submissions = $this->_getSubmissionsFromContext($context);
 
         Workflow::log('Rendering ' . $template . ' for #' . $context['entry']->id);
 
@@ -248,4 +260,17 @@ class Service extends Component
         ], $routeParams));
     }
 
+    private function _getSubmissionsFromContext($context)
+    {
+        // Get existing submissions
+        $ownerId = $context['entry']->id ?? ':empty:';
+        $draftId = $context['draftId'] ?? ':empty:';
+        $siteId = $context['entry']['siteId'] ?? Craft::$app->getSites()->getCurrentSite()->id;
+
+        return Submission::find()
+            ->ownerId($ownerId)
+            ->ownerSiteId($siteId)
+            ->ownerDraftId($draftId)
+            ->all();
+    }
 }

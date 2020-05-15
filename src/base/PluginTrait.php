@@ -6,7 +6,6 @@ use verbb\workflow\services\Service;
 use verbb\workflow\services\Submissions;
 
 use Craft;
-use craft\log\FileTarget;
 
 use yii\log\Logger;
 
@@ -17,17 +16,26 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
+    /**
+     * @var Workflow $plugin
+     */
     public static $plugin;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return Service
+     */
     public function getService()
     {
         return $this->get('service');
     }
 
+    /**
+     * @return Submissions
+     */
     public function getSubmissions()
     {
         return $this->get('submissions');

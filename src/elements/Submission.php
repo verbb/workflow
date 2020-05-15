@@ -1,8 +1,12 @@
 <?php
 namespace verbb\workflow\elements;
 
+use craft\elements\User;
+use craft\i18n\Locale;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
+use verbb\workflow\models\Review;
+use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\records\Submission as SubmissionRecord;
 
 use Craft;
@@ -11,6 +15,7 @@ use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
+use verbb\workflow\Workflow;
 
 class Submission extends Element
 {
@@ -96,7 +101,7 @@ class Submission extends Element
                 'label' => Craft::t('workflow', 'All submissions'),
             ]
         ];
-        
+
         return $sources;
     }
 
@@ -114,7 +119,7 @@ class Submission extends Element
 
         return $actions;
     }
-    
+
 
     // Public Methods
     // -------------------------------------------------------------------------
@@ -230,6 +235,120 @@ class Submission extends Element
         return $this->getPublisher()->fullName ?? '';
     }
 
+    /**
+     * Returns the reviews, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return Review[]
+     */
+    public function getReviews(bool $approved = null): array
+    {
+        $reviews = [];
+
+        $query = ReviewRecord::find()
+            ->where(['submissionId' => $this->id])
+            ->orderBy('dateCreated');
+
+        if ($approved !== null) {
+            $query->andWhere(['approved' => $approved]);
+        }
+
+        $records = $query->all();
+
+        foreach ($records as $record) {
+            $review = new Review();
+            $review->setAttributes($record->getAttributes(), false);
+            $reviews[] = $review;
+        }
+
+        return $reviews;
+    }
+
+    /**
+     * Returns the last reviews, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return Review|null
+     */
+    public function getLastReview(bool $approved = null)
+    {
+        $reviews = $this->getReviews($approved);
+
+        return end($reviews) ?: null;
+    }
+
+    /**
+     * Returns the last reviewer, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return User|null
+     */
+    public function getLastReviewer(bool $approved = null)
+    {
+        $lastReview = $this->getLastReview($approved);
+
+        if ($lastReview === null) {
+            return null;
+        }
+
+        return Craft::$app->getUsers()->getUserById($lastReview->userId);
+    }
+
+    /**
+     * Returns the URL of the last reviewer, optionally filtered by whether approved or not.
+     *
+     * @param bool|null
+     * @return User|string
+     */
+    public function getLastReviewerUrl(bool $approved = null)
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        if ($lastReviewer = $this->getLastReviewer($approved)) {
+            if ($currentUser->can('editUsers')) {
+                return Html::a($lastReviewer, $lastReviewer->cpEditUrl);
+            } else {
+                return $lastReviewer;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns whether a user is allowed to review this submission.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function canUserReview(User $user): bool
+    {
+        $publisherGroup = Craft::$app->userGroups->getGroupByUid(Workflow::$plugin->getSettings()->publisherUserGroup);
+
+        if ($user->isInGroup($publisherGroup)) {
+            return true;
+        }
+
+        $lastReviewer = $this->getLastReviewer();
+
+        if ($lastReviewer === null) {
+            return true;
+        }
+
+        $canReview = false;
+
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($this) as $key => $userGroup) {
+            if ($lastReviewer->isInGroup($userGroup)) {
+                $canReview = false;
+            }
+            elseif ($user->isInGroup($userGroup)) {
+                $canReview = true;
+            }
+        }
+
+        return $canReview;
+    }
+
     public function afterSave(bool $isNew)
     {
         if (!$isNew) {
@@ -272,13 +391,29 @@ class Submission extends Element
         return [
             'id' => ['label' => Craft::t('workflow', 'Entry')],
             'siteId' => ['label' => Craft::t('workflow', 'Site')],
-            'editor' => ['label' => Craft::t('workflow', 'Editor')],
             'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
+            'editor' => ['label' => Craft::t('workflow', 'Editor')],
+            'lastReviewDate' => ['label' => Craft::t('workflow', 'Last Reviewed')],
+            'reviewer' => ['label' => Craft::t('workflow', 'Last Reviewed By')],
             'publisher' => ['label' => Craft::t('workflow', 'Publisher')],
             'editorNotes' => ['label' => Craft::t('workflow', 'Editor Notes')],
             'publisherNotes' => ['label' => Craft::t('workflow', 'Publisher Notes')],
             'dateApproved' => ['label' => Craft::t('workflow', 'Date Approved')],
             'dateRejected' => ['label' => Craft::t('workflow', 'Date Rejected')],
+        ];
+    }
+
+    protected static function defineDefaultTableAttributes(string $source): array
+    {
+        return [
+            'id',
+            'editor',
+            'dateCreated',
+            'reviewer',
+            'lastReviewDate',
+            'publisher',
+            'dateApproved',
+            'dateRejected',
         ];
     }
 
@@ -307,6 +442,21 @@ class Submission extends Element
             }
             case 'editor': {
                 return $this->getEditorUrl() ?: '-';
+            }
+            case 'reviewer': {
+                return $this->getLastReviewerUrl() ?: '-';
+            }
+            case 'lastReviewDate': {
+                $lastReview = $this->getLastReview();
+
+                if ($lastReview === null) {
+                    return '-';
+                }
+
+                $formatter = Craft::$app->getFormatter();
+                    return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
+                        'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT)
+                    ]);
             }
             case 'dateApproved':
             case 'dateRejected': {

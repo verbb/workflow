@@ -28,12 +28,15 @@ use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 use yii\web\User;
 
+/**
+ * @method Settings getSettings()
+ */
 class Workflow extends Plugin
 {
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '2.1.3';
+    public $schemaVersion = '2.1.4';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 
@@ -101,6 +104,11 @@ class Workflow extends Plugin
                     'heading' => Craft::t('workflow', 'workflow_publisher_notification_heading'),
                     'subject' => Craft::t('workflow', 'workflow_publisher_notification_subject'),
                     'body' => Craft::t('workflow', 'workflow_publisher_notification_body'),
+                ], [
+                    'key' => 'workflow_editor_review_notification',
+                    'heading' => Craft::t('workflow', 'workflow_editor_review_notification_heading'),
+                    'subject' => Craft::t('workflow', 'workflow_editor_review_notification_subject'),
+                    'body' => Craft::t('workflow', 'workflow_editor_review_notification_body'),
                 ], [
                     'key' => 'workflow_editor_notification',
                     'heading' => Craft::t('workflow', 'workflow_editor_notification_heading'),

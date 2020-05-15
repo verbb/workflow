@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.0 - Unreleased
+
+### Added
+- Added multi-step review process.
+
+### Fixed
+- Fix multi-site entries and their approval overriding the status of other-site entries.
+- Approving new entries respects section default status settings.
+- Fix date attributes for submissions not being localised.
+
 ## 1.4.8 - 2020-05-13
 
 ### Fixed
