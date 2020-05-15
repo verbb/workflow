@@ -3,7 +3,7 @@
 ## 1.5.0 - 2020-05-15
 
 ### Added
-- Added multi-step review process. This introduces an optiona middle step between editor submissions and publisher approvals. This can be used for multiple review steps, by various parties. Big thanks to @bencroker from @putyourlightson.
+- Added multi-step review process. This introduces an optional middle step between editor submissions and publisher approvals. This can be used for multiple review steps, by various parties. Big thanks to @bencroker from @putyourlightson.
 
 ## 1.4.8 - 2020-05-13
 
