@@ -9,7 +9,9 @@ To visualise this, let's take an example hierarchy:
 
 In this scenario, an entry might start at the Junior Editor, before going to the Senior Editor for review and approval, which then must go on to the Managing Editor for final sign-off and approval. The Senior Editor can approve or deny a submission without having to go to the Managing Editor.
 
+:::tip
 Workflow also allows for multiple reviewers - so if you need more than one middle level of reviewers, you can add as many as required.
+:::
 
 To add Reviewers, use the Workflow settings to add user groups as reviewer levels. Similar to nominating user groups for Publishers and Editors. The overall review process will be top-down. So for example, you might have the following:
 
