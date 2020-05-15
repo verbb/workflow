@@ -13,7 +13,9 @@ In this scenario, an entry might start at the Junior Editor, before going to the
 Workflow also allows for multiple reviewers - so if you need more than one middle level of reviewers, you can add as many as required.
 :::
 
-To add Reviewers, use the Workflow settings to add user groups as reviewer levels. Similar to nominating user groups for Publishers and Editors. The overall review process will be top-down. So for example, you might have the following:
+To add Reviewers, use the Workflow settings to add user groups as reviewer levels. This will be similar to how you would have nominated user groups for Publishers and Editors.
+
+The overall review process will be top-down. So for example, you might have the following:
 
 ![](/docs/screenshots/review-pane5.png)
 
