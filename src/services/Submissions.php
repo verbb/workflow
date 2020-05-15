@@ -435,8 +435,7 @@ class Submissions extends Component
 
                 if ($review === null) {
                     $mail->composeFromKey('workflow_editor_notification', ['submission' => $submission]);
-                }
-                else {
+                } else {
                     $mail->composeFromKey('workflow_editor_review_notification', [
                         'submission' => $submission,
                         'review' => $review,

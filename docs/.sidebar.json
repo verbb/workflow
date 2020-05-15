@@ -14,7 +14,8 @@
         "children": [
             "feature-tour/setup",
             "feature-tour/editors",
-            "feature-tour/publishers"
+            "feature-tour/publishers",
+            "feature-tour/reviews"
         ]
     },
     {
@@ -22,7 +23,8 @@
         "collapsable": false,
         "children": [
             "template-guides/available-variables",
-            "template-guides/front-end-submission"
+            "template-guides/front-end-submission",
+            "template-guides/notifications"
         ]
     },
     {
@@ -37,6 +39,7 @@
         "collapsable": false,
         "children": [
             "developers/submission",
+            "developers/review",
             "developers/events"
         ]
     },

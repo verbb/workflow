@@ -31,6 +31,22 @@ Event::on(Submission::class, Submission::EVENT_AFTER_SAVE, function(Event $e) {
 });
 ```
 
+### The `afterGetReviewerUserGroups` event
+
+Plugins can get notified when registering user groups for reviewers.
+
+```php
+use verbb\workflow\events\ReviewerUserGroupsEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_AFTER_GET_REVIEWER_USER_GROUPS, function(ReviewerUserGroupsEvent $e) {
+    $submission = $event->submission;
+    $userGroups = $event->userGroups;
+
+});
+```
+
 ### The `beforeSendEditorEmail` event
 
 Plugins can get notified before the editor's email is sent
@@ -58,4 +74,3 @@ Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, fu
 
 });
 ```
-

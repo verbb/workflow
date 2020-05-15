@@ -7,7 +7,7 @@
 		"uuidString": "ECE3F09A-2816-43C6-9715-3F4A30BD28C5"
 		}
 	],
-"creatorBuild": "32137",
+"creatorBuild": "32147",
 "files": {
 	"/.github": {
 		"ft": 65536,
@@ -77,6 +77,25 @@
 		"rFN": 0,
 		"uCM": 0
 		},
+	"/docs/developers/review.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"hM": 0,
+		"oA": 1,
+		"oAP": "/docs/developers/review.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
+		},
 	"/docs/developers/submission.md": {
 		"cB": 0,
 		"cS": 0,
@@ -126,6 +145,25 @@
 		"hM": 0,
 		"oA": 1,
 		"oAP": "/docs/feature-tour/publishers.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
+		},
+	"/docs/feature-tour/reviews.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"hM": 0,
+		"oA": 1,
+		"oAP": "/docs/feature-tour/reviews.html",
 		"oF": 0,
 		"oFM": 0,
 		"oS": 0,
@@ -314,6 +352,28 @@
 		"oT": 1,
 		"q": 100
 		},
+	"/docs/screenshots/review-pane5.png": {
+		"ft": 32768,
+		"iS": 41525,
+		"oA": 0,
+		"oAP": "/docs/screenshots/review-pane5.png",
+		"oF": 0,
+		"oIPL": 0,
+		"opt": 0,
+		"oT": 1,
+		"q": 100
+		},
+	"/docs/screenshots/review-pane6.png": {
+		"ft": 32768,
+		"iS": 25368,
+		"oA": 0,
+		"oAP": "/docs/screenshots/review-pane6.png",
+		"oF": 0,
+		"oIPL": 0,
+		"opt": 0,
+		"oT": 1,
+		"q": 100
+		},
 	"/docs/support/get-support.md": {
 		"cB": 0,
 		"cS": 0,
@@ -363,6 +423,25 @@
 		"hM": 0,
 		"oA": 1,
 		"oAP": "/docs/template-guides/front-end-submission.html",
+		"oF": 0,
+		"oFM": 0,
+		"oS": 0,
+		"pHT": 0,
+		"pME": 1,
+		"rFN": 0,
+		"uCM": 0
+		},
+	"/docs/template-guides/Notifications.md": {
+		"cB": 0,
+		"cS": 0,
+		"eF": 1,
+		"eL": 1,
+		"ema": 1,
+		"eSQ": 1,
+		"ft": 4096,
+		"hM": 0,
+		"oA": 1,
+		"oAP": "/docs/template-guides/Notifications.html",
 		"oF": 0,
 		"oFM": 0,
 		"oS": 0,
@@ -439,6 +518,14 @@
 		"hM": 0,
 		"oA": 2,
 		"oAP": "/src/events/EmailEvent.php",
+		"oF": 0
+		},
+	"/src/events/ReviewerUserGroupsEvent.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/events/ReviewerUserGroupsEvent.php",
 		"oF": 0
 		},
 	"/src/icon-mask.svg": {
