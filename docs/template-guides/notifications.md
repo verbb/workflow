@@ -13,11 +13,15 @@ Variable | Description
 `submission` | A [Submission](docs:developers/submission) element.
 `user` | A [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) element.
 
-#### Example
+#### Example Subject
 
 ```twig
-Subject: "{{ submission.owner.title }}" has been submitted for approval on {{ siteName }}.
+"{{ submission.owner.title }}" has been submitted for approval on {{ siteName }}.
+```
 
+#### Example Body
+
+```twig
 Hey {{ user.friendlyName }},
 
 {{ submission.editor }} has submitted the entry "{{ submission.owner.title }}" for approval on {{ siteName }}.
@@ -37,11 +41,15 @@ Variable | Description
 `review` | A [Submission](docs:developers/review) model.
 `user` | A [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) element.
 
-#### Example
+#### Example Subject
 
 ```twig
-Subject: Your submission for "{{ submission.owner.title }}" has been {{ review.approved ? 'approved' : 'rejected' }} on {{ siteName }}.
+Your submission for "{{ submission.owner.title }}" has been {{ review.approved ? 'approved' : 'rejected' }} on {{ siteName }}.
+```
 
+#### Example Body
+
+```twig
 Hey {{ user.friendlyName }},
 
 Your submission for {{ submission.owner.title }} has been {{ review.approved ? 'approved' : 'rejected' }} {{ review.dateCreated | date }} on {{ siteName }}.
@@ -60,11 +68,15 @@ Variable | Description
 `submission` | A [Submission](docs:developers/submission) element.
 `user` | A [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) element.
 
-#### Example
+#### Example Subject
 
 ```twig
-Subject: Your submission for "{{ submission.owner.title }}" has been {{ submission.status }} on {{ siteName }}.
+Your submission for "{{ submission.owner.title }}" has been {{ submission.status }} on {{ siteName }}.
+```
 
+#### Example Body
+
+```twig
 Hey {{ user.friendlyName }},
 
 Your submission for {{ submission.owner.title }} has been {{ submission.status }} {{ (submission.status == 'approved') ? submission.dateApproved | date : submission.dateRejected | date }} on {{ siteName }}.
