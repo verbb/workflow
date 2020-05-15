@@ -6,21 +6,6 @@
     {% set groups = groups | merge([{ label: group.name, value: group.uid }]) %}
 {% endfor %}
 
-{# TODO: add to Sass file #}
-{% css %}
-table.editable tbody tr td {
-    text-align: left;
-}
-table.editable tbody tr td:first-of-type:before {
-    font-family: 'Craft';
-    content: 'rarr';
-    color: #9aa5b1;
-    vertical-align: middle;
-    margin-right: 5px;
-}
-{% endcss %}
-
-
 {% set groupsWithNone = [{ label: "None" | t('workflow'), value: '' }] | merge(groups) %}
 
 {{ forms.selectField({

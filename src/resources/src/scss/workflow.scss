@@ -116,7 +116,7 @@ body.rtl .workflow-widget .status {
 
 
 // ==========================================================================
-// Comments Settings
+// Workflow Settings
 // ==========================================================================
 
 .workflow-settings-tabs li {
@@ -124,4 +124,15 @@ body.rtl .workflow-widget .status {
     max-width: 100% !important;
 }
 
+#settings-reviewerUserGroups.editable tbody tr td {
+    text-align: left;
+}
+
+#settings-reviewerUserGroups.editable tbody tr td:first-of-type:before {
+    font-family: 'Craft';
+    content: 'rarr';
+    color: #9aa5b1;
+    vertical-align: middle;
+    margin-right: 5px;
+}
 
