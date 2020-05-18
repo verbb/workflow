@@ -36,7 +36,7 @@ class Workflow extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '2.1.4';
+    public $schemaVersion = '2.1.5';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 
