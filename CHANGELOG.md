@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.1 - 2020-05-18
+
+### Fixed
+- Fix missing migration for review, introduced in 1.5.0.
+
 ## 1.5.0 - 2020-05-15
 
 ### Added
