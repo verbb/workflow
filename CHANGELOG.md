@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.2 - 2020-06-09
+
+### Fixed
+- Fix XSS vulnerability with permissions settings.
+- Fix error when `reviewerUserGroups` plugin settings is not an array.
+
 ## 1.5.1 - 2020-05-18
 
 ### Fixed
