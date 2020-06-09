@@ -24,4 +24,18 @@ class Settings extends Model
 
     // Permissions
     public $enabledSections = '*';
+
+
+    // Public Methods
+    // =========================================================================
+
+    public function getReviewerUserGroups()
+    {
+        // Protect against _somehow_ this not being an array...
+        if (!is_array($this->reviewerUserGroups)) {
+            return [];
+        }
+
+        return $this->reviewerUserGroups;
+    }
 }

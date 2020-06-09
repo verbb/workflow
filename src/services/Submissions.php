@@ -45,7 +45,7 @@ class Submissions extends Component
     {
         $userGroups = [];
 
-        foreach (Workflow::$plugin->getSettings()->reviewerUserGroups as $reviewerUserGroup) {
+        foreach (Workflow::$plugin->getSettings()->getReviewerUserGroups() as $reviewerUserGroup) {
             // Get UID from first element in array
             $uid = $reviewerUserGroup[0] ?? null;
 
