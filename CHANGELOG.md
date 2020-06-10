@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.3 - 2020-06-10
+
+### Fixed
+- Add more logging to email notifications.
+- Fix emails not sending unless Reviewer Notifications is checked.
+
 ## 1.5.2 - 2020-06-09
 
 ### Fixed
