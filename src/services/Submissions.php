@@ -337,10 +337,14 @@ class Submissions extends Component
 
     public function sendReviewerNotificationEmail($submission)
     {
+        Workflow::log('Preparing reviewer notification.');
+
         $reviewerUserGroup = $this->getNextReviewerUserGroup($submission);
 
         // If there is no next reviewer user group then send publisher notification email
         if ($reviewerUserGroup === null) {
+            Workflow::log('No reviewer user groups. Send publisher email.');
+
             $this->sendPublisherNotificationEmail($submission);
 
             return;
@@ -349,6 +353,10 @@ class Submissions extends Component
         $reviewers = User::find()
             ->groupId($reviewerUserGroup->id)
             ->all();
+
+        if (!$reviewers) {
+            Workflow::log('No reviewers found to send notifications to.');
+        }
 
         foreach ($reviewers as $key => $user) {
             try {
@@ -368,19 +376,25 @@ class Submissions extends Component
 
                 Workflow::log('Sent reviewer notification to ' . $user->email);
             } catch (\Throwable $e) {
-                Workflow::log('Failed to send reviewer notification to ' . $user->email . ' - ' . $e->getMessage());
+                Workflow::error(Craft::t('workflow', 'Failed to send reviewer notification to {value} - “{message}” {file}:{line}', [
+                    'value' => $user->email,
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             }
         }
     }
 
     public function sendPublisherNotificationEmail($submission)
     {
+        Workflow::log('Preparing publisher notification.');
+
         $settings = Workflow::$plugin->getSettings();
 
         $groupId = Db::idByUid(Table::USERGROUPS, $settings->publisherUserGroup);
 
-        $query = User::find()
-            ->groupId($groupId);
+        $query = User::find()->groupId($groupId);
 
         // Check settings to see if we should email all publishers or not
         if (isset($settings->selectedPublishers)) {
@@ -390,6 +404,10 @@ class Submissions extends Component
         }
 
         $publishers = $query->all();
+
+        if (!$publishers) {
+            Workflow::log('No publishers found to send notifications to.');
+        }
 
         foreach ($publishers as $key => $user) {
             try {
@@ -409,7 +427,12 @@ class Submissions extends Component
 
                 Workflow::log('Sent publisher notification to ' . $user->email);
             } catch (\Throwable $e) {
-                Workflow::log('Failed to send publisher notification to ' . $user->email . ' - ' . $e->getMessage());
+                Workflow::error(Craft::t('workflow', 'Failed to send publisher notification to {value} - “{message}” {file}:{line}', [
+                    'value' => $user->email,
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
             }
         }
     }
@@ -422,6 +445,8 @@ class Submissions extends Component
      */
     public function sendEditorNotificationEmail($submission, Review $review = null)
     {
+        Workflow::log('Preparing editor notification.');
+
         $settings = Workflow::$plugin->getSettings();
 
         $editor = User::find()
@@ -429,62 +454,70 @@ class Submissions extends Component
             ->one();
 
         // Only send to the single user editor - not the whole group
-        if ($editor) {
-            try {
-                $mail = Craft::$app->getMailer()->setTo($editor);
+        if (!$editor) {
+            Workflow::error('Unable to find editor #' . $submission->editorId);
 
-                if ($review === null) {
-                    $mail->composeFromKey('workflow_editor_notification', ['submission' => $submission]);
-                } else {
-                    $mail->composeFromKey('workflow_editor_review_notification', [
-                        'submission' => $submission,
-                        'review' => $review,
-                    ]);
-                }
+            return;
+        }
 
-                if (!is_array($settings->editorNotificationsOptions)) {
-                    $settings->editorNotificationsOptions = [];
-                }
+        try {
+            $mail = Craft::$app->getMailer()->setTo($editor);
 
-                if ($review === null) {
-                    if ($submission->publisher) {
-                        if (in_array('replyTo', $settings->editorNotificationsOptions)) {
-                            $mail->setReplyTo($submission->publisher->email);
-                        }
-
-                        if (in_array('cc', $settings->editorNotificationsOptions)) {
-                            $mail->setCc($submission->publisher->email);
-                        }
-                    }
-                }
-                else {
-                    $reviewer = $submission->getLastReviewer();
-
-                    if ($reviewer !== null) {
-                        if (in_array('replyToReviewer', $settings->editorNotificationsOptions)) {
-                            $mail->setReplyTo($reviewer->email);
-                        }
-
-                        if (in_array('ccReviewer', $settings->editorNotificationsOptions)) {
-                            $mail->setCc($reviewer->email);
-                        }
-                    }
-                }
-
-                // Fire a 'beforeSendEditorEmail' event
-                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_EDITOR_EMAIL)) {
-                    $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, new EmailEvent([
-                        'mail' => $mail,
-                        'user' => $editor,
-                    ]));
-                }
-
-                $mail->send();
-
-                Workflow::log('Sent editor notification to ' . $editor->email);
-            } catch (\Throwable $e) {
-                Workflow::log('Failed to send editor notification to ' . $editor->email . ' - ' . $e->getMessage());
+            if ($review === null) {
+                $mail->composeFromKey('workflow_editor_notification', ['submission' => $submission]);
+            } else {
+                $mail->composeFromKey('workflow_editor_review_notification', [
+                    'submission' => $submission,
+                    'review' => $review,
+                ]);
             }
+
+            if (!is_array($settings->editorNotificationsOptions)) {
+                $settings->editorNotificationsOptions = [];
+            }
+
+            if ($review === null) {
+                if ($submission->publisher) {
+                    if (in_array('replyTo', $settings->editorNotificationsOptions)) {
+                        $mail->setReplyTo($submission->publisher->email);
+                    }
+
+                    if (in_array('cc', $settings->editorNotificationsOptions)) {
+                        $mail->setCc($submission->publisher->email);
+                    }
+                }
+            } else {
+                $reviewer = $submission->getLastReviewer();
+
+                if ($reviewer !== null) {
+                    if (in_array('replyToReviewer', $settings->editorNotificationsOptions)) {
+                        $mail->setReplyTo($reviewer->email);
+                    }
+
+                    if (in_array('ccReviewer', $settings->editorNotificationsOptions)) {
+                        $mail->setCc($reviewer->email);
+                    }
+                }
+            }
+
+            // Fire a 'beforeSendEditorEmail' event
+            if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_EDITOR_EMAIL)) {
+                $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, new EmailEvent([
+                    'mail' => $mail,
+                    'user' => $editor,
+                ]));
+            }
+
+            $mail->send();
+
+            Workflow::log('Sent editor notification to ' . $editor->email);
+        } catch (\Throwable $e) {
+            Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
+                'value' => $editor->email,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
         }
     }
 
