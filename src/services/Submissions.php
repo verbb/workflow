@@ -139,6 +139,8 @@ class Submissions extends Component
             // Trigger notification to reviewer
             if ($settings->reviewerNotifications) {
                 $this->sendReviewerNotificationEmail($submission);
+            } else if ($settings->publisherNotifications) {
+                $this->sendPublisherNotificationEmail($submission);
             }
         }
 
@@ -209,6 +211,8 @@ class Submissions extends Component
         // Trigger notification to editor
         if ($settings->reviewerNotifications) {
             $this->sendReviewerNotificationEmail($submission);
+        } else if ($settings->editorNotifications) {
+            $this->sendEditorNotificationEmail($submission);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
