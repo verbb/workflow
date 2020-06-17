@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.4 - 2020-06-18
+
+### Fixed
+- Fix email notifications for editor approvals.
+
 ## 1.5.3 - 2020-06-10
 
 ### Fixed
