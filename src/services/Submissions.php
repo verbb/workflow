@@ -465,16 +465,16 @@ class Submissions extends Component
         }
 
         try {
-            $mail = Craft::$app->getMailer()->setTo($editor);
-
             if ($review === null) {
-                $mail->composeFromKey('workflow_editor_notification', ['submission' => $submission]);
+                $mail = Craft::$app->getMailer()->composeFromKey('workflow_editor_notification', ['submission' => $submission]);
             } else {
-                $mail->composeFromKey('workflow_editor_review_notification', [
+                $mail = Craft::$app->getMailer()->composeFromKey('workflow_editor_review_notification', [
                     'submission' => $submission,
                     'review' => $review,
                 ]);
             }
+
+            $mail->setTo($editor);
 
             if (!is_array($settings->editorNotificationsOptions)) {
                 $settings->editorNotificationsOptions = [];
