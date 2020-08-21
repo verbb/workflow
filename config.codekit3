@@ -431,7 +431,7 @@
 		"rFN": 0,
 		"uCM": 0
 		},
-	"/docs/template-guides/Notifications.md": {
+	"/docs/template-guides/notifications.md": {
 		"cB": 0,
 		"cS": 0,
 		"eF": 1,
@@ -441,7 +441,7 @@
 		"ft": 4096,
 		"hM": 0,
 		"oA": 1,
-		"oAP": "/docs/template-guides/Notifications.html",
+		"oAP": "/docs/template-guides/notifications.html",
 		"oF": 0,
 		"oFM": 0,
 		"oS": 0,
