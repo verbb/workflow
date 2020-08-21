@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.5 - 2020-08-21
+
+### Fixed
+- Fix editors being able to continue editing their draft once submitted (through auto-save).
+
 ## 1.5.4 - 2020-06-18
 
 ### Fixed
