@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.6 - 2020-08-31
+
+### Fixed
+- Fix user receiving an error when trying to edit a submitted entry.
+
 ## 1.5.5 - 2020-08-21
 
 ### Fixed
