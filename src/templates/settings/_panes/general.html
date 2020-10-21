@@ -72,3 +72,14 @@
     on: settings.publisherNotesRequired,
     warning: macros.configWarning('publisherNotesRequired', 'workflow'),
 }) }}
+
+<hr>
+
+{{ forms.lightswitchField({
+    label: 'Lock Draft Submissions' | t('workflow'),
+    instructions: 'Whether an entry should be locked for editing after it‘s been submitted for review.' | t('workflow'),
+    id: 'lockDraftSubmissions',
+    name: 'lockDraftSubmissions',
+    on: settings.lockDraftSubmissions,
+    warning: macros.configWarning('lockDraftSubmissions', 'workflow'),
+}) }}

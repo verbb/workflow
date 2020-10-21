@@ -14,6 +14,7 @@ class Settings extends Model
     public $publisherUserGroup;
     public $editorNotesRequired = false;
     public $publisherNotesRequired = false;
+    public $lockDraftSubmissions = true;
 
     // Notifications
     public $editorNotifications = true;

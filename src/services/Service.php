@@ -50,7 +50,7 @@ class Service extends Component
                 // Ensure current user is allowed to review the submission
                 // If the current user is the author, they can't edit their own submission
                 /** @var Submission $submission */
-                if (!$submission->canUserReview($currentUser) || $submission->editorId == $currentUser->id) {
+                if ((!$submission->canUserReview($currentUser) || $submission->editorId == $currentUser->id) && $settings->lockDraftSubmissions) {
                     $event->isValid = false;
 
                     $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
