@@ -13,6 +13,7 @@ return [
         'editorNotifications' => true,
         'publisherNotifications' => true,
         'selectedPublishers' => '*',
+        'lockDraftSubmissions' => true,
     ]
 ];
 ```
@@ -25,6 +26,7 @@ return [
 - `editorNotifications` - Whether editors should receive email notifications.
 - `publisherNotifications` - Whether publishers should receive email notifications.
 - `selectedPublishers` - An array of user IDs of publishers to receive email notifications. Use '\*' for all.
+- `lockDraftSubmissions` - Whether an entry should be locked for editing after it‘s been submitted for review.
 
 ## Control Panel
 
