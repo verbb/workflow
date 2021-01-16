@@ -93,7 +93,7 @@ class Submissions extends Component
 
         foreach ($reviewerUserGroups as $key => $userGroup) {
             if ($lastReviewer->isInGroup($userGroup)) {
-                $nextUserGroup = $userGroups[$key + 1] ?? $nextUserGroup;
+                $nextUserGroup = $reviewerUserGroups[$key + 1] ?? $nextUserGroup;
             }
         }
 
