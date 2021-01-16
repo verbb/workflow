@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.8 - 2021-01-16
+
+### Fixed
+- Fix toggle arrow alignment for entry widgets.
+- Fix publisher receiving notifications incorrectly, when multiple reviewers are enabled.
+
 ## 1.5.7 - 2020-11-28
 
 ### Added
