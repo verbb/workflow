@@ -208,11 +208,16 @@ class Submissions extends Component
             return null;
         }
 
-        // Trigger notification to editor
+        $review = Review::populateModel($reviewRecord);
+
+        // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
             $this->sendReviewerNotificationEmail($submission);
-        } else if ($settings->editorNotifications) {
-            $this->sendEditorNotificationEmail($submission);
+        } 
+
+        // Trigger notification to editor - if configured to do so
+        if ($settings->editorNotifications && $settings->reviewerApprovalNotifications) {
+            $this->sendEditorNotificationEmail($submission, $review);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
@@ -514,7 +519,11 @@ class Submissions extends Component
 
             $mail->send();
 
-            Workflow::log('Sent editor notification to ' . $editor->email);
+            if ($review === null) {
+                Workflow::log('Sent editor notification to ' . $editor->email);
+            } else {
+                Workflow::log('Sent editor review notification to ' . $editor->email);
+            }
         } catch (\Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
                 'value' => $editor->email,

@@ -7,26 +7,49 @@ Create an `workflow.php` file under your `/config` directory with the following 
 
 return [
     '*' => [
-        'enabledSections' => '*',
+        // General
         'editorUserGroup' => '',
+        'reviewerUserGroups' => [],
         'publisherUserGroup' => '',
+        'editorNotesRequired' => false,
+        'publisherNotesRequired' => false,
+        'lockDraftSubmissions' => true,
+
+        // Notifications
         'editorNotifications' => true,
+        'editorNotificationsOptions' => [],
+        'reviewerNotifications' => true,
+        'reviewerApprovalNotifications' => false,
         'publisherNotifications' => true,
         'selectedPublishers' => '*',
-        'lockDraftSubmissions' => true,
+
+        // Permissions
+        'enabledSections' => '*',
     ]
 ];
 ```
 
 ### Configuration options
 
-- `enabledSections` - An array of section IDs to enable submissions on. Use '\*' for all.
+General
 - `editorUserGroup` - The User Group ID for editors.
+- `reviewerUserGroups` - A collection of user groups for each reviewer.
 - `publisherUserGroup` - The User Group ID for publishers.
-- `editorNotifications` - Whether editors should receive email notifications.
-- `publisherNotifications` - Whether publishers should receive email notifications.
-- `selectedPublishers` - An array of user IDs of publishers to receive email notifications. Use '\*' for all.
+- `editorNotesRequired` - Whether editors are required to enter a note in their submissions.
+- `publisherNotesRequired` - Whether publishers are required to enter a note in their submissions.
 - `lockDraftSubmissions` - Whether an entry should be locked for editing after it‘s been submitted for review.
+
+Notifications
+- `editorNotifications` - Whether email notifications should be delivered to individual editors when approved or rejected.
+- `editorNotificationsOptions` - Whether editor notifications should include the reviewer's or publisher's email whose triggered the action.
+- `reviewerNotifications` - Whether email notifications should be delivered to reviewers when editors submit an entry for review.
+- `reviewerApprovalNotifications` - Whether email notifications should be delivered to editors when each reviewer approves an entry after review.
+- `publisherNotifications` - Whether email notifications should be delivered to publishers when editors submit an entry for review.
+- `selectedPublishers` - An array of user IDs of publishers to receive email notifications. Use '\*' for all.
+
+Permissions
+- `enabledSections` - An array of section IDs to enable submissions on. Use '\*' for all.
+
 
 ## Control Panel
 

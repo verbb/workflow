@@ -36,6 +36,15 @@
     warning: macros.configWarning('reviewerNotifications', 'workflow'),
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Reviewer Approval Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to editors when each reviewer approves an entry after review.' | t('workflow'),
+    id: 'reviewerApprovalNotifications',
+    name: 'reviewerApprovalNotifications',
+    on: settings.reviewerApprovalNotifications,
+    warning: macros.configWarning('reviewerApprovalNotifications', 'workflow'),
+}) }}
+
 <hr>
 
 {{ forms.lightswitchField({

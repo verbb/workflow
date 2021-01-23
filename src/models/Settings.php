@@ -20,6 +20,7 @@ class Settings extends Model
     public $editorNotifications = true;
     public $editorNotificationsOptions = [];
     public $reviewerNotifications = true;
+    public $reviewerApprovalNotifications = false;
     public $publisherNotifications = true;
     public $selectedPublishers = '*';
 
