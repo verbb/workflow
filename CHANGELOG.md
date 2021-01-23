@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.9 - 2021-01-24
+
+### Added
+- Add `reviewerApprovalNotifications` plugin setting to control sending email notifications to each the editor upon each reviewer’s approval.
+
+### Fixed
+- Fix reviewer emails not setting the correct “Review” model.
+
 ## 1.5.8 - 2021-01-16
 
 ### Fixed
