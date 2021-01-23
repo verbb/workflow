@@ -1,6 +1,8 @@
 <?php
 namespace verbb\workflow\models;
 
+use verbb\workflow\records\Review as ReviewRecord;
+
 use craft\base\Model;
 
 class Review extends Model
@@ -25,7 +27,7 @@ class Review extends Model
      */
     public static function populateModel($values): Review
     {
-        if ($values instanceof Model) {
+        if ($values instanceof Model || $values instanceof ReviewRecord) {
             $values = $values->getAttributes();
         }
 
