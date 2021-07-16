@@ -63,29 +63,8 @@ class SubmissionsController extends BaseEntriesController
 
     public function actionUnsavedDraftSubmission()
     {
-        // For an unsaved entry (brand new), we want to publish the draft first, then also submit
-        // a new draft (with the same details) immediately, because the rest of the functionality for Workflow
-        // always deals with drafts. This is mostly so users can have an entry shown in the element index
-        // which it can't be if its an unpublished draft. Bit of a pain...
-
-        // We have to duplicate the controller action for publishing a draft, otherwise we can't get the 
-        // resulting published entry (easily), which we need to redirect properly and create the new draft from.
-        $entry = $this->_publishDraft();
-
-        if (!$entry) {
-            return null;
-        }
-
-        // Create a new draft, based on the one published
-        $draft = Craft::$app->getDrafts()->createDraft($entry, Craft::$app->getUser()->getId());
-
-        // Perform the Workflow submission on this new draft
-        Workflow::$plugin->getSubmissions()->saveSubmission($draft);
-
-        // Redirect to the new draft
-        return $this->redirect(UrlHelper::url($draft->getCpEditUrl(), [
-            'draftId' => $draft->draftId,
-        ]));
+        // We're already checking validation in our beforeAction
+        return Craft::$app->runAction('entry-revisions/save-draft');
     }
 
     public function actionSaveDraft()
@@ -145,102 +124,6 @@ class SubmissionsController extends BaseEntriesController
 
             return $entry;
         }
-    }
-
-    private function _publishDraft()
-    {
-        $this->requirePostRequest();
-
-        $request = Craft::$app->getRequest();
-        $draftId = $request->getRequiredBodyParam('draftId');
-        $siteId = $request->getBodyParam('siteId');
-
-        /** @var Entry|DraftBehavior|null $draft */
-        $draft = Entry::find()
-            ->draftId($draftId)
-            ->siteId($siteId)
-            ->anyStatus()
-            ->one();
-
-        if (!$draft) {
-            throw new NotFoundHttpException('Draft not found');
-        }
-
-        // Permission enforcement
-        /** @var Entry|null $entry */
-        $entry = ElementHelper::sourceElement($draft);
-        $this->enforceEditEntryPermissions($entry);
-        $section = $entry->getSection();
-
-        // Is this another user's entry (and it's not a Single)?
-        $userId = Craft::$app->getUser()->getId();
-        if (
-            $entry->authorId != $userId &&
-            $section->type != Section::TYPE_SINGLE &&
-            $entry->enabled
-        ) {
-            // Make sure they have permission to make live changes to those
-            $this->requirePermission('publishPeerEntries:' . $section->uid);
-        }
-
-        // Is this another user's draft?
-        if ($draft->creatorId != $userId) {
-            $this->requirePermission('publishPeerEntryDrafts:' . $section->uid);
-        }
-
-        // Populate the main draft attributes
-        $this->_setDraftAttributesFromPost($draft);
-
-        // Even more permission enforcement
-        if ($draft->enabled && !Craft::$app->getUser()->checkPermission("publishEntries:{$section->uid}")) {
-            if ($draft->getIsUnsavedDraft()) {
-                // Just disable it
-                $draft->enabled = false;
-            } else {
-                throw new ForbiddenHttpException('User is not permitted to perform this action');
-            }
-        }
-
-        // Populate the field content
-        $fieldsLocation = $request->getParam('fieldsLocation', 'fields');
-        $draft->setFieldValuesFromRequest($fieldsLocation);
-        $draft->updateTitle();
-
-        // Validate and save the draft
-        if ($draft->enabled && $draft->enabledForSite) {
-            $draft->setScenario(Element::SCENARIO_LIVE);
-        }
-
-        if ($draft->getIsUnsavedDraft() && $request->getBodyParam('propagateAll')) {
-            $draft->propagateAll = true;
-        }
-
-        try {
-            if (!Craft::$app->getElements()->saveElement($draft)) {
-                throw new InvalidElementException($draft);
-            }
-
-            // Publish the draft (finally!)
-            $newEntry = Craft::$app->getDrafts()->applyDraft($draft);
-        } catch (InvalidElementException $e) {
-            Craft::$app->getSession()->setError(Craft::t('app', 'Couldn’t publish draft.'));
-
-            // Send the draft back to the template
-            Craft::$app->getUrlManager()->setRouteParams([
-                'entry' => $draft
-            ]);
-            return null;
-        }
-
-        if ($request->getAcceptsJson()) {
-            return $this->asJson([
-                'success' => true,
-            ]);
-        }
-
-        Craft::$app->getSession()->setNotice(Craft::t('app', 'Entry saved.'));
-
-        return $newEntry;
     }
 
     private function _setDraftAttributesFromPost(Entry $draft)

@@ -104,8 +104,8 @@ class Service extends Component
             return;
         }
 
-        // Check if we're submitting a new submission on an existing entry - different to a brand-new, unsaved draft
-        if ($action == 'save-submission' && !$event->sender->getIsUnsavedDraft()) {
+        // Check if we're submitting a new submission
+        if ($action == 'save-submission') {
             Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
 
             // This doesn't seem to redirect properly, which is annoying!
