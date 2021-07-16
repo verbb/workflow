@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0 - 2021-07-16
+
+### Changed
+- Now requires Craft 3.7+.
+
+### Fixed
+- Fixed Craft 3.7+ compatibility.
+
 ## 1.5.9 - 2021-01-24
 
 ### Added
