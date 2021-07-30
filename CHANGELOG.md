@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.1 - 2021-07-30
+
+### Fixed
+- Fixed Craft 3.7+ compatibility.
+
 ## 1.6.0 - 2021-07-16
 
 ### Changed
