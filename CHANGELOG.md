@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.2 - 2021-08-29
+
+### Fixed
+- Fix editors (who have access to the Workflow index) being allowed to approve their own submissions.
+
 ## 1.6.1 - 2021-07-30
 
 ### Fixed
