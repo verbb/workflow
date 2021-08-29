@@ -37,6 +37,8 @@ class SetStatus extends ElementAction
         $submissions = $query->all();
         $failCount = 0;
 
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
         foreach ($submissions as $submission) {
             // Skip if there's nothing to change
             if ($submission->status == $this->status) {
@@ -50,6 +52,13 @@ class SetStatus extends ElementAction
                 $ownerId = $submission->ownerId;
                 $ownerSiteId = $submission->ownerSiteId;
                 $ownerDraftId = $submission->ownerDraftId;
+
+                // If trying to approve their own submission, fail
+                if ($submission->editorId == $currentUser->id) {
+                    $failCount++;
+
+                    continue;
+                }
 
                 if ($ownerDraftId) {
                     $draft = Entry::find()->draftId($ownerDraftId)->siteId($ownerSiteId)->anyStatus()->one();
