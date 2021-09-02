@@ -11,6 +11,7 @@ use craft\db\Table;
 use craft\events\DraftEvent;
 use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\UrlHelper;
@@ -196,6 +197,22 @@ class Service extends Component
 
         $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
         $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
+
+        // If the user is in _both_ editor and publisher groups, work it out.
+        if ($currentUser->isInGroup($editorGroup) && $currentUser->isInGroup($publisherGroup)) {
+            // Are there any submissions pending for any users but this one?
+            $submissions = $this->_getSubmissionsFromContext($context);
+
+            $pendingSubmissions = ArrayHelper::where($submissions, function($submission) use ($currentUser) {
+                return $submission->status === 'pending' && $submission->editorId != $currentUser->id;
+            }, true, true, false);
+
+            if ($pendingSubmissions) {
+                return $this->_renderEntrySidebarPanel($context, 'publisher-pane');
+            }
+
+            return $this->_renderEntrySidebarPanel($context, 'editor-pane');
+        }
 
         // Show the sidebar submission button for editors
         if ($currentUser->isInGroup($editorGroup)) {
