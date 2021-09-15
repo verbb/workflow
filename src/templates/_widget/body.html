@@ -1,23 +1,20 @@
+{% do view.registerAssetBundle('verbb\\workflow\\assetbundles\\WorkflowAsset') %}
+
 <div class="workflow-widget">
     {% if submissions | length %}
-        <table class="data fullwidth">
-            <tbody>
-                {% for submission in submissions %}
-                    <tr>
-                        <td>
-                            <span class="status {{ submission.status }}"></span>
-                            
-                            {% if submission.owner %}
-                                <a href="{{ submission.cpEditUrl }}">{{ submission.owner.title }}</a>
-                            {% endif %}
+        {% for submission in submissions %}
+            <div class="workflow-block">
+                <span class="status {{ submission.status }}"></span>
 
-                            <span class="light">{{ submission.dateCreated | date() }}, {{ submission.editor }}</span>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                {% set title = submission.getOwner() ?? ('[Deleted element]' | t('workflow')) %}
+
+                <a href="{{ submission.cpEditUrl }}">
+                    <span>{{ title }}</span>
+                    <small>{{ submission.dateCreated | timestamp('short') }}: {{ submission.getEditor() }}</small>
+                </a>
+            </div>
+        {% endfor %}
     {% else %}
-        <p>{{ "No submissions." | t('workflow') }}</p>
+        <p>{{ 'No submissions.' | t('workflow') }}</p>
     {% endif %}
 </div>

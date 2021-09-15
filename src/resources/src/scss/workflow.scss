@@ -109,13 +109,46 @@
 // Workflow Dashboard Widget
 // ==========================================================================
 
-body.ltr .workflow-widget .status {
-    margin-right: 5px;
+.workflow-widget .workflow-block {
+    position: relative;
+    margin-left: 0;
+    margin-bottom: 10px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .status {
+        position: absolute;
+        top: 5px;
+        left: 0;
+    }
+    
+    a {
+        margin-left: 20px;
+        display: block;
+
+        small {
+            color: #aaa;
+            font-size: 85%;
+            display: block;
+        }
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        &:hover small {
+            color: #666;
+            text-decoration: none;
+        }
+
+        &:hover span {
+            text-decoration: underline;
+        }
+    }
 }
 
-body.rtl .workflow-widget .status {
-    margin-left: 5px;
-}
 
 
 // ==========================================================================
