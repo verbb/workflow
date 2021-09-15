@@ -19,6 +19,10 @@
 .status.rejected {
     background-color: #CF1124;
     border-color: transparent !important;
+
+    body.use-shapes & {
+        border-radius: 1px;
+    }
 }
 
 
