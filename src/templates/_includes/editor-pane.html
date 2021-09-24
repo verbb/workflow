@@ -63,7 +63,7 @@
 
             <div id="workflow-submission-info" class="hidden">
                 <div class="instructions">
-                    <p style="color: #da5a47;">{{ "This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | date('jS M Y g:ia') }) }}</p>
+                    <p style="color: #da5a47;">{{ "This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | date('medium') }) }}</p>
 
                     {% if submission.editorNotes %}
                         <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
@@ -101,7 +101,7 @@
 
                     <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
-                            <p>{{ submission.publisherUrl | raw }} {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | date('jS M Y g:ia') }) }}</p>
+                            <p>{{ submission.publisherUrl | raw }} {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | date('medium') }) }}</p>
 
                             {% if submission.editorNotes %}
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
@@ -128,7 +128,7 @@
                     <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
                             {% set url = submission.publisherUrl ?: submission.lastReviewerUrl %}
-                            <p>{{ url | raw }} {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('jS M Y g:ia') }) }}</p>
+                            <p>{{ url | raw }} {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | date('medium') }) }}</p>
 
                             {% if submission.editorNotes %}
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
@@ -154,7 +154,7 @@
 
                     <div id="history-info-{{ loop.index }}" class="workflow-history-info hidden">
                         <div class="instructions">
-                            <p>{{ submission.editorUrl | raw }} {{ "revoked this entry on {date}." | t('workflow', { date: submission.dateRevoked | date('jS M Y g:ia') }) }}</p>
+                            <p>{{ submission.editorUrl | raw }} {{ "revoked this entry on {date}." | t('workflow', { date: submission.dateRevoked | date('medium') }) }}</p>
 
                             {% if submission.editorNotes %}
                                 <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
