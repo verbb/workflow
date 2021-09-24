@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.3 - 2021-09-24
+
+### Changed
+- Update dashboard widget formatting.
+- Update status colours to Craft standard.
+- Set `publisherId` and `dateApproved` when setting the status to approved in the element status index.
+
+### Fixed
+- Fix all date text not using locale-aware formatting.
+- Fix notes placeholder text not being fully translatable.
+- Fix rejected submissions' status not working with user border accessibility options.
+- Fix when a user is both editor and publisher, not showing the approval widget for other editors submissions.
+
 ## 1.6.2 - 2021-08-29
 
 ### Fixed
