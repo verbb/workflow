@@ -45,10 +45,10 @@
             </div>
 
             <div class="workflow-submission-body">
-                {% set required = settings.publisherNotesRequired ? ' (required)' : '' %}
+                {% set placeholderText = settings.publisherNotesRequired ? 'Notes about your response (required)' : 'Notes about your response' %}
 
                 {{ forms.textareaField({
-                    placeholder: 'Notes about your response' ~ required ~ '.' | t('workflow'),
+                    placeholder: placeholderText | t('workflow'),
                     id: 'publisherNotes',
                     name: 'publisherNotes',
                     class: 'field-notes',
