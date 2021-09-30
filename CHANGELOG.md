@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.4 - 2021-10-01
+
+### Fixed
+- Fix all date text not showing date and time (just date).
+- Fix missing translation for 'Notes about your submission' text.
+
 ## 1.6.3 - 2021-09-24
 
 ### Changed
