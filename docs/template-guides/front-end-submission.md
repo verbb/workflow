@@ -24,7 +24,7 @@ Workflow submissions can also be triggered for entries created through the front
 </form>
 ```
 
-When triggered by a user that's a [Editor](docs:feature-tour/editor), this entry will be created in your section (as disabled), a new draft will be created, and automatically submitted for review by the [Publisher](docs:feature-tour/publisher). If notifications are setup, publishers will receive a notification to action this submission.
+When triggered by a user that's a [Editor](docs:feature-tour/editors), this entry will be created in your section (as disabled), a new draft will be created, and automatically submitted for review by the [Publisher](docs:feature-tour/publishers). If notifications are setup, publishers will receive a notification to action this submission.
 
 There are also a number of other values you can give your `workflow-action` input, to do various tasks, should you like to build out more front-end functionality.
 
