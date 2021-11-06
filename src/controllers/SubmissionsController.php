@@ -34,6 +34,12 @@ class SubmissionsController extends BaseEntriesController
         $editorNotes = $request->getBodyParam('editorNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
 
+        // Save the notes for later, due to a number of different events triggering
+        Craft::$app->getUrlManager()->setRouteParams([
+            'editorNotes' => $editorNotes,
+            'publisherNotes' => $publisherNotes,
+        ]);
+
         if ($action === 'save-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->editorNotesRequired && !$editorNotes) {
