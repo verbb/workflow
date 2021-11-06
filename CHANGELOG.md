@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.5 - 2021-11-06
+
+### Fixed
+- Fix editor/publisher notes not being kept after a failed validation attempt.
+- Fix required fields not validating when submitting for review.
+
 ## 1.6.4 - 2021-10-01
 
 ### Fixed
