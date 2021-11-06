@@ -59,6 +59,18 @@ class Service extends Component
             }
         }
 
+        if ($action === 'save-submission') {
+            // Don't trigger for propagating elements
+            if ($event->sender->propagating) {
+                return;
+            }
+
+            // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
+            // can't publish. We quickly switch it on to make sure the entry validates correctly.
+            $event->sender->setScenario(Element::SCENARIO_LIVE);
+            $event->sender->validate();
+        }
+
         if ($action === 'approve-submission') {
             // Don't trigger for propagating elements
             if ($event->sender->propagating) {
