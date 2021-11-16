@@ -8,7 +8,7 @@ Workflow is a Craft CMS plugin for a common publisher-editor scenario when it co
 
 - Makes use of Craft's native user permissions.
 - Choose which user groups are your Editor and Publisher roles.
-- Email notifications to Publisher group, which editable content.
+- Email notifications to the Publisher group when content is ready for review.
 - Events for third-party plugins to hook into for submissions.
 
 ## Documentation
@@ -18,8 +18,6 @@ Visit the [Workflow Plugin page](https://verbb.io/craft-plugins/workflow) for al
 ## Support
 
 Get in touch with us via the [Workflow Support page](https://verbb.io/craft-plugins/workflow/support) or by [creating a Github issue](https://github.com/verbb/workflow/issues)
-
-<h2></h2>
 
 <a href="https://verbb.io" target="_blank">
   <img width="100" src="https://verbb.io/assets/img/verbb-pill.svg">
