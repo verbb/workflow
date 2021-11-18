@@ -20,6 +20,12 @@ use DateTime;
 
 class Service extends Component
 {
+    // Properties
+    // =========================================================================
+
+    public $afterSaveRun = false;
+
+
     // Public Methods
     // =========================================================================
 
@@ -113,13 +119,19 @@ class Service extends Component
         }
 
         // When approving, we don't want to perform an action here - wait until the draft has been applied
-        if (!$action || $event->sender->propagating || $event->isNew) {
+        if (!$action || $event->sender->propagating || $event->isNew || $this->afterSaveRun) {
             return;
         }
 
         // Check if we're submitting a new submission
         if ($action == 'save-submission') {
             Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
+
+            // This helps us maintain whether the after-save event has already been triggered for this
+            // request, and not to have it run again. This is most commonly caused by Preparse fields
+            // which re-save the element again, straight after it's first save. Then we end up with multiple
+            // submissions, created each time it's called.
+            $this->afterSaveRun = true;
 
             // This doesn't seem to redirect properly, which is annoying!
             if ($request->getIsCpRequest()) {
