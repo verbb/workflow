@@ -8,7 +8,7 @@ Workflow is a Craft CMS plugin for a common publisher-editor scenario when it co
 
 - Makes use of Craft's native user permissions.
 - Choose which user groups are your Editor and Publisher roles.
-- Email notifications to Publisher group, which editable content.
+- Email notifications to the Publisher group when content is ready for review.
 - Events for third-party plugins to hook into for submissions.
 
 ## Documentation
