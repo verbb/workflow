@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.6 - 2021-11-26
+
+### Fixed
+- Fix submissions being created multiple times, if an entry contained a Preparse field.
+
 ## 1.6.5 - 2021-11-06
 
 ### Fixed
