@@ -4,6 +4,7 @@ namespace verbb\workflow\services;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 use verbb\workflow\events\EmailEvent;
+use verbb\workflow\events\PrepareEmailEvent;
 use verbb\workflow\events\ReviewerUserGroupsEvent;
 use verbb\workflow\models\Review;
 use verbb\workflow\records\Review as ReviewRecord;
@@ -21,6 +22,9 @@ class Submissions extends Component
     // Constants
     // =========================================================================
 
+    const EVENT_PREPARE_EDITOR_EMAIL = 'prepareEditorEmail';
+    const EVENT_PREPARE_REVIEWER_EMAIL = 'prepareReviewerEmail';
+    const EVENT_PREPARE_PUBLISHER_EMAIL = 'preparePublisherEmail';
     const EVENT_BEFORE_SEND_EDITOR_EMAIL = 'beforeSendEditorEmail';
     const EVENT_BEFORE_SEND_REVIEWER_EMAIL = 'beforeSendReviewerEmail';
     const EVENT_BEFORE_SEND_PUBLISHER_EMAIL = 'beforeSendPublisherEmail';
@@ -363,6 +367,21 @@ class Submissions extends Component
             ->groupId($reviewerUserGroup->id)
             ->all();
 
+        // Fire a 'prepareReviewerEmail' event
+        $event = new PrepareEmailEvent([
+            'reviewers' => $reviewers,
+            'submission' => $submission,
+        ]);
+        $this->trigger(self::EVENT_PREPARE_REVIEWER_EMAIL, $event);
+
+        if (!$event->isValid) {
+            Workflow::log('Reviewer notification was cancelled by event.');
+            return;
+        }
+
+        // Update the users from the event, potentially modified
+        $reviewers = $event->reviewers;
+
         if (!$reviewers) {
             Workflow::log('No reviewers found to send notifications to.');
         }
@@ -419,6 +438,21 @@ class Submissions extends Component
 
         $publishers = $query->all();
 
+        // Fire a 'preparePublisherEmail' event
+        $event = new PrepareEmailEvent([
+            'publishers' => $publishers,
+            'submission' => $submission,
+        ]);
+        $this->trigger(self::EVENT_PREPARE_PUBLISHER_EMAIL, $event);
+
+        if (!$event->isValid) {
+            Workflow::log('Publisher notification was cancelled by event.');
+            return;
+        }
+
+        // Update the users from the event, potentially modified
+        $publishers = $event->publishers;
+
         if (!$publishers) {
             Workflow::log('No publishers found to send notifications to.');
         }
@@ -471,6 +505,21 @@ class Submissions extends Component
         $editor = User::find()
             ->id($submission->editorId)
             ->one();
+
+        // Fire a 'prepareEditorEmail' event
+        $event = new PrepareEmailEvent([
+            'editor' => $editor,
+            'submission' => $submission,
+        ]);
+        $this->trigger(self::EVENT_PREPARE_EDITOR_EMAIL, $event);
+
+        if (!$event->isValid) {
+            Workflow::log('Editor notification was cancelled by event.');
+            return;
+        }
+
+        // Update the user from the event, potentially modified
+        $editor = $event->editor;
 
         // Only send to the single user editor - not the whole group
         if (!$editor) {

@@ -47,6 +47,25 @@ Event::on(Submissions::class, Submissions::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
 });
 ```
 
+
+### The `prepareEditorEmail` event
+The event that is triggered when preparing the editor to send an email to.
+
+The `isValid` event property can be set to `false` to prevent the email from being sent.
+
+```php
+use verbb\workflow\events\PrepareEmailEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_PREPARE_EDITOR_EMAIL, function(PrepareEmailEvent $event) {
+    $editor = $event->editor;
+    $submission = $event->submission;
+    // ...
+});
+```
+
+
 ### The `beforeSendEditorEmail` event
 The event that is triggered before an email is sent to an editor.
 
@@ -66,6 +85,24 @@ Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_EDITOR_EMAIL, funct
 ```
 
 
+### The `prepareReviewerEmail` event
+The event that is triggered when preparing the reviewers to send an email to.
+
+The `isValid` event property can be set to `false` to prevent the email from being sent.
+
+```php
+use verbb\workflow\events\PrepareEmailEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_PREPARE_REVIEWER_EMAIL, function(PrepareEmailEvent $event) {
+    $reviewers = $event->reviewers;
+    $submission = $event->submission;
+    // ...
+});
+```
+
+
 ### The `beforeSendReviewerEmail` event
 The event that is triggered before an email is sent to a reviewer.
 
@@ -79,6 +116,24 @@ use yii\base\Event;
 Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_REVIEWER_EMAIL, function(EmailEvent $event) {
     $mail = $event->mail;
     $user = $event->user;
+    $submission = $event->submission;
+    // ...
+});
+```
+
+
+### The `preparePublisherEmail` event
+The event that is triggered when preparing the publishers to send an email to.
+
+The `isValid` event property can be set to `false` to prevent the email from being sent.
+
+```php
+use verbb\workflow\events\PrepareEmailEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_PREPARE_PUBLISHER_EMAIL, function(PrepareEmailEvent $event) {
+    $publishers = $event->publishers;
     $submission = $event->submission;
     // ...
 });
