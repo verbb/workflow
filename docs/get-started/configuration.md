@@ -32,9 +32,9 @@ return [
 ### Configuration options
 
 General
-- `editorUserGroup` - The User Group ID for editors.
+- `editorUserGroup` - The User Group UID for editors.
 - `reviewerUserGroups` - A collection of user groups for each reviewer.
-- `publisherUserGroup` - The User Group ID for publishers.
+- `publisherUserGroup` - The User Group UID for publishers.
 - `editorNotesRequired` - Whether editors are required to enter a note in their submissions.
 - `publisherNotesRequired` - Whether publishers are required to enter a note in their submissions.
 - `lockDraftSubmissions` - Whether an entry should be locked for editing after it‘s been submitted for review.
@@ -45,10 +45,10 @@ Notifications
 - `reviewerNotifications` - Whether email notifications should be delivered to reviewers when editors submit an entry for review.
 - `reviewerApprovalNotifications` - Whether email notifications should be delivered to editors when each reviewer approves an entry after review.
 - `publisherNotifications` - Whether email notifications should be delivered to publishers when editors submit an entry for review.
-- `selectedPublishers` - An array of user IDs of publishers to receive email notifications. Use '\*' for all.
+- `selectedPublishers` - An array of user UIDs of publishers to receive email notifications. Use '\*' for all.
 
 Permissions
-- `enabledSections` - An array of section IDs to enable submissions on. Use '\*' for all.
+- `enabledSections` - An array of section UIDs to enable submissions on. Use '\*' for all.
 
 
 ## Control Panel
