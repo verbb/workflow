@@ -377,6 +377,7 @@ class Submissions extends Component
                 $event = new EmailEvent([
                     'mail' => $mail,
                     'user' => $user,
+                    'submission' => $submission,
                 ]);
                 $this->trigger(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL, $event);
 
@@ -432,6 +433,7 @@ class Submissions extends Component
                 $event = new EmailEvent([
                     'mail' => $mail,
                     'user' => $user,
+                    'submission' => $submission,
                 ]);
                 $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, $event);
 
@@ -521,6 +523,7 @@ class Submissions extends Component
             $event = new EmailEvent([
                 'mail' => $mail,
                 'user' => $editor,
+                'submission' => $submission,
             ]);
             $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, $event);
 

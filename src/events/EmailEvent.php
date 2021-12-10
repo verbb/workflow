@@ -10,5 +10,6 @@ class EmailEvent extends CancelableEvent
 
     public $mail;
     public $user;
+    public $submission;
 
 }

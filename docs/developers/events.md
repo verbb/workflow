@@ -60,6 +60,7 @@ use yii\base\Event;
 Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_EDITOR_EMAIL, function(EmailEvent $event) {
     $mail = $event->mail;
     $user = $event->user;
+    $submission = $event->submission;
     // ...
 });
 ```
@@ -78,6 +79,7 @@ use yii\base\Event;
 Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_REVIEWER_EMAIL, function(EmailEvent $event) {
     $mail = $event->mail;
     $user = $event->user;
+    $submission = $event->submission;
     // ...
 });
 ```
@@ -96,6 +98,7 @@ use yii\base\Event;
 Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, function(EmailEvent $event) {
     $mail = $event->mail;
     $user = $event->user;
+    $submission = $event->submission;
     // ...
 });
 ```
