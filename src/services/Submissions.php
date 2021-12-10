@@ -385,9 +385,9 @@ class Submissions extends Component
                     continue;
                 }
 
-                $mail->send();
+                $event->mail->send();
 
-                Workflow::log('Sent reviewer notification to ' . $user->email);
+                Workflow::log('Sent reviewer notification to ' . $event->user->email);
             } catch (\Throwable $e) {
                 Workflow::error(Craft::t('workflow', 'Failed to send reviewer notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
@@ -440,9 +440,9 @@ class Submissions extends Component
                     continue;
                 }
 
-                $mail->send();
+                $event->mail->send();
 
-                Workflow::log('Sent publisher notification to ' . $user->email);
+                Workflow::log('Sent publisher notification to ' . $event->user->email);
             } catch (\Throwable $e) {
                 Workflow::error(Craft::t('workflow', 'Failed to send publisher notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
@@ -529,12 +529,12 @@ class Submissions extends Component
                 return;
             }
 
-            $mail->send();
+            $event->mail->send();
 
             if ($review === null) {
-                Workflow::log('Sent editor notification to ' . $editor->email);
+                Workflow::log('Sent editor notification to ' . $event->user->email);
             } else {
-                Workflow::log('Sent editor review notification to ' . $editor->email);
+                Workflow::log('Sent editor review notification to ' . $event->user->email);
             }
         } catch (\Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
