@@ -1,13 +1,12 @@
 <?php
 namespace verbb\workflow\services;
 
-use craft\models\UserGroup;
-use verbb\workflow\events\ReviewerUserGroupsEvent;
-use verbb\workflow\models\Review;
-use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 use verbb\workflow\events\EmailEvent;
+use verbb\workflow\events\ReviewerUserGroupsEvent;
+use verbb\workflow\models\Review;
+use verbb\workflow\records\Review as ReviewRecord;
 
 use Craft;
 use craft\base\Component;
@@ -15,6 +14,7 @@ use craft\db\Table;
 use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\Db;
+use craft\models\UserGroup;
 
 class Submissions extends Component
 {
@@ -373,12 +373,16 @@ class Submissions extends Component
                     ->composeFromKey('workflow_publisher_notification', ['submission' => $submission])
                     ->setTo($user);
 
-                // Fire a 'beforeSendPublisherEmail' event
-                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL)) {
-                    $this->trigger(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL, new EmailEvent([
-                        'mail' => $mail,
-                        'user' => $user,
-                    ]));
+                // Fire a 'beforeSendReviewerEmail' event
+                $event = new EmailEvent([
+                    'mail' => $mail,
+                    'user' => $user,
+                ]);
+                $this->trigger(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL, $event);
+
+                if (!$event->isValid) {
+                    Workflow::log('Reviewer notification was cancelled by event.');
+                    continue;
                 }
 
                 $mail->send();
@@ -425,11 +429,15 @@ class Submissions extends Component
                     ->setTo($user);
 
                 // Fire a 'beforeSendPublisherEmail' event
-                if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL)) {
-                    $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, new EmailEvent([
-                        'mail' => $mail,
-                        'user' => $user,
-                    ]));
+                $event = new EmailEvent([
+                    'mail' => $mail,
+                    'user' => $user,
+                ]);
+                $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, $event);
+
+                if (!$event->isValid) {
+                    Workflow::log('Publisher notification was cancelled by event.');
+                    continue;
                 }
 
                 $mail->send();
@@ -510,11 +518,15 @@ class Submissions extends Component
             }
 
             // Fire a 'beforeSendEditorEmail' event
-            if ($this->hasEventHandlers(self::EVENT_BEFORE_SEND_EDITOR_EMAIL)) {
-                $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, new EmailEvent([
-                    'mail' => $mail,
-                    'user' => $editor,
-                ]));
+            $event = new EmailEvent([
+                'mail' => $mail,
+                'user' => $editor,
+            ]);
+            $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, $event);
+
+            if (!$event->isValid) {
+                Workflow::log('Editor notification was cancelled by event.');
+                return;
             }
 
             $mail->send();

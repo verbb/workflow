@@ -48,29 +48,54 @@ Event::on(Submissions::class, Submissions::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
 ```
 
 ### The `beforeSendEditorEmail` event
+The event that is triggered before an email is sent to an editor.
 
-Plugins can get notified before the editor's email is sent
+The `isValid` event property can be set to `false` to prevent the email from being sent.
 
 ```php
 use verbb\workflow\events\EmailEvent;
 use verbb\workflow\services\Submissions;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_EDITOR_EMAIL, function(EmailEvent $e) {
-
+Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_EDITOR_EMAIL, function(EmailEvent $event) {
+    $mail = $event->mail;
+    $user = $event->user;
+    // ...
 });
 ```
 
-### The `beforeSendPublisherEmail` event
 
-Plugins can get notified before the publisher's email is sent
+### The `beforeSendReviewerEmail` event
+The event that is triggered before an email is sent to a reviewer.
+
+The `isValid` event property can be set to `false` to prevent the email from being sent.
 
 ```php
 use verbb\workflow\events\EmailEvent;
 use verbb\workflow\services\Submissions;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, function(EmailEvent $e) {
+Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_REVIEWER_EMAIL, function(EmailEvent $event) {
+    $mail = $event->mail;
+    $user = $event->user;
+    // ...
+});
+```
 
+
+### The `beforeSendPublisherEmail` event
+The event that is triggered before an email is sent to a publisher.
+
+The `isValid` event property can be set to `false` to prevent the email from being sent.
+
+```php
+use verbb\workflow\events\EmailEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, function(EmailEvent $event) {
+    $mail = $event->mail;
+    $user = $event->user;
+    // ...
 });
 ```
