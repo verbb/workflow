@@ -1,21 +1,24 @@
 <?php
 namespace verbb\workflow\controllers;
 
+use verbb\workflow\Workflow;
+
 use Craft;
 use craft\db\Table;
-use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\Db;
 use craft\web\Controller;
 
-use verbb\workflow\Workflow;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class BaseController extends Controller
 {
     // Public Methods
     // =========================================================================
 
-    public function actionSettings()
+    public function actionSettings(): Response
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -35,7 +38,7 @@ class BaseController extends Controller
         ]);
     }
 
-    public function actionSavePluginSettings()
+    public function actionSavePluginSettings(): ?Response
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
 

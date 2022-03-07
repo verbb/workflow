@@ -16,26 +16,30 @@ use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\Db;
 use craft\models\UserGroup;
+use Exception;
+use Throwable;
+use DateTime;
 
 class Submissions extends Component
 {
     // Constants
     // =========================================================================
 
-    const EVENT_PREPARE_EDITOR_EMAIL = 'prepareEditorEmail';
-    const EVENT_PREPARE_REVIEWER_EMAIL = 'prepareReviewerEmail';
-    const EVENT_PREPARE_PUBLISHER_EMAIL = 'preparePublisherEmail';
-    const EVENT_BEFORE_SEND_EDITOR_EMAIL = 'beforeSendEditorEmail';
-    const EVENT_BEFORE_SEND_REVIEWER_EMAIL = 'beforeSendReviewerEmail';
-    const EVENT_BEFORE_SEND_PUBLISHER_EMAIL = 'beforeSendPublisherEmail';
-    const EVENT_AFTER_GET_REVIEWER_USER_GROUPS = 'afterGetReviewerUserGroups';
+    public const EVENT_PREPARE_EDITOR_EMAIL = 'prepareEditorEmail';
+    public const EVENT_PREPARE_REVIEWER_EMAIL = 'prepareReviewerEmail';
+    public const EVENT_PREPARE_PUBLISHER_EMAIL = 'preparePublisherEmail';
+    public const EVENT_BEFORE_SEND_EDITOR_EMAIL = 'beforeSendEditorEmail';
+    public const EVENT_BEFORE_SEND_REVIEWER_EMAIL = 'beforeSendReviewerEmail';
+    public const EVENT_BEFORE_SEND_PUBLISHER_EMAIL = 'beforeSendPublisherEmail';
+    public const EVENT_AFTER_GET_REVIEWER_USER_GROUPS = 'afterGetReviewerUserGroups';
 
 
     // Public Methods
     // =========================================================================
 
-    public function getSubmissionById(int $id)
+    public function getSubmissionById(int $id): ?Submission
     {
+        /* @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::$app->getElements()->getElementById($id, Submission::class);
     }
 
@@ -79,11 +83,8 @@ class Submissions extends Component
 
     /**
      * Returns the next reviewer user group for the given submission.
-     *
-     * @param Submission $submission
-     * @return UserGroup|null
      */
-    public function getNextReviewerUserGroup(Submission $submission)
+    public function getNextReviewerUserGroup(Submission $submission): ?UserGroup
     {
         $reviewerUserGroups = $this->getReviewerUserGroups($submission);
 
@@ -104,7 +105,7 @@ class Submissions extends Component
         return $nextUserGroup;
     }
 
-    public function saveSubmission($entry = null)
+    public function saveSubmission($entry = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -136,7 +137,7 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         if ($isNew) {
@@ -149,9 +150,11 @@ class Submissions extends Component
         }
 
         $session->setNotice(Craft::t('workflow', 'Entry submitted for approval.'));
+
+        return true;
     }
 
-    public function revokeSubmission()
+    public function revokeSubmission(): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -160,7 +163,7 @@ class Submissions extends Component
 
         $submission = $this->_setSubmissionFromPost();
         $submission->status = Submission::STATUS_REVOKED;
-        $submission->dateRevoked = new \DateTime;
+        $submission->dateRevoked = new DateTime;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not revoke submission.'));
@@ -169,13 +172,15 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission revoked.'));
+
+        return true;
     }
 
-    public function approveReview()
+    public function approveReview(): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -192,7 +197,7 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         $reviewRecord = new ReviewRecord([
@@ -209,7 +214,7 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         $review = Review::populateModel($reviewRecord);
@@ -225,9 +230,11 @@ class Submissions extends Component
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
+
+        return true;
     }
 
-    public function rejectReview()
+    public function rejectReview(): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -237,7 +244,7 @@ class Submissions extends Component
 
         $submission = $this->_setSubmissionFromPost();
         $submission->status = Submission::STATUS_REJECTED;
-        $submission->dateRejected = new \DateTime;
+        $submission->dateRejected = new DateTime;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not approve submission.'));
@@ -246,7 +253,7 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         $reviewRecord = new ReviewRecord([
@@ -263,7 +270,7 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         $review = Review::populateModel($reviewRecord);
@@ -274,9 +281,11 @@ class Submissions extends Component
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
+
+        return true;
     }
 
-    public function approveSubmission($entry = null)
+    public function approveSubmission($entry = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -287,7 +296,7 @@ class Submissions extends Component
         $submission = $this->_setSubmissionFromPost();
         $submission->status = Submission::STATUS_APPROVED;
         $submission->publisherId = $currentUser->id;
-        $submission->dateApproved = new \DateTime;
+        $submission->dateApproved = new DateTime;
         $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
         $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
@@ -304,7 +313,7 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         // Trigger notification to editor
@@ -313,9 +322,11 @@ class Submissions extends Component
         }
 
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
+
+        return true;
     }
 
-    public function rejectSubmission()
+    public function rejectSubmission(): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -326,7 +337,7 @@ class Submissions extends Component
         $submission = $this->_setSubmissionFromPost();
         $submission->status = Submission::STATUS_REJECTED;
         $submission->publisherId = $currentUser->id;
-        $submission->dateRejected = new \DateTime;
+        $submission->dateRejected = new DateTime;
         $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
         $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
@@ -337,7 +348,7 @@ class Submissions extends Component
                 'submission' => $submission,
             ]);
 
-            return null;
+            return false;
         }
 
         // Trigger notification to editor
@@ -346,9 +357,11 @@ class Submissions extends Component
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
+
+        return true;
     }
 
-    public function sendReviewerNotificationEmail($submission)
+    public function sendReviewerNotificationEmail($submission): void
     {
         Workflow::log('Preparing reviewer notification.');
 
@@ -408,7 +421,7 @@ class Submissions extends Component
                 $event->mail->send();
 
                 Workflow::log('Sent reviewer notification to ' . $event->user->email);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Workflow::error(Craft::t('workflow', 'Failed to send reviewer notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
                     'message' => $e->getMessage(),
@@ -419,7 +432,7 @@ class Submissions extends Component
         }
     }
 
-    public function sendPublisherNotificationEmail($submission)
+    public function sendPublisherNotificationEmail($submission): void
     {
         Workflow::log('Preparing publisher notification.');
 
@@ -430,10 +443,8 @@ class Submissions extends Component
         $query = User::find()->groupId($groupId);
 
         // Check settings to see if we should email all publishers or not
-        if (isset($settings->selectedPublishers)) {
-            if ($settings->selectedPublishers != '*') {
-                $query->id($settings->selectedPublishers);
-            }
+        if (isset($settings->selectedPublishers) && $settings->selectedPublishers != '*') {
+            $query->id($settings->selectedPublishers);
         }
 
         $publishers = $query->all();
@@ -479,7 +490,7 @@ class Submissions extends Component
                 $event->mail->send();
 
                 Workflow::log('Sent publisher notification to ' . $event->user->email);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Workflow::error(Craft::t('workflow', 'Failed to send publisher notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
                     'message' => $e->getMessage(),
@@ -496,7 +507,7 @@ class Submissions extends Component
      * @param Submission $submission
      * @param Review|null $review
      */
-    public function sendEditorNotificationEmail($submission, Review $review = null)
+    public function sendEditorNotificationEmail(Submission $submission, Review $review = null): void
     {
         Workflow::log('Preparing editor notification.');
 
@@ -588,7 +599,7 @@ class Submissions extends Component
             } else {
                 Workflow::log('Sent editor review notification to ' . $event->user->email);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
                 'value' => $editor->email,
                 'message' => $e->getMessage(),
@@ -611,7 +622,7 @@ class Submissions extends Component
             $submission = $this->getSubmissionById($submissionId);
 
             if (!$submission) {
-                throw new \Exception(Craft::t('workflow', 'No submission with the ID “{id}”', ['id' => $submissionId]));
+                throw new Exception(Craft::t('workflow', 'No submission with the ID “{id}”', ['id' => $submissionId]));
             }
         } else {
             $submission = new Submission();

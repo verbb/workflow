@@ -1,6 +1,9 @@
 <?php
 namespace verbb\workflow\events;
 
+use verbb\workflow\elements\Submission;
+
+use craft\elements\User;
 use craft\events\CancelableEvent;
 
 class EmailEvent extends CancelableEvent
@@ -8,8 +11,8 @@ class EmailEvent extends CancelableEvent
     // Properties
     // =========================================================================
 
-    public $mail;
-    public $user;
-    public $submission;
+    public mixed $mail = null;
+    public ?User $user = null;
+    public ?Submission $submission = null;
 
 }

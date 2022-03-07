@@ -1,17 +1,12 @@
 <?php
 namespace verbb\workflow\migrations;
 
-use verbb\workflow\Workflow;
-use verbb\workflow\elements\Submission;
-
-use Craft;
 use craft\db\Migration;
-use craft\db\Query;
 use craft\helpers\MigrationHelper;
 
 class m190808_000000_fix_foreign_keys extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         $queryBuilder = $this->db->getSchema()->getQueryBuilder();
         $this->execute($queryBuilder->checkIntegrity(false, '', '{{%workflow_submissions}}'));
@@ -24,9 +19,11 @@ class m190808_000000_fix_foreign_keys extends Migration
 
         // Re-enable FK checks
         $this->execute($queryBuilder->checkIntegrity(true, '', '{{%workflow_submissions}}'));
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m190808_000000_fix_foreign_keys cannot be reverted.\n";
 

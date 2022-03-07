@@ -11,8 +11,8 @@ class Submissions extends Widget
     // Properties
     // =========================================================================
 
-    public $status = 'pending';
-    public $limit = 10;
+    public string $status = 'pending';
+    public int $limit = 10;
 
 
     // Public Methods
@@ -28,7 +28,7 @@ class Submissions extends Widget
         return Craft::getAlias('@verbb/workflow/icon-mask.svg');
     }
 
-    public function getBodyHtml()
+    public function getBodyHtml(): ?string
     {
         $submissions = Submission::find()
             ->status($this->status)
@@ -40,7 +40,7 @@ class Submissions extends Widget
         ]);
     }
     
-    public function getSettingsHtml()
+    public function getSettingsHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate('workflow/_widget/settings', [
             'widget' => $this,

@@ -3,6 +3,8 @@ namespace verbb\workflow\elements;
 
 use craft\elements\User;
 use craft\i18n\Locale;
+
+use verbb\workflow\Workflow;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
 use verbb\workflow\models\Review;
@@ -12,37 +14,40 @@ use verbb\workflow\records\Submission as SubmissionRecord;
 use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
-use craft\elements\db\ElementQueryInterface;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
-use verbb\workflow\Workflow;
+
+use DateTime;
+
+use Exception;
+use craft\elements\Entry;
 
 class Submission extends Element
 {
     // Constants
     // =========================================================================
 
-    const STATUS_APPROVED = 'approved';
-    const STATUS_PENDING = 'pending';
-    const STATUS_REJECTED = 'rejected';
-    const STATUS_REVOKED = 'revoked';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_REVOKED = 'revoked';
 
 
-    // Public Properties
+    // Properties
     // =========================================================================
 
-    public $ownerId;
-    public $ownerSiteId;
-    public $ownerDraftId;
-    public $editorId;
-    public $publisherId;
-    public $status;
-    public $editorNotes;
-    public $publisherNotes;
-    public $data;
-    public $dateApproved;
-    public $dateRejected;
-    public $dateRevoked;
+    public ?int $ownerId = null;
+    public ?int $ownerSiteId = null;
+    public ?int $ownerDraftId = null;
+    public ?int $editorId = null;
+    public ?int $publisherId = null;
+    public ?string $status = null;
+    public ?string $editorNotes = null;
+    public ?string $publisherNotes = null;
+    public ?string $data = null;
+    public ?DateTime $dateApproved = null;
+    public ?DateTime $dateRejected = null;
+    public ?DateTime $dateRevoked = null;
 
 
     // Static Methods
@@ -53,7 +58,7 @@ class Submission extends Element
         return Craft::t('workflow', 'Workflow Submission');
     }
 
-    public static function refHandle()
+    public static function refHandle(): ?string
     {
         return 'submission';
     }
@@ -88,21 +93,19 @@ class Submission extends Element
         ];
     }
 
-    public static function find(): ElementQueryInterface
+    public static function find(): SubmissionQuery
     {
         return new SubmissionQuery(static::class);
     }
 
     protected static function defineSources(string $context = null): array
     {
-        $sources = [
+        return [
             '*' => [
                 'key' => '*',
                 'label' => Craft::t('workflow', 'All submissions'),
             ]
         ];
-
-        return $sources;
     }
 
     protected static function defineActions(string $source = null): array
@@ -122,12 +125,12 @@ class Submission extends Element
 
 
     // Public Methods
-    // -------------------------------------------------------------------------
+    // =========================================================================
 
-    public function __tostring()
+    public function __toString(): string
     {
         if ($owner = $this->getOwner()) {
-            return $owner->title;
+            return (string) $owner->title;
         }
 
         return Craft::t('workflow', '[Deleted element]');
@@ -143,12 +146,12 @@ class Submission extends Element
         return $attributes;
     }
 
-    public function getStatus()
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function getCpEditUrl()
+    public function getCpEditUrl(): ?string
     {
         if ($owner = $this->getOwner()) {
             $url = $owner->getCpEditUrl();
@@ -163,7 +166,7 @@ class Submission extends Element
         return '';
     }
 
-    public function getOwner()
+    public function getOwner(): ?Entry
     {
         if ($this->ownerId !== null) {
             return Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
@@ -172,7 +175,7 @@ class Submission extends Element
         return null;
     }
 
-    public function getEditor()
+    public function getEditor(): ?User
     {
         if ($this->editorId !== null) {
             return Craft::$app->getUsers()->getUserById($this->editorId);
@@ -181,22 +184,22 @@ class Submission extends Element
         return null;
     }
 
-    public function getEditorUrl()
+    public function getEditorUrl(): string|User
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         if ($editor = $this->getEditor()) {
             if ($currentUser->can('editUsers')) {
                 return Html::a($editor, $editor->cpEditUrl);
-            } else {
-                return $editor;
             }
+
+            return $editor;
         }
 
         return '';
     }
 
-    public function getPublisher()
+    public function getPublisher(): ?User
     {
         if ($this->publisherId !== null) {
             return Craft::$app->getUsers()->getUserById($this->publisherId);
@@ -205,32 +208,32 @@ class Submission extends Element
         return null;
     }
 
-    public function getPublisherUrl()
+    public function getPublisherUrl(): string|User
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         if ($publisher = $this->getPublisher()) {
             if ($currentUser->can('editUsers')) {
                 return Html::a($publisher, $publisher->cpEditUrl);
-            } else {
-                return $publisher;
             }
+
+            return $publisher;
         }
 
         return '';
     }
 
-    public function getOwnerTitle()
+    public function getOwnerTitle(): string
     {
         return $this->getOwner()->title ?? '';
     }
 
-    public function getEditorName()
+    public function getEditorName(): string
     {
         return $this->getEditor()->fullName ?? '';
     }
 
-    public function getPublisherName()
+    public function getPublisherName(): string
     {
         return $this->getPublisher()->fullName ?? '';
     }
@@ -270,7 +273,7 @@ class Submission extends Element
      * @param bool|null
      * @return Review|null
      */
-    public function getLastReview(bool $approved = null)
+    public function getLastReview(bool $approved = null): ?Review
     {
         $reviews = $this->getReviews($approved);
 
@@ -283,7 +286,7 @@ class Submission extends Element
      * @param bool|null
      * @return User|null
      */
-    public function getLastReviewer(bool $approved = null)
+    public function getLastReviewer(bool $approved = null): ?User
     {
         $lastReview = $this->getLastReview($approved);
 
@@ -300,16 +303,16 @@ class Submission extends Element
      * @param bool|null
      * @return User|string
      */
-    public function getLastReviewerUrl(bool $approved = null)
+    public function getLastReviewerUrl(bool $approved = null): User|string
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         if ($lastReviewer = $this->getLastReviewer($approved)) {
             if ($currentUser->can('editUsers')) {
                 return Html::a($lastReviewer, $lastReviewer->cpEditUrl);
-            } else {
-                return $lastReviewer;
             }
+
+            return $lastReviewer;
         }
 
         return '';
@@ -317,9 +320,6 @@ class Submission extends Element
 
     /**
      * Returns whether a user is allowed to review this submission.
-     *
-     * @param User $user
-     * @return bool
      */
     public function canUserReview(User $user): bool
     {
@@ -349,7 +349,7 @@ class Submission extends Element
         return $canReview;
     }
 
-    public function afterSave(bool $isNew)
+    public function afterSave(bool $isNew): void
     {
         if (!$isNew) {
             $record = SubmissionRecord::findOne($this->id);
@@ -381,10 +381,6 @@ class Submission extends Element
 
         parent::afterSave($isNew);
     }
-
-
-    // Element index methods
-    // -------------------------------------------------------------------------
 
     protected static function defineTableAttributes(): array
     {
@@ -463,10 +459,8 @@ class Submission extends Element
                 return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
             }
             case 'siteId': {
-                if ($this->ownerSiteId) {
-                    if ($site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
-                        return $site->name;
-                    }
+                if ($this->ownerSiteId && $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
+                    return $site->name;
                 }
 
                 return '';

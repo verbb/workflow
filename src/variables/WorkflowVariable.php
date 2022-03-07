@@ -1,8 +1,8 @@
 <?php
 namespace verbb\workflow\variables;
 
-use verbb\workflow\elements\db\SubmissionQuery;
 use verbb\workflow\elements\Submission;
+use verbb\workflow\elements\db\SubmissionQuery;
 
 use Craft;
 

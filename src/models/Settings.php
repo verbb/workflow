@@ -5,33 +5,33 @@ use craft\base\Model;
 
 class Settings extends Model
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
     // General
-    public $editorUserGroup;
-    public $reviewerUserGroups = [];
-    public $publisherUserGroup;
-    public $editorNotesRequired = false;
-    public $publisherNotesRequired = false;
-    public $lockDraftSubmissions = true;
+    public mixed $editorUserGroup;
+    public array $reviewerUserGroups = [];
+    public mixed $publisherUserGroup;
+    public bool $editorNotesRequired = false;
+    public bool $publisherNotesRequired = false;
+    public bool $lockDraftSubmissions = true;
 
     // Notifications
-    public $editorNotifications = true;
-    public $editorNotificationsOptions = [];
-    public $reviewerNotifications = true;
-    public $reviewerApprovalNotifications = false;
-    public $publisherNotifications = true;
-    public $selectedPublishers = '*';
+    public bool $editorNotifications = true;
+    public array $editorNotificationsOptions = [];
+    public bool $reviewerNotifications = true;
+    public bool $reviewerApprovalNotifications = false;
+    public bool $publisherNotifications = true;
+    public mixed $selectedPublishers = '*';
 
     // Permissions
-    public $enabledSections = '*';
+    public mixed $enabledSections = '*';
 
 
     // Public Methods
     // =========================================================================
 
-    public function getReviewerUserGroups()
+    public function getReviewerUserGroups(): array
     {
         // Protect against _somehow_ this not being an array...
         if (!is_array($this->reviewerUserGroups)) {

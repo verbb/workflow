@@ -23,13 +23,13 @@ class Service extends Component
     // Properties
     // =========================================================================
 
-    public $afterSaveRun = false;
+    public bool $afterSaveRun = false;
 
 
     // Public Methods
     // =========================================================================
 
-    public function onBeforeSaveEntry(ModelEvent $event)
+    public function onBeforeSaveEntry(ModelEvent $event): void
     {
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
@@ -107,7 +107,7 @@ class Service extends Component
         }
     }
 
-    public function onAfterSaveEntry(ModelEvent $event)
+    public function onAfterSaveEntry(ModelEvent $event): void
     {
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
@@ -161,10 +161,10 @@ class Service extends Component
             Workflow::$plugin->getSubmissions()->rejectSubmission();
         }
 
-        // For the cases where its been submitted from the front-end, its not a draft!
+        // For the cases where it's been submitted from the front-end, it's not a draft!
         if ($action === 'approve-submission') {
             // Probably a better way to deal with this, but at this point, its no longer a draft
-            // its now a fully realised entry. We rely on the query param to determine if this was
+            // it's now a fully realised entry. We rely on the query param to determine if this was
             // a draft that was approved and saved, or a regular entry that was approved.
             if (!$request->getParam('draftId')) {
                 Workflow::$plugin->getSubmissions()->approveSubmission($event->sender);
@@ -172,7 +172,7 @@ class Service extends Component
         }
     }
 
-    public function onAfterApplyDraft(DraftEvent $event)
+    public function onAfterApplyDraft(DraftEvent $event): void
     {
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
@@ -184,17 +184,17 @@ class Service extends Component
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
         if ($action == 'approve-submission' || $action == 'approve-only-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->source);
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->canonical);
         }
     }
 
-    public function handleSiteRequest($event, $action)
+    public function handleSiteRequest($event, $action): void
     {
         if (!$action || $event->sender->propagating || ElementHelper::isDraftOrRevision($event->sender)) {
             return;
         }
 
-        // When we're saving a brand new entry for submission, we need to create a new draft
+        // When we're saving a brand-new entry for submission, we need to create a new draft
         // and work with that, as opposed to the original entry.
         if ($action == 'save-submission') {
             // Perform the Workflow submission on this new entry
@@ -202,7 +202,7 @@ class Service extends Component
         }
     }
 
-    public function renderEntrySidebar(&$context)
+    public function renderEntrySidebar(&$context): ?string
     {
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
@@ -210,13 +210,13 @@ class Service extends Component
         if (!$settings->editorUserGroup || !$settings->publisherUserGroup) {
             Workflow::log('Editor and Publisher groups not set in settings.');
 
-            return;
+            return null;
         }
 
         if (!$currentUser) {
             Workflow::log('No current user.');
 
-            return;
+            return null;
         }
 
         $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
@@ -257,13 +257,15 @@ class Service extends Component
                 return $this->_renderEntrySidebarPanel($context, 'reviewer-pane');
             }
         }
+
+        return null;
     }
 
 
     // Private Methods
     // =========================================================================
 
-    private function _renderEntrySidebarPanel($context, $template)
+    private function _renderEntrySidebarPanel($context, $template): ?string
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -273,7 +275,7 @@ class Service extends Component
         if (!$settings->enabledSections) {
             Workflow::log('New enabled sections.');
 
-            return;
+            return null;
         }
 
         if ($settings->enabledSections != '*') {
@@ -282,7 +284,7 @@ class Service extends Component
             if (!in_array($context['entry']->sectionId, $enabledSectionIds)) {
                 Workflow::log('Entry not in allowed section.');
 
-                return;
+                return null;
             }
         }
 
@@ -302,7 +304,7 @@ class Service extends Component
         ], $routeParams));
     }
 
-    private function _getSubmissionsFromContext($context)
+    private function _getSubmissionsFromContext($context): array
     {
         // Get existing submissions
         $ownerId = $context['entry']->id ?? ':empty:';

@@ -1,17 +1,12 @@
 <?php
 namespace verbb\workflow\migrations;
 
-use verbb\workflow\Workflow;
-use verbb\workflow\elements\Submission;
-
 use Craft;
 use craft\db\Migration;
-use craft\db\Query;
-use craft\helpers\MigrationHelper;
 
 class m200518_000000_add_reviews extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         if (!$this->db->tableExists('{{%workflow_reviews}}')) {
             $this->createTable('{{%workflow_reviews}}', [
@@ -30,9 +25,11 @@ class m200518_000000_add_reviews extends Migration
 
             Craft::$app->db->schema->refresh();
         }
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m200518_000000_add_reviews cannot be reverted.\n";
 

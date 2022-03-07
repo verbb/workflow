@@ -8,6 +8,7 @@ use verbb\workflow\variables\WorkflowVariable;
 use verbb\workflow\widgets\Submissions as SubmissionsWidget;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\Entry;
 use craft\events\RegisterComponentTypesEvent;
@@ -15,30 +16,27 @@ use craft\events\RegisterEmailMessagesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
-use craft\models\EntryDraft;
 use craft\services\Dashboard;
 use craft\services\Drafts;
 use craft\services\Elements;
-use craft\services\EntryRevisions;
 use craft\services\SystemMessages;
 use craft\services\UserPermissions;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
 use yii\base\Event;
-use yii\web\User;
 
 /**
  * @method Settings getSettings()
  */
 class Workflow extends Plugin
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
-    public $schemaVersion = '2.1.5';
-    public $hasCpSettings = true;
-    public $hasCpSection = true;
+    public string $schemaVersion = '2.1.5';
+    public bool $hasCpSettings = true;
+    public bool $hasCpSection = true;
 
     // Traits
     // =========================================================================
@@ -49,7 +47,7 @@ class Workflow extends Plugin
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -68,7 +66,7 @@ class Workflow extends Plugin
         Craft::$app->view->hook('cp.entries.edit.details', [$this->getService(), 'renderEntrySidebar']);
     }
 
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('workflow/settings'));
     }
@@ -77,7 +75,7 @@ class Workflow extends Plugin
     // Protected Methods
     // =========================================================================
 
-    protected function createSettingsModel(): Settings
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
@@ -86,18 +84,18 @@ class Workflow extends Plugin
     // Private Methods
     // =========================================================================
 
-    private function _registerCpRoutes()
+    private function _registerCpRoutes(): void
     {
-        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
+        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event): void {
             $event->rules = array_merge($event->rules, [
                 'workflow/settings' => 'workflow/base/settings',
             ]);
         });
     }
 
-    private function _registerEmailMessages()
+    private function _registerEmailMessages(): void
     {
-        Event::on(SystemMessages::class, SystemMessages::EVENT_REGISTER_MESSAGES, function(RegisterEmailMessagesEvent $event) {
+        Event::on(SystemMessages::class, SystemMessages::EVENT_REGISTER_MESSAGES, function(RegisterEmailMessagesEvent $event): void {
             $event->messages = array_merge($event->messages, [
                 [
                     'key' => 'workflow_publisher_notification',
@@ -119,28 +117,28 @@ class Workflow extends Plugin
         });
     }
 
-    private function _registerWidgets()
+    private function _registerWidgets(): void
     {
-        Event::on(Dashboard::class, Dashboard::EVENT_REGISTER_WIDGET_TYPES, function(RegisterComponentTypesEvent $event) {
+        Event::on(Dashboard::class, Dashboard::EVENT_REGISTER_WIDGET_TYPES, function(RegisterComponentTypesEvent $event): void {
             $event->types[] = SubmissionsWidget::class;
         });
     }
 
-    private function _registerVariables()
+    private function _registerVariables(): void
     {
-        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event): void {
             $event->sender->set('workflow', WorkflowVariable::class);
         });
     }
 
-    private function _registerElementTypes()
+    private function _registerElementTypes(): void
     {
-        Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function(RegisterComponentTypesEvent $event) {
+        Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function(RegisterComponentTypesEvent $event): void {
             $event->types[] = Submission::class;
         });
     }
 
-    private function _registerCraftEventListeners()
+    private function _registerCraftEventListeners(): void
     {
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
@@ -152,9 +150,9 @@ class Workflow extends Plugin
         Event::on(Drafts::class, Drafts::EVENT_AFTER_APPLY_DRAFT, [$this->getService(), 'onAfterApplyDraft']);
     }
 
-    private function _registerPermissions()
+    private function _registerPermissions(): void
     {
-        Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
+        Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event): void {
             $event->permissions[Craft::t('workflow', 'Workflow')] = [
                 'workflow:overview' => ['label' => Craft::t('workflow', 'Overview')],
                 'workflow:settings' => ['label' => Craft::t('workflow', 'Settings')],

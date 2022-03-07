@@ -13,49 +13,44 @@ use verbb\base\BaseHelper;
 
 trait PluginTrait
 {
-    // Static Properties
+    // Properties
     // =========================================================================
 
-    /**
-     * @var Workflow $plugin
-     */
-    public static $plugin;
+    public static Workflow $plugin;
+
+
+    // Static Methods
+    // =========================================================================
+
+    public static function log($message): void
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'workflow');
+    }
+
+    public static function error($message): void
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'workflow');
+    }
 
 
     // Public Methods
     // =========================================================================
 
-    /**
-     * @return Service
-     */
-    public function getService()
+    public function getService(): Service
     {
         return $this->get('service');
     }
 
-    /**
-     * @return Submissions
-     */
-    public function getSubmissions()
+    public function getSubmissions(): Submissions
     {
         return $this->get('submissions');
-    }
-
-    public static function log($message)
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'workflow');
-    }
-
-    public static function error($message)
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'workflow');
     }
 
 
     // Private Methods
     // =========================================================================
 
-    private function _setPluginComponents()
+    private function _setPluginComponents(): void
     {
         $this->setComponents([
             'service' => Service::class,
@@ -65,7 +60,7 @@ trait PluginTrait
         BaseHelper::registerModule();
     }
 
-    private function _setLogging()
+    private function _setLogging(): void
     {
         BaseHelper::setFileLogging('workflow');
     }

@@ -6,13 +6,15 @@ use craft\base\Element;
 use craft\base\ElementAction;
 use craft\elements\Entry;
 use craft\elements\db\ElementQueryInterface;
+use DateTime;
 
 class SetStatus extends ElementAction
 {
     // Properties
     // =========================================================================
 
-    public $status;
+    public ?string $status = null;
+
 
     // Public Methods
     // =========================================================================
@@ -22,10 +24,11 @@ class SetStatus extends ElementAction
         return Craft::t('app', 'Set Status');
     }
 
+
     // Public Methods
     // =========================================================================
 
-    public function getTriggerHtml()
+    public function getTriggerHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate('workflow/_elementactions/status');
     }
@@ -50,7 +53,7 @@ class SetStatus extends ElementAction
             // Check if approving
             if ($this->status === 'approved') {
                 $submission->publisherId = $currentUser->id;
-                $submission->dateApproved = new \DateTime;
+                $submission->dateApproved = new DateTime;
                         
                 $ownerId = $submission->ownerId;
                 $ownerSiteId = $submission->ownerSiteId;
@@ -99,12 +102,10 @@ class SetStatus extends ElementAction
 
         if ($failCount !== 0) {
             $this->setMessage(Craft::t('workflow', 'Status updated, with some failures due to validation errors.'));
+        } else if (count($submissions) === 1) {
+            $this->setMessage(Craft::t('workflow', 'Status updated.'));
         } else {
-            if (count($submissions) === 1) {
-                $this->setMessage(Craft::t('workflow', 'Status updated.'));
-            } else {
-                $this->setMessage(Craft::t('workflow', 'Statuses updated.'));
-            }
+            $this->setMessage(Craft::t('workflow', 'Statuses updated.'));
         }
 
         return true;

@@ -4,17 +4,8 @@ namespace verbb\workflow\records;
 use craft\db\ActiveRecord;
 use craft\records\User;
 
-use DateTime;
-use yii\db\ActiveQueryInterface;
+use craft\db\ActiveQuery;
 
-/**
- * @property int $id
- * @property int $submissionId
- * @property int $userId
- * @property bool $approved
- * @property string $notes
- * @property DateTime $dateCreated
- **/
 class Review extends ActiveRecord
 {
     // Public Methods
@@ -25,12 +16,12 @@ class Review extends ActiveRecord
         return '{{%workflow_reviews}}';
     }
 
-    public function getSubmission(): ActiveQueryInterface
+    public function getSubmission(): ActiveQuery
     {
         return $this->hasOne(Submission::class, ['id' => 'submissionId']);
     }
 
-    public function getUser(): ActiveQueryInterface
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'userId']);
     }

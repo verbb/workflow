@@ -2,34 +2,28 @@
 namespace verbb\workflow\controllers;
 
 use verbb\workflow\Workflow;
-use verbb\workflow\elements\Submission;
 
 use Craft;
 use craft\base\Element;
+use craft\base\ElementInterface;
 use craft\controllers\BaseEntriesController;
 use craft\elements\Entry;
-use craft\errors\InvalidElementException;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\ElementHelper;
-use craft\helpers\UrlHelper;
-use craft\models\Section;
-use craft\web\Controller;
 
-use yii\base\Exception;
-use yii\web\ForbiddenHttpException;
-use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class SubmissionsController extends BaseEntriesController
 {
     // Public Methods
     // =========================================================================
 
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         // Until I can find a better way to handle firing this before an action...
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
-        $action = $request->getBodyParam('workflow-action');
+        $workflowAction = $request->getBodyParam('workflow-action');
 
         $editorNotes = $request->getBodyParam('editorNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
@@ -40,7 +34,7 @@ class SubmissionsController extends BaseEntriesController
             'publisherNotes' => $publisherNotes,
         ]);
 
-        if ($action === 'save-submission') {
+        if ($workflowAction === 'save-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->editorNotesRequired && !$editorNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
@@ -48,11 +42,11 @@ class SubmissionsController extends BaseEntriesController
                     'entry' => $this->getDraftEntry(),
                 ]);
 
-                return null;
+                return false;
             }
         }
 
-        if ($action === 'approve-submission' || $action === 'approve-only-submission' || $action === 'reject-submission') {
+        if ($workflowAction === 'approve-submission' || $workflowAction === 'approve-only-submission' || $workflowAction === 'reject-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->publisherNotesRequired && !$publisherNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
@@ -60,20 +54,20 @@ class SubmissionsController extends BaseEntriesController
                     'entry' => $this->getDraftEntry(),
                 ]);
 
-                return null;
+                return false;
             }
         }
 
         return parent::beforeAction($action);
     }
 
-    public function actionUnsavedDraftSubmission()
+    public function actionUnsavedDraftSubmission(): Response
     {
         // We're already checking validation in our beforeAction
         return Craft::$app->runAction('entry-revisions/save-draft');
     }
 
-    public function actionSaveDraft()
+    public function actionSaveDraft(): Response
     {
         // Set the param here, because the front-end can only suppose a single param form data
         $params = Craft::$app->getRequest()->getBodyParams();
@@ -85,13 +79,13 @@ class SubmissionsController extends BaseEntriesController
         return Craft::$app->runAction('entry-revisions/save-draft');
     }
 
-    public function actionPublishDraft()
+    public function actionPublishDraft(): Response
     {
         // We're already checking validation in our beforeAction
         return Craft::$app->runAction('entry-revisions/publish-draft');
     }
 
-    public function actionPublishEntry()
+    public function actionPublishEntry(): Response
     {
         // We're already checking validation in our beforeAction
         return Craft::$app->runAction('entries/save-entry');
@@ -101,7 +95,7 @@ class SubmissionsController extends BaseEntriesController
     // Private Methods
     // =========================================================================
 
-    private function getDraftEntry()
+    private function getDraftEntry(): ?ElementInterface
     {
         $request = Craft::$app->getRequest();
 
@@ -136,33 +130,40 @@ class SubmissionsController extends BaseEntriesController
 
             return $entry;
         }
+
+        return $entry;
     }
 
-    private function _setDraftAttributesFromPost(Entry $draft)
+    private function _setDraftAttributesFromPost(Entry $draft): void
     {
         $request = Craft::$app->getRequest();
-        /** @var Entry|DraftBehavior $draft */
+
         $draft->typeId = $request->getBodyParam('typeId');
+
         // Prevent the last entry type's field layout from being used
         $draft->fieldLayoutId = null;
+
         // Default to a temp slug to avoid slug validation errors
-        $draft->slug = $request->getBodyParam('slug') ?: (ElementHelper::isTempSlug($draft->slug)
-            ? $draft->slug
-            : ElementHelper::tempSlug());
+        $tempSlug = (ElementHelper::isTempSlug($draft->slug) ? $draft->slug : ElementHelper::tempSlug());
+        $draft->slug = $request->getBodyParam('slug') ?: $tempSlug;
+
         if (($postDate = $request->getBodyParam('postDate')) !== null) {
             $draft->postDate = DateTimeHelper::toDateTime($postDate) ?: null;
         }
+
         if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
             $draft->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
         }
         
         $enabledForSite = $this->enabledForSiteValue();
+
         if (is_array($enabledForSite)) {
             // Set the global status to true if it's enabled for *any* sites, or if already enabled.
             $draft->enabled = in_array(true, $enabledForSite, false) || $draft->enabled;
         } else {
             $draft->enabled = (bool)$request->getBodyParam('enabled', $draft->enabled);
         }
+
         $draft->setEnabledForSite($enabledForSite ?? $draft->getEnabledForSite());
         $draft->title = $request->getBodyParam('title');
 

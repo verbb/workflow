@@ -1,21 +1,15 @@
 <?php
 namespace verbb\workflow\migrations;
 
-use verbb\workflow\Workflow;
-
-use Craft;
 use craft\db\Migration;
-use craft\db\Query;
-use craft\db\Table;
 use craft\helpers\MigrationHelper;
-use craft\services\Plugins;
 
 class m190224_000000_notes extends Migration
 {
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         if ($this->db->columnExists('{{%workflow_submissions}}', 'notes')) {
             MigrationHelper::renameColumn('{{%workflow_submissions}}', 'notes', 'publisherNotes', $this);
@@ -24,9 +18,11 @@ class m190224_000000_notes extends Migration
         if (!$this->db->columnExists('{{%workflow_submissions}}', 'editorNotes')) {
             $this->addColumn('{{%workflow_submissions}}', 'editorNotes', $this->text()->after('status'));
         }
+
+        return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m190224_000000_notes cannot be reverted.\n";
         return false;

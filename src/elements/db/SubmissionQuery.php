@@ -8,61 +8,68 @@ use craft\helpers\Db;
 
 class SubmissionQuery extends ElementQuery
 {
-    public $ownerId;
-    public $ownerSiteId;
-    public $ownerDraftId;
-    public $editorId;
-    public $publisherId;
-    public $editorNotes;
-    public $publisherNotes;
-    public $data;
-    public $dateApproved;
-    public $dateRejected;
-    public $dateRevoked;
+    // Properties
+    // =========================================================================
 
-    public function ownerId($value)
+    public mixed $ownerId = null;
+    public mixed $ownerSiteId = null;
+    public mixed $ownerDraftId = null;
+    public mixed $editorId = null;
+    public mixed $publisherId = null;
+    public mixed $editorNotes = null;
+    public mixed $publisherNotes = null;
+    public mixed $data = null;
+    public mixed $dateApproved = null;
+    public mixed $dateRejected = null;
+    public mixed $dateRevoked = null;
+
+
+    // Public Methods
+    // =========================================================================
+
+    public function ownerId($value): static
     {
         $this->ownerId = $value;
         return $this;
     }
 
-    public function ownerDraftId($value)
+    public function ownerDraftId($value): static
     {
         $this->ownerDraftId = $value;
         return $this;
     }
 
-    public function ownerSiteId($value)
+    public function ownerSiteId($value): static
     {
         $this->ownerSiteId = $value;
         return $this;
     }
 
-    public function editorId($value)
+    public function editorId($value): static
     {
         $this->editorId = $value;
         return $this;
     }
 
-    public function publisherId($value)
+    public function publisherId($value): static
     {
         $this->publisherId = $value;
         return $this;
     }
 
-    public function dateApproved($value)
+    public function dateApproved($value): static
     {
         $this->dateApproved = $value;
         return $this;
     }
 
-    public function dateRejected($value)
+    public function dateRejected($value): static
     {
         $this->dateRejected = $value;
         return $this;
     }
 
-    public function dateRevoked($value)
+    public function dateRevoked($value): static
     {
         $this->dateRevoked = $value;
         return $this;
@@ -123,27 +130,26 @@ class SubmissionQuery extends ElementQuery
         return parent::beforePrepare();
     }
 
-    protected function statusCondition(string $status)
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function statusCondition(string $status): mixed
     {
-        switch ($status) {
-            case Submission::STATUS_APPROVED:
-                return [
-                    'workflow_submissions.status' => Submission::STATUS_APPROVED,
-                ];
-            case Submission::STATUS_PENDING:
-                return [
-                    'workflow_submissions.status' => Submission::STATUS_PENDING,
-                ];
-            case Submission::STATUS_REJECTED:
-                return [
-                    'workflow_submissions.status' => Submission::STATUS_REJECTED,
-                ];
-            case Submission::STATUS_REVOKED:
-                return [
-                    'workflow_submissions.status' => Submission::STATUS_REVOKED,
-                ];
-            default:
-                return parent::statusCondition($status);
-        }
+        return match ($status) {
+            Submission::STATUS_APPROVED => [
+                'workflow_submissions.status' => Submission::STATUS_APPROVED,
+            ],
+            Submission::STATUS_PENDING => [
+                'workflow_submissions.status' => Submission::STATUS_PENDING,
+            ],
+            Submission::STATUS_REJECTED => [
+                'workflow_submissions.status' => Submission::STATUS_REJECTED,
+            ],
+            Submission::STATUS_REVOKED => [
+                'workflow_submissions.status' => Submission::STATUS_REVOKED,
+            ],
+            default => parent::statusCondition($status),
+        };
     }
 }

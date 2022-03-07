@@ -48,6 +48,9 @@
     addRowLabel: 'Add a user group' | t('workflow'),
     errors: settings.getErrors('reviewerUserGroups'),
     warning: macros.configWarning('reviewerUserGroups', 'workflow') ?: 'Changing this may result in submissions being lost in the review process.' | t('workflow'),
+    allowAdd: true,
+    allowDelete: true,
+    allowReorder: true,
 })|spaceless }}
 
 <hr>

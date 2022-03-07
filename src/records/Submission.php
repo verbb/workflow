@@ -6,7 +6,7 @@ use craft\records\Element;
 use craft\records\Entry;
 use craft\records\User;
 
-use yii\db\ActiveQueryInterface;
+use craft\db\ActiveQuery;
 
 class Submission extends ActiveRecord
 {
@@ -18,22 +18,22 @@ class Submission extends ActiveRecord
         return '{{%workflow_submissions}}';
     }
 
-    public function getElement(): ActiveQueryInterface
+    public function getElement(): ActiveQuery
     {
         return $this->hasOne(Element::class, ['id' => 'id']);
     }
 
-    public function getOwner(): ActiveQueryInterface
+    public function getOwner(): ActiveQuery
     {
         return $this->hasOne(Entry::class, ['id' => 'ownerId']);
     }
 
-    public function getEditor(): ActiveQueryInterface
+    public function getEditor(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'editorId']);
     }
 
-    public function getPublisher(): ActiveQueryInterface
+    public function getPublisher(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'publisherId']);
     }

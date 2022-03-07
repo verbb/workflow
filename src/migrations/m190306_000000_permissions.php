@@ -1,15 +1,12 @@
 <?php
 namespace verbb\workflow\migrations;
 
-use verbb\workflow\Workflow;
-
-use Craft;
 use craft\db\Migration;
 use craft\db\Query;
 
 class m190306_000000_permissions extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         $permissionIds = [];
 
@@ -39,7 +36,7 @@ class m190306_000000_permissions extends Migration
             ->column($this->db);
 
         if (empty($userIds) && empty($groupIds)) {
-            return;
+            return true;
         }
 
         // Assign the new permissions to the users
@@ -71,7 +68,7 @@ class m190306_000000_permissions extends Migration
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m190306_000000_permissions cannot be reverted.\n";
 
