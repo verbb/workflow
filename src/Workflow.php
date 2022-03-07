@@ -153,9 +153,12 @@ class Workflow extends Plugin
     private function _registerPermissions(): void
     {
         Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event): void {
-            $event->permissions[Craft::t('workflow', 'Workflow')] = [
-                'workflow:overview' => ['label' => Craft::t('workflow', 'Overview')],
-                'workflow:settings' => ['label' => Craft::t('workflow', 'Settings')],
+            $event->permissions[] = [
+                'heading' => Craft::t('workflow', 'Workflow'),
+                'permissions' => [
+                    'workflow-overview' => ['label' => Craft::t('workflow', 'Overview')],
+                    'workflow-settings' => ['label' => Craft::t('workflow', 'Settings')],
+                ],
             ];
         });
     }
