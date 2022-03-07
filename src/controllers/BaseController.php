@@ -42,7 +42,7 @@ class BaseController extends Controller
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        if (!$currentUser->can('workflow:settings')) {
+        if (!$currentUser->can('workflow-settings')) {
             throw new ForbiddenHttpException('User is not permitted to perform this action.');
         }
 

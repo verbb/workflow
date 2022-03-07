@@ -11,13 +11,13 @@ class m190306_000000_permissions extends Migration
         $permissionIds = [];
 
         // Update permissions
-        $this->insert('{{%userpermissions}}', ['name' => 'workflow:overview']);
+        $this->insert('{{%userpermissions}}', ['name' => 'workflow-overview']);
         $permissionIds[] = $this->db->getLastInsertID('{{%userpermissions}}');
 
         $this->insert('{{%userpermissions}}', ['name' => 'workflow:drafts']);
         $permissionIds[] = $this->db->getLastInsertID('{{%userpermissions}}');
 
-        $this->insert('{{%userpermissions}}', ['name' => 'workflow:settings']);
+        $this->insert('{{%userpermissions}}', ['name' => 'workflow-settings']);
         $permissionIds[] = $this->db->getLastInsertID('{{%userpermissions}}');
 
         // See which users & groups already have the "accessplugin-workflow" permission

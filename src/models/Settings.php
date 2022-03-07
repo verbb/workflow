@@ -2,6 +2,7 @@
 namespace verbb\workflow\models;
 
 use craft\base\Model;
+use craft\helpers\Json;
 
 class Settings extends Model
 {
@@ -9,9 +10,9 @@ class Settings extends Model
     // =========================================================================
 
     // General
-    public mixed $editorUserGroup;
+    public mixed $editorUserGroup = null;
     public array $reviewerUserGroups = [];
-    public mixed $publisherUserGroup;
+    public mixed $publisherUserGroup = null;
     public bool $editorNotesRequired = false;
     public bool $publisherNotesRequired = false;
     public bool $lockDraftSubmissions = true;
@@ -30,6 +31,32 @@ class Settings extends Model
 
     // Public Methods
     // =========================================================================
+
+    public function setAttributes($values, $safeOnly = true): void
+    {
+        // Config normalization
+        if (array_key_exists('reviewerUserGroups', $values)) {
+            if (is_string($values['reviewerUserGroups'])) {
+                $values['reviewerUserGroups'] = Json::decodeIfJson($values['reviewerUserGroups']);
+            }
+
+            if (!is_array($values['reviewerUserGroups'])) {
+                $values['reviewerUserGroups'] = [];
+            }
+        }
+
+        if (array_key_exists('editorNotificationsOptions', $values)) {
+            if (is_string($values['editorNotificationsOptions'])) {
+                $values['editorNotificationsOptions'] = Json::decodeIfJson($values['editorNotificationsOptions']);
+            }
+
+            if (!is_array($values['editorNotificationsOptions'])) {
+                $values['editorNotificationsOptions'] = [];
+            }
+        }
+
+        parent::setAttributes($values, $safeOnly);
+    }
 
     public function getReviewerUserGroups(): array
     {
