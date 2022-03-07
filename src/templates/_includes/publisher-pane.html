@@ -63,13 +63,13 @@
 
             {% set endpoint = 'workflow/submissions/publish-entry' %}
 
-            {% if context.entry.getIsDraft() %}
+            {% if entry.getIsDraft() %}
                 {% set endpoint = 'workflow/submissions/publish-draft' %}
             {% endif %}
 
             <div class="workflow-submission-footer btngroup">
                 <div id="save-btn-container" class="btngroup submit">
-                    <a class="btn formsubmit submit" data-action="{{ endpoint }}" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve and publish" | t('workflow') }}</a>
+                    <a class="btn formsubmit submit" data-action="{{ endpoint }}" data-param="workflow-action" data-value="approve-submission">{{ "Approve and publish" | t('workflow') }}</a>
 
                     <div class="btn submit menubtn"></div>
 
@@ -92,7 +92,7 @@
 
 {% if nonPendingSubmissions | length %}
     <div class="pane workflow-pane workflow-history-pane">
-        {% for submission in submissions if submission.status != 'pending' %}
+        {% for submission in submissions %}
             {% if submission.status == 'approved' %}
                 <div class="workflow-history">
                     <div class="workflow-history-heading">

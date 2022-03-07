@@ -62,8 +62,6 @@ class Workflow extends Plugin
         $this->_registerCraftEventListeners();
         $this->_registerElementTypes();
         $this->_registerPermissions();
-
-        Craft::$app->view->hook('cp.entries.edit.details', [$this->getService(), 'renderEntrySidebar']);
     }
 
     public function getSettingsResponse(): mixed
@@ -148,6 +146,8 @@ class Workflow extends Plugin
         Event::on(Entry::class, Entry::EVENT_AFTER_SAVE, [$this->getService(), 'onAfterSaveEntry']);
 
         Event::on(Drafts::class, Drafts::EVENT_AFTER_APPLY_DRAFT, [$this->getService(), 'onAfterApplyDraft']);
+
+        Event::on(Entry::class, Entry::EVENT_DEFINE_SIDEBAR_HTML, [$this->getService(), 'renderEntrySidebar']);
     }
 
     private function _registerPermissions(): void

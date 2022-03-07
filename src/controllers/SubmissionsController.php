@@ -61,34 +61,34 @@ class SubmissionsController extends BaseEntriesController
         return parent::beforeAction($action);
     }
 
-    public function actionUnsavedDraftSubmission(): Response
+    public function actionUnsavedDraftSubmission(): ?Response
     {
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('entry-revisions/save-draft');
+        return Craft::$app->runAction('elements/save-draft');
     }
 
-    public function actionSaveDraft(): Response
+    public function actionSaveDraft(): ?Response
     {
-        // Set the param here, because the front-end can only suppose a single param form data
+        // Set the param here, because the front-end can only support a single param form data
         $params = Craft::$app->getRequest()->getBodyParams();
         $params['dropProvisional'] = true;
 
         Craft::$app->getRequest()->setBodyParams($params);
 
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('entry-revisions/save-draft');
+        return Craft::$app->runAction('elements/save-draft');
     }
 
-    public function actionPublishDraft(): Response
+    public function actionPublishDraft(): ?Response
     {
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('entry-revisions/publish-draft');
+        return Craft::$app->runAction('elements/apply-draft');
     }
 
-    public function actionPublishEntry(): Response
+    public function actionPublishEntry(): ?Response
     {
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('entries/save-entry');
+        return Craft::$app->runAction('elements/save');
     }
 
 
@@ -184,12 +184,12 @@ class SubmissionsController extends BaseEntriesController
         $draft->authorId = $authorId;
 
         // Parent
-        $parentId = $request->getBodyParam('parentId');
+        // $parentId = $request->getBodyParam('parentId');
 
-        if (is_array($parentId)) {
-            $parentId = $parentId[0] ?? null;
-        }
+        // if (is_array($parentId)) {
+        //     $parentId = $parentId[0] ?? null;
+        // }
 
-        $draft->newParentId = $parentId ?: null;
+        // $draft->newParentId = $parentId ?: null;
     }
 }

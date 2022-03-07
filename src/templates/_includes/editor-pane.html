@@ -42,7 +42,7 @@
             </div>
 
             <div class="workflow-submission-footer btngroup">
-                {% if context.entry.getIsUnsavedDraft() %}
+                {% if entry.getIsUnpublishedDraft() %}
                     <a class="btn formsubmit submit" data-action="workflow/submissions/unsaved-draft-submission" data-param="workflow-action" data-value="save-submission">{{ "Save draft and submit for review" | t('workflow') }}</a>
                 {% else %}
                     <a class="btn formsubmit submit" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="save-submission">{{ "Save draft and submit for review" | t('workflow') }}</a>

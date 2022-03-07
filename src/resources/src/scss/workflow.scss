@@ -32,7 +32,7 @@
 // ==========================================================================
 
 .workflow-pane {
-    margin: 0;
+    margin: 14px -24px;
 }
 
 .workflow-pane .btngroup {
@@ -49,6 +49,11 @@
 
 .workflow-submission-footer {
     margin-top: 10px;
+}
+
+.workflow-pane .field {
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .workflow-submission-heading,

@@ -536,6 +536,14 @@
       "oAP" : "\/src\/events\/EmailEvent.php",
       "oF" : 0
     },
+    "\/src\/events\/PrepareEmailEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/PrepareEmailEvent.php",
+      "oF" : 0
+    },
     "\/src\/events\/ReviewerUserGroupsEvent.php" : {
       "cB" : 0,
       "ft" : 8192,

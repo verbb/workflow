@@ -15,6 +15,7 @@ use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\helpers\Html;
+use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 
 use DateTime;
@@ -44,7 +45,7 @@ class Submission extends Element
     public ?string $status = null;
     public ?string $editorNotes = null;
     public ?string $publisherNotes = null;
-    public ?string $data = null;
+    public ?array $data = null;
     public ?DateTime $dateApproved = null;
     public ?DateTime $dateRejected = null;
     public ?DateTime $dateRevoked = null;
@@ -126,6 +127,22 @@ class Submission extends Element
 
     // Public Methods
     // =========================================================================
+
+    public function __construct($config = [])
+    {
+        // Config normalization
+        if (array_key_exists('data', $config)) {
+            if (is_string($config['data'])) {
+                $config['data'] = Json::decodeIfJson($config['data']);
+            }
+
+            if (!is_array($config['data'])) {
+                $config['data'] = [];
+            }
+        }
+
+        parent::__construct($config);
+    }
 
     public function __toString(): string
     {

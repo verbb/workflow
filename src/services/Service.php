@@ -202,21 +202,23 @@ class Service extends Component
         }
     }
 
-    public function renderEntrySidebar(&$context): ?string
+    public function renderEntrySidebar(\craft\events\DefineHtmlEvent $event): void
     {
+        $entry = $event->sender;
+        
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         if (!$settings->editorUserGroup || !$settings->publisherUserGroup) {
             Workflow::log('Editor and Publisher groups not set in settings.');
 
-            return null;
+            return;
         }
 
         if (!$currentUser) {
             Workflow::log('No current user.');
 
-            return null;
+            return;
         }
 
         $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
@@ -225,47 +227,50 @@ class Service extends Component
         // If the user is in _both_ editor and publisher groups, work it out.
         if ($currentUser->isInGroup($editorGroup) && $currentUser->isInGroup($publisherGroup)) {
             // Are there any submissions pending for any users but this one?
-            $submissions = $this->_getSubmissionsFromContext($context);
+            $submissions = $this->_getSubmissionsFromContext($entry);
 
             $pendingSubmissions = ArrayHelper::where($submissions, function($submission) use ($currentUser) {
                 return $submission->status === 'pending' && $submission->editorId != $currentUser->id;
             }, true, true, false);
 
             if ($pendingSubmissions) {
-                return $this->_renderEntrySidebarPanel($context, 'publisher-pane');
+                $event->html .= $this->_renderEntrySidebarPanel($entry, 'publisher-pane');
+                return;
             }
 
-            return $this->_renderEntrySidebarPanel($context, 'editor-pane');
+            $event->html .= $this->_renderEntrySidebarPanel($entry, 'editor-pane');
+            return;
         }
 
         // Show the sidebar submission button for editors
         if ($currentUser->isInGroup($editorGroup)) {
-            return $this->_renderEntrySidebarPanel($context, 'editor-pane');
+            $event->html .= $this->_renderEntrySidebarPanel($entry, 'editor-pane');
+            return;
         }
 
         // Show another information panel for publishers (if there's submission info)
         if ($currentUser->isInGroup($publisherGroup)) {
-            return $this->_renderEntrySidebarPanel($context, 'publisher-pane');
+            $event->html .= $this->_renderEntrySidebarPanel($entry, 'publisher-pane');
+            return;
         }
 
         // Show the sidebar submission button for reviewers
-        $submissions = $this->_getSubmissionsFromContext($context);
+        $submissions = $this->_getSubmissionsFromContext($entry);
         $lastSubmission = empty($submissions) ? null : end($submissions);
 
         foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($lastSubmission) as $userGroup) {
             if ($currentUser->isInGroup($userGroup)) {
-                return $this->_renderEntrySidebarPanel($context, 'reviewer-pane');
+                $event->html .= $this->_renderEntrySidebarPanel($entry, 'reviewer-pane');
+                return;
             }
         }
-
-        return null;
     }
 
 
     // Private Methods
     // =========================================================================
 
-    private function _renderEntrySidebarPanel($context, $template): ?string
+    private function _renderEntrySidebarPanel($entry, $template): ?string
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -281,7 +286,7 @@ class Service extends Component
         if ($settings->enabledSections != '*') {
             $enabledSectionIds = Db::idsByUids(Table::SECTIONS, $settings->enabledSections);
 
-            if (!in_array($context['entry']->sectionId, $enabledSectionIds)) {
+            if (!in_array($entry->sectionId, $enabledSectionIds)) {
                 Workflow::log('Entry not in allowed section.');
 
                 return null;
@@ -289,27 +294,27 @@ class Service extends Component
         }
 
         // Get existing submissions
-        $submissions = $this->_getSubmissionsFromContext($context);
+        $submissions = $this->_getSubmissionsFromContext($entry);
 
-        Workflow::log('Rendering ' . $template . ' for #' . $context['entry']->id);
+        Workflow::log('Rendering ' . $template . ' for #' . $entry->id);
 
         // Merge any additional route params
         $routeParams = Craft::$app->getUrlManager()->getRouteParams();
         unset($routeParams['template'], $routeParams['template']);
 
         return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, array_merge([
-            'context' => $context,
+            'entry' => $entry,
             'submissions' => $submissions,
             'settings' => $settings,
         ], $routeParams));
     }
 
-    private function _getSubmissionsFromContext($context): array
+    private function _getSubmissionsFromContext($entry): array
     {
         // Get existing submissions
-        $ownerId = $context['entry']->id ?? ':empty:';
-        $draftId = $context['draftId'] ?? ':empty:';
-        $siteId = $context['entry']['siteId'] ?? Craft::$app->getSites()->getCurrentSite()->id;
+        $ownerId = $entry->id ?? ':empty:';
+        $draftId = $entry->draftId ?? ':empty:';
+        $siteId = $entry->siteId ?? Craft::$app->getSites()->getCurrentSite()->id;
 
         return Submission::find()
             ->ownerId($ownerId)
