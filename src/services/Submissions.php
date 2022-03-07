@@ -222,7 +222,7 @@ class Submissions extends Component
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
             $this->sendReviewerNotificationEmail($submission);
-        } 
+        }
 
         // Trigger notification to editor - if configured to do so
         if ($settings->editorNotifications && $settings->reviewerApprovalNotifications) {

@@ -34,9 +34,9 @@ class Workflow extends Plugin
     // Properties
     // =========================================================================
 
-    public string $schemaVersion = '2.1.5';
-    public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
+    public bool $hasCpSettings = true;
+    public string $schemaVersion = '2.1.5';
 
     // Traits
     // =========================================================================
@@ -110,7 +110,7 @@ class Workflow extends Plugin
                     'heading' => Craft::t('workflow', 'workflow_editor_notification_heading'),
                     'subject' => Craft::t('workflow', 'workflow_editor_notification_subject'),
                     'body' => Craft::t('workflow', 'workflow_editor_notification_body'),
-                ]
+                ],
             ]);
         });
     }

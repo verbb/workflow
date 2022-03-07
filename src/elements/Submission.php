@@ -34,23 +34,6 @@ class Submission extends Element
     public const STATUS_REVOKED = 'revoked';
 
 
-    // Properties
-    // =========================================================================
-
-    public ?int $ownerId = null;
-    public ?int $ownerSiteId = null;
-    public ?int $ownerDraftId = null;
-    public ?int $editorId = null;
-    public ?int $publisherId = null;
-    public ?string $status = null;
-    public ?string $editorNotes = null;
-    public ?string $publisherNotes = null;
-    public ?array $data = null;
-    public ?DateTime $dateApproved = null;
-    public ?DateTime $dateRejected = null;
-    public ?DateTime $dateRevoked = null;
-
-
     // Static Methods
     // =========================================================================
 
@@ -90,7 +73,7 @@ class Submission extends Element
             self::STATUS_APPROVED => Craft::t('workflow', 'Approved'),
             self::STATUS_PENDING => Craft::t('workflow', 'Pending'),
             self::STATUS_REJECTED => Craft::t('workflow', 'Rejected'),
-            self::STATUS_REVOKED => Craft::t('workflow', 'Revoked')
+            self::STATUS_REVOKED => Craft::t('workflow', 'Revoked'),
         ];
     }
 
@@ -105,7 +88,7 @@ class Submission extends Element
             '*' => [
                 'key' => '*',
                 'label' => Craft::t('workflow', 'All submissions'),
-            ]
+            ],
         ];
     }
 
@@ -123,6 +106,71 @@ class Submission extends Element
 
         return $actions;
     }
+
+    protected static function defineTableAttributes(): array
+    {
+        return [
+            'id' => ['label' => Craft::t('workflow', 'Entry')],
+            'siteId' => ['label' => Craft::t('workflow', 'Site')],
+            'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
+            'editor' => ['label' => Craft::t('workflow', 'Editor')],
+            'lastReviewDate' => ['label' => Craft::t('workflow', 'Last Reviewed')],
+            'reviewer' => ['label' => Craft::t('workflow', 'Last Reviewed By')],
+            'publisher' => ['label' => Craft::t('workflow', 'Publisher')],
+            'editorNotes' => ['label' => Craft::t('workflow', 'Editor Notes')],
+            'publisherNotes' => ['label' => Craft::t('workflow', 'Publisher Notes')],
+            'dateApproved' => ['label' => Craft::t('workflow', 'Date Approved')],
+            'dateRejected' => ['label' => Craft::t('workflow', 'Date Rejected')],
+        ];
+    }
+
+    protected static function defineDefaultTableAttributes(string $source): array
+    {
+        return [
+            'id',
+            'editor',
+            'dateCreated',
+            'reviewer',
+            'lastReviewDate',
+            'publisher',
+            'dateApproved',
+            'dateRejected',
+        ];
+    }
+
+    protected static function defineSortOptions(): array
+    {
+        return [
+            'id' => Craft::t('workflow', 'Entry'),
+            'editorId' => Craft::t('workflow', 'Editor'),
+            'dateCreated' => Craft::t('workflow', 'Date Submitted'),
+            'publisherId' => Craft::t('workflow', 'Publisher'),
+            'dateApproved' => Craft::t('workflow', 'Date Approved'),
+            'dateRejected' => Craft::t('workflow', 'Date Rejected'),
+        ];
+    }
+
+    protected static function defineSearchableAttributes(): array
+    {
+        return ['ownerTitle', 'editorName', 'publisherName'];
+    }
+
+
+    // Properties
+    // =========================================================================
+
+    public ?int $ownerId = null;
+    public ?int $ownerSiteId = null;
+    public ?int $ownerDraftId = null;
+    public ?int $editorId = null;
+    public ?int $publisherId = null;
+    public ?string $status = null;
+    public ?string $editorNotes = null;
+    public ?string $publisherNotes = null;
+    public ?array $data = null;
+    public ?DateTime $dateApproved = null;
+    public ?DateTime $dateRejected = null;
+    public ?DateTime $dateRevoked = null;
 
 
     // Public Methods
@@ -147,7 +195,7 @@ class Submission extends Element
     public function __toString(): string
     {
         if ($owner = $this->getOwner()) {
-            return (string) $owner->title;
+            return (string)$owner->title;
         }
 
         return Craft::t('workflow', '[Deleted element]');
@@ -357,8 +405,7 @@ class Submission extends Element
         foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($this) as $key => $userGroup) {
             if ($lastReviewer->isInGroup($userGroup)) {
                 $canReview = false;
-            }
-            elseif ($user->isInGroup($userGroup)) {
+            } else if ($user->isInGroup($userGroup)) {
                 $canReview = true;
             }
         }
@@ -399,67 +446,27 @@ class Submission extends Element
         parent::afterSave($isNew);
     }
 
-    protected static function defineTableAttributes(): array
-    {
-        return [
-            'id' => ['label' => Craft::t('workflow', 'Entry')],
-            'siteId' => ['label' => Craft::t('workflow', 'Site')],
-            'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
-            'editor' => ['label' => Craft::t('workflow', 'Editor')],
-            'lastReviewDate' => ['label' => Craft::t('workflow', 'Last Reviewed')],
-            'reviewer' => ['label' => Craft::t('workflow', 'Last Reviewed By')],
-            'publisher' => ['label' => Craft::t('workflow', 'Publisher')],
-            'editorNotes' => ['label' => Craft::t('workflow', 'Editor Notes')],
-            'publisherNotes' => ['label' => Craft::t('workflow', 'Publisher Notes')],
-            'dateApproved' => ['label' => Craft::t('workflow', 'Date Approved')],
-            'dateRejected' => ['label' => Craft::t('workflow', 'Date Rejected')],
-        ];
-    }
 
-    protected static function defineDefaultTableAttributes(string $source): array
-    {
-        return [
-            'id',
-            'editor',
-            'dateCreated',
-            'reviewer',
-            'lastReviewDate',
-            'publisher',
-            'dateApproved',
-            'dateRejected',
-        ];
-    }
-
-    protected static function defineSortOptions(): array
-    {
-        return [
-            'id' => Craft::t('workflow', 'Entry'),
-            'editorId' => Craft::t('workflow', 'Editor'),
-            'dateCreated' => Craft::t('workflow', 'Date Submitted'),
-            'publisherId' => Craft::t('workflow', 'Publisher'),
-            'dateApproved' => Craft::t('workflow', 'Date Approved'),
-            'dateRejected' => Craft::t('workflow', 'Date Rejected'),
-        ];
-    }
-
-    protected static function defineSearchableAttributes(): array
-    {
-        return ['ownerTitle', 'editorName', 'publisherName'];
-    }
+    // Protected Methods
+    // =========================================================================
 
     protected function tableAttributeHtml(string $attribute): string
     {
         switch ($attribute) {
-            case 'publisher': {
+            case 'publisher':
+            {
                 return $this->getPublisherUrl() ?: '-';
             }
-            case 'editor': {
+            case 'editor':
+            {
                 return $this->getEditorUrl() ?: '-';
             }
-            case 'reviewer': {
+            case 'reviewer':
+            {
                 return $this->getLastReviewerUrl() ?: '-';
             }
-            case 'lastReviewDate': {
+            case 'lastReviewDate':
+            {
                 $lastReview = $this->getLastReview();
 
                 if ($lastReview === null) {
@@ -467,22 +474,25 @@ class Submission extends Element
                 }
 
                 $formatter = Craft::$app->getFormatter();
-                    return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
-                        'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT)
-                    ]);
+                return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
+                    'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT),
+                ]);
             }
             case 'dateApproved':
-            case 'dateRejected': {
+            case 'dateRejected':
+            {
                 return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
             }
-            case 'siteId': {
+            case 'siteId':
+            {
                 if ($this->ownerSiteId && $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
                     return $site->name;
                 }
 
                 return '';
             }
-            default: {
+            default:
+            {
                 return parent::tableAttributeHtml($attribute);
             }
         }

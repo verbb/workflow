@@ -8,14 +8,7 @@ use craft\base\Widget;
 
 class Submissions extends Widget
 {
-    // Properties
-    // =========================================================================
-
-    public string $status = 'pending';
-    public int $limit = 10;
-
-
-    // Public Methods
+    // Static Methods
     // =========================================================================
 
     public static function displayName(): string
@@ -28,6 +21,18 @@ class Submissions extends Widget
         return Craft::getAlias('@verbb/workflow/icon-mask.svg');
     }
 
+
+
+    // Properties
+    // =========================================================================
+
+    public int $limit = 10;
+    public string $status = 'pending';
+    
+
+    // Public Methods
+    // =========================================================================
+    
     public function getBodyHtml(): ?string
     {
         $submissions = Submission::find()
@@ -39,12 +44,12 @@ class Submissions extends Widget
             'submissions' => $submissions,
         ]);
     }
-    
+
     public function getSettingsHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate('workflow/_widget/settings', [
             'widget' => $this,
         ]);
     }
-    
+
 }

@@ -16,7 +16,7 @@ class m190806_000000_removeOwnerForeignKey extends Migration
         MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId'], $this);
 
         $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'SET NULL', null);
-        
+
         // Re-enable FK checks
         $this->execute($queryBuilder->checkIntegrity(true, '', '{{%workflow_submissions}}'));
 

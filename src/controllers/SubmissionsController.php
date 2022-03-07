@@ -154,7 +154,7 @@ class SubmissionsController extends BaseEntriesController
         if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
             $draft->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
         }
-        
+
         $enabledForSite = $this->enabledForSiteValue();
 
         if (is_array($enabledForSite)) {

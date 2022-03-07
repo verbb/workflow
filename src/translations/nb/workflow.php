@@ -4,7 +4,7 @@ return [
     //
     // Email Messages
     //
-    
+
     'workflow_publisher_notification_heading' => 'Når en skribent sender et utkast til godkjenning:',
     'workflow_publisher_notification_subject' => '"{{ submission.owner.title }}" har blitt sendt inn for godkjenning på {{ siteName }}.',
     'workflow_publisher_notification_body' => "Hei {{ user.friendlyName }},\n\n" .

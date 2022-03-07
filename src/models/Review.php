@@ -9,17 +9,9 @@ use DateTime;
 
 class Review extends Model
 {
-    // Properties
-    // =========================================================================
-
-    public ?int $submissionId = null;
-    public ?int $userId = null;
-    public bool $approved = true;
-    public ?string $notes = null;
-    public ?DateTime $dateCreated = null;
-
     // Static Methods
     // =========================================================================
+
     /**
      * Populates a new model instance with a given set of attributes.
      *
@@ -37,4 +29,15 @@ class Review extends Model
 
         return $review;
     }
+    
+
+    // Properties
+    // =========================================================================
+
+    public ?int $submissionId = null;
+    public ?int $userId = null;
+    public bool $approved = true;
+    public ?string $notes = null;
+    public ?DateTime $dateCreated = null;
+
 }

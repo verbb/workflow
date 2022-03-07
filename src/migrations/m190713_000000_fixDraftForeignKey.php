@@ -14,7 +14,7 @@ class m190713_000000_fixDraftForeignKey extends Migration
         MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId'], $this);
 
         $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerDraftId', '{{%drafts}}', 'id', 'SET NULL', null);
-        
+
         // Re-enable FK checks
         $this->execute($queryBuilder->checkIntegrity(true, '', '{{%workflow_submissions}}'));
 

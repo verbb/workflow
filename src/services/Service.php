@@ -8,6 +8,7 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\db\Table;
+use craft\events\DefineHtmlEvent;
 use craft\events\DraftEvent;
 use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
@@ -202,10 +203,10 @@ class Service extends Component
         }
     }
 
-    public function renderEntrySidebar(\craft\events\DefineHtmlEvent $event): void
+    public function renderEntrySidebar(DefineHtmlEvent $event): void
     {
         $entry = $event->sender;
-        
+
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
