@@ -176,22 +176,6 @@ class Submission extends Element
     // Public Methods
     // =========================================================================
 
-    public function __construct($config = [])
-    {
-        // Config normalization
-        if (array_key_exists('data', $config)) {
-            if (is_string($config['data'])) {
-                $config['data'] = Json::decodeIfJson($config['data']);
-            }
-
-            if (!is_array($config['data'])) {
-                $config['data'] = [];
-            }
-        }
-
-        parent::__construct($config);
-    }
-
     public function __toString(): string
     {
         if ($owner = $this->getOwner()) {
@@ -199,16 +183,6 @@ class Submission extends Element
         }
 
         return Craft::t('workflow', '[Deleted element]');
-    }
-
-    public function datetimeAttributes(): array
-    {
-        $attributes = parent::datetimeAttributes();
-        $attributes[] = 'dateApproved';
-        $attributes[] = 'dateRejected';
-        $attributes[] = 'dateRevoked';
-
-        return $attributes;
     }
 
     public function getStatus(): ?string
