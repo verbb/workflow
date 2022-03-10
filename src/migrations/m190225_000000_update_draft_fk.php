@@ -2,7 +2,7 @@
 namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 
 class m190225_000000_update_draft_fk extends Migration
 {
@@ -11,7 +11,7 @@ class m190225_000000_update_draft_fk extends Migration
 
     public function safeUp(): bool
     {
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['draftId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['draftId'], $this);
 
         $this->addForeignKey(null, '{{%workflow_submissions}}', 'draftId', '{{%entrydrafts}}', 'id', 'SET NULL', null);
 

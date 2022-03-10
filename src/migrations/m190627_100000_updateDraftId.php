@@ -2,14 +2,14 @@
 namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 
 class m190627_100000_updateDraftId extends Migration
 {
     public function safeUp(): bool
     {
         if (!$this->db->columnExists('{{%workflow_submissions}}', 'ownerDraftId')) {
-            MigrationHelper::renameColumn('{{%workflow_submissions}}', 'draftId', 'ownerDraftId', $this);
+            Db::renameColumn('{{%workflow_submissions}}', 'draftId', 'ownerDraftId', $this);
         }
 
         return true;

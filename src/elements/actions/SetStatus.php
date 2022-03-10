@@ -67,7 +67,7 @@ class SetStatus extends ElementAction
                 }
 
                 if ($ownerDraftId) {
-                    $draft = Entry::find()->draftId($ownerDraftId)->siteId($ownerSiteId)->anyStatus()->one();
+                    $draft = Entry::find()->draftId($ownerDraftId)->siteId($ownerSiteId)->status(null)->one();
 
                     if ($draft) {
                         $draft->setScenario(Element::SCENARIO_LIVE);

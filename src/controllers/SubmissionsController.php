@@ -110,7 +110,7 @@ class SubmissionsController extends BaseEntriesController
             $entry = Entry::find()
                 ->draftId($draftId)
                 ->siteId($siteId)
-                ->anyStatus()
+                ->status(null)
                 ->one();
         }
 
@@ -118,7 +118,7 @@ class SubmissionsController extends BaseEntriesController
             $entry = Entry::find()
                 ->id($entryId)
                 ->siteId($siteId)
-                ->anyStatus()
+                ->status(null)
                 ->one();
         }
 

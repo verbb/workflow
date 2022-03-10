@@ -2,7 +2,7 @@
 namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 
 class Install extends Migration
 {
@@ -90,14 +90,14 @@ class Install extends Migration
 
     public function dropForeignKeys(): void
     {
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['id'], $this);
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId'], $this);
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerSiteId'], $this);
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['editorId'], $this);
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId'], $this);
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['publisherId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['id'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerSiteId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['editorId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['publisherId'], $this);
 
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_reviews}}', ['submissionId'], $this);
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_reviews}}', ['userId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['submissionId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['userId'], $this);
     }
 }

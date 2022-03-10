@@ -2,7 +2,7 @@
 namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 
 class m190224_000000_notes extends Migration
 {
@@ -12,7 +12,7 @@ class m190224_000000_notes extends Migration
     public function safeUp(): bool
     {
         if ($this->db->columnExists('{{%workflow_submissions}}', 'notes')) {
-            MigrationHelper::renameColumn('{{%workflow_submissions}}', 'notes', 'publisherNotes', $this);
+            Db::renameColumn('{{%workflow_submissions}}', 'notes', 'publisherNotes', $this);
         }
 
         if (!$this->db->columnExists('{{%workflow_submissions}}', 'editorNotes')) {

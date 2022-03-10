@@ -2,7 +2,7 @@
 namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 
 class m190806_000000_removeOwnerForeignKey extends Migration
 {
@@ -13,7 +13,7 @@ class m190806_000000_removeOwnerForeignKey extends Migration
 
         $this->alterColumn('{{%workflow_submissions}}', 'ownerId', $this->integer());
 
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId'], $this);
 
         $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'SET NULL', null);
 

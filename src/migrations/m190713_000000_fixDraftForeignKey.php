@@ -2,7 +2,7 @@
 namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
+use craft\helpers\Db;
 
 class m190713_000000_fixDraftForeignKey extends Migration
 {
@@ -11,7 +11,7 @@ class m190713_000000_fixDraftForeignKey extends Migration
         $queryBuilder = $this->db->getSchema()->getQueryBuilder();
         $this->execute($queryBuilder->checkIntegrity(false, '', '{{%workflow_submissions}}'));
 
-        MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId'], $this);
 
         $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerDraftId', '{{%drafts}}', 'id', 'SET NULL', null);
 
