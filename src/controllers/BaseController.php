@@ -22,12 +22,16 @@ class BaseController extends Controller
         $publishers = [];
 
         if ($settings->publisherUserGroup) {
-            $publisherUserGroupId = Db::idByUid(Table::USERGROUPS, $settings->publisherUserGroup);
+            foreach ($settings->publisherUserGroup as $siteUid => $publisherUserGroupUid) {
+                $publisherUserGroupId = Db::idByUid(Table::USERGROUPS, $publisherUserGroupUid);
 
-            foreach (User::find()->groupId($publisherUserGroupId)->all() as $user) {
-                $publishers[] = ['value' => $user->id, 'label' => $user];
+                foreach (User::find()->groupId($publisherUserGroupId)->all() as $user) {
+                    $publishers[] = ['value' => $user->id, 'label' => (string)$user];
+                }
             }
         }
+
+        $publishers = array_unique($publishers, SORT_REGULAR);
 
         return $this->renderTemplate('workflow/settings', [
             'settings' => $settings,

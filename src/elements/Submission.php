@@ -321,9 +321,10 @@ class Submission extends Element
      * @param User $user
      * @return bool
      */
-    public function canUserReview(User $user): bool
+    public function canUserReview(User $user, $site): bool
     {
-        $publisherGroup = Craft::$app->userGroups->getGroupByUid(Workflow::$plugin->getSettings()->publisherUserGroup);
+        $settings = Workflow::$plugin->getSettings();
+        $publisherGroup = $settings->getPublisherUserGroup($site);
 
         if ($user->isInGroup($publisherGroup)) {
             return true;
@@ -337,7 +338,7 @@ class Submission extends Element
 
         $canReview = false;
 
-        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($this) as $key => $userGroup) {
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($site, $this) as $key => $userGroup) {
             if ($lastReviewer->isInGroup($userGroup)) {
                 $canReview = false;
             }

@@ -1,6 +1,7 @@
 <?php
 namespace verbb\workflow\models;
 
+use Craft;
 use craft\base\Model;
 
 class Settings extends Model
@@ -9,11 +10,11 @@ class Settings extends Model
     // =========================================================================
 
     // General
-    public $editorUserGroup;
+    public $editorUserGroup = [];
     public $reviewerUserGroups = [];
-    public $publisherUserGroup;
-    public $editorNotesRequired = false;
-    public $publisherNotesRequired = false;
+    public $publisherUserGroup = [];
+    public $editorNotesRequired = [];
+    public $publisherNotesRequired = [];
     public $lockDraftSubmissions = true;
 
     // Notifications
@@ -31,13 +32,58 @@ class Settings extends Model
     // Public Methods
     // =========================================================================
 
-    public function getReviewerUserGroups()
+    public function getEditorUserGroup($site)
     {
-        // Protect against _somehow_ this not being an array...
-        if (!is_array($this->reviewerUserGroups)) {
-            return [];
+        $groupUid = $this->editorUserGroup[$site->uid] ?? null;
+
+        if ($groupUid) {
+            return Craft::$app->userGroups->getGroupByUid($groupUid);
         }
 
-        return $this->reviewerUserGroups;
+        return null;
+    }
+
+    public function getReviewerUserGroups($site)
+    {
+        $userGroups = [];
+        $siteGroups = $this->reviewerUserGroups[$site->uid] ?? [];
+
+        foreach ($siteGroups as $siteGroup) {
+            // Get UID from first element in array
+            $uid = $siteGroup[0] ?? null;
+
+            if ($uid === null) {
+                continue;
+            }
+
+            $userGroup = Craft::$app->getUserGroups()->getGroupByUid($uid);
+
+            if ($userGroup !== null) {
+                $userGroups[] = $userGroup;
+            }
+        }
+
+        return $userGroups;
+    }
+
+    public function getPublisherUserGroup($site)
+    {
+        $groupUid = $this->publisherUserGroup[$site->uid] ?? null;
+
+        if ($groupUid) {
+            return Craft::$app->userGroups->getGroupByUid($groupUid);
+        }
+
+        return null;
+    }
+
+    public function getEditorNotesRequired($site)
+    {
+        return $this->editorNotesRequired[$site->uid] ?? false;
+    }
+
+    public function getPublisherNotesRequired($site)
+    {
+        return $this->publisherNotesRequired[$site->uid] ?? false;
     }
 }
