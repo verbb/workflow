@@ -3,6 +3,7 @@ namespace verbb\workflow\models;
 
 use Craft;
 use craft\base\Model;
+use craft\helpers\ArrayHelper;
 
 class Settings extends Model
 {
@@ -43,6 +44,11 @@ class Settings extends Model
         return null;
     }
 
+    public function getEditorUserGroupUid($site)
+    {
+        return $this->getEditorUserGroup($site) ?? null;
+    }
+
     public function getReviewerUserGroups($site)
     {
         $userGroups = [];
@@ -71,6 +77,11 @@ class Settings extends Model
         return $userGroups;
     }
 
+    public function getReviewerUserGroupsUids($site)
+    {
+        return ArrayHelper::getColumn($this->getReviewerUserGroups($site), 'uid');
+    }
+
     public function getPublisherUserGroup($site)
     {
         $groupUid = $this->publisherUserGroup[$site->uid] ?? null;
@@ -80,6 +91,11 @@ class Settings extends Model
         }
 
         return null;
+    }
+
+    public function getPublisherUserGroupUid($site)
+    {
+        return $this->getPublisherUserGroup($site) ?? null;
     }
 
     public function getEditorNotesRequired($site)
