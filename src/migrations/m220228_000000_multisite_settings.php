@@ -47,8 +47,10 @@ class m220228_000000_multisite_settings extends Migration
             }
         }
 
+        $settings = $settings->toArray();
+
         // Update the plugin's settings in the project config
-        $settings = ProjectConfig::packAssociativeArrays($settings ?? []);
+        $settings = ProjectConfig::packAssociativeArrays($settings);
 
         Craft::$app->getProjectConfig()->set(Plugins::CONFIG_PLUGINS_KEY . '.workflow.settings', $settings);
     }
