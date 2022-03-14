@@ -21,7 +21,7 @@
                     instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t('workflow'),
                     id: "editorUserGroup-#{loop.index}",
                     name: "editorUserGroup[#{site.uid}]",
-                    value: settings.editorUserGroup[site.uid],
+                    value: settings.getEditorUserGroup(site),
                     errors: settings.getErrors('editorUserGroup'),
                     options: groupsWithNone,
                     warning: macros.configWarning('editorUserGroup', 'workflow'),
@@ -32,7 +32,7 @@
                     instructions: 'Whether editors are required to enter a note in their submissions.' | t('workflow'),
                     id: "editorNotesRequired-#{loop.index}",
                     name: "editorNotesRequired[#{site.uid}]",
-                    on: settings.editorNotesRequired[site.uid],
+                    on: settings.getEditorNotesRequired(site),
                     warning: macros.configWarning('editorNotesRequired', 'workflow'),
                 }) }}
 
@@ -52,7 +52,7 @@
                     name: "reviewerUserGroups[#{site.uid}]",
                     id: "reviewerUserGroups-#{loop.index}",
                     cols: cols,
-                    rows: settings.reviewerUserGroups[site.uid],
+                    rows: settings.getReviewerUserGroups(site),
                     addRowLabel: 'Add a user group' | t('workflow'),
                     errors: settings.getErrors('reviewerUserGroups'),
                     warning: macros.configWarning('reviewerUserGroups', 'workflow') ?: 'Changing this may result in submissions being lost in the review process.' | t('workflow'),
@@ -65,7 +65,7 @@
                     instructions: 'Select the user group that your publishers belong to. Publishers are users who are notified when an editor submits content for review, and can approve content to be published live.' | t('workflow'),
                     id: "publisherUserGroup-#{loop.index}",
                     name: "publisherUserGroup[#{site.uid}]",
-                    value: settings.publisherUserGroup[site.uid],
+                    value: settings.getPublisherUserGroup(site),
                     errors: settings.getErrors('publisherUserGroup'),
                     required: true,
                     options: groups,
@@ -77,7 +77,7 @@
                     instructions: 'Whether publishers are required to enter a note in their submissions.' | t('workflow'),
                     id: "publisherNotesRequired-#{loop.index}",
                     name: "publisherNotesRequired[#{site.uid}]",
-                    on: settings.publisherNotesRequired[site.uid],
+                    on: settings.getPublisherNotesRequired(site),
                     warning: macros.configWarning('publisherNotesRequired', 'workflow'),
                 }) }}
             </div>
