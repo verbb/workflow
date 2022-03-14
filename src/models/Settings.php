@@ -46,7 +46,7 @@ class Settings extends Model
 
     public function getEditorUserGroupUid($site)
     {
-        return $this->getEditorUserGroup($site) ?? null;
+        return $this->getEditorUserGroup($site)->uid ?? null;
     }
 
     public function getReviewerUserGroups($site)
@@ -95,7 +95,7 @@ class Settings extends Model
 
     public function getPublisherUserGroupUid($site)
     {
-        return $this->getPublisherUserGroup($site) ?? null;
+        return $this->getPublisherUserGroup($site)->uid ?? null;
     }
 
     public function getEditorNotesRequired($site)
