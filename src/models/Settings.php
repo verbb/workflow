@@ -48,6 +48,11 @@ class Settings extends Model
         $userGroups = [];
         $siteGroups = $this->reviewerUserGroups[$site->uid] ?? [];
 
+        // For when no items are passed, this will be a string
+        if (!is_array($siteGroups)) {
+            $siteGroups = [];
+        }
+
         foreach ($siteGroups as $siteGroup) {
             // Get UID from first element in array
             $uid = $siteGroup[0] ?? null;
