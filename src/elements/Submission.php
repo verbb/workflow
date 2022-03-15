@@ -44,6 +44,10 @@ class Submission extends Element
     public $dateRejected;
     public $dateRevoked;
 
+    private $_owner = null;
+    private $_editor = null;
+    private $_publisher = null;
+
 
     // Static Methods
     // =========================================================================
@@ -165,8 +169,13 @@ class Submission extends Element
 
     public function getOwner()
     {
+        if ($this->_owner !== null) {
+            return $this->_owner;
+        }
+
+
         if ($this->ownerId !== null) {
-            return Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
+            return $this->_owner = Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
         }
 
         return null;
@@ -174,8 +183,12 @@ class Submission extends Element
 
     public function getEditor()
     {
+        if ($this->_editor !== null) {
+            return $this->_editor;
+        }
+
         if ($this->editorId !== null) {
-            return Craft::$app->getUsers()->getUserById($this->editorId);
+            return $this->_editor = Craft::$app->getUsers()->getUserById($this->editorId);
         }
 
         return null;
@@ -198,8 +211,12 @@ class Submission extends Element
 
     public function getPublisher()
     {
+        if ($this->_publisher !== null) {
+            return $this->_publisher;
+        }
+
         if ($this->publisherId !== null) {
-            return Craft::$app->getUsers()->getUserById($this->publisherId);
+            return $this->_publisher = Craft::$app->getUsers()->getUserById($this->publisherId);
         }
 
         return null;
