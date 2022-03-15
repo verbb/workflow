@@ -247,6 +247,11 @@ class Submission extends Element
         return $this->getEditor()->fullName ?? '';
     }
 
+    public function getOwnerSite()
+    {
+        return $this->getOwner()->getSite() ?? Craft::$app->getSites()->getPrimarySite();
+    }
+
     public function getPublisherName()
     {
         return $this->getPublisher()->fullName ?? '';
