@@ -177,3 +177,52 @@
     margin-right: 5px;
 }
 
+//
+// Multi-site settings panes
+//
+
+.workflow-settings-pane {
+    border: 1px solid #cdd8e4;
+    margin-bottom: -2px;
+
+    &:first-child {
+        border-radius: 5px 5px 0 0;
+
+        .pane-toolbar {
+            border-radius: 5px 5px 0 0;
+        }
+    }
+
+    &:last-child {
+        border-radius: 0 0 5px 5px;
+
+        .pane-toolbar {
+            border-radius: 0 0 5px 5px;
+        }
+    }
+}
+
+.workflow-settings-pane .pane-toolbar {
+    background: #f3f7fc;
+    border-bottom: 1px solid #cdd8e4;
+}
+
+.workflow-settings-pane .pane-toolbar-title {
+    font-weight: bold;
+    color: #596673;
+    display: block;
+    padding: 10px 20px !important;
+    margin: 0;
+
+    &::before {
+        right: 20px;
+        left: auto !important;
+        top: 16px;
+        transform-origin: 50% 50%;
+    }
+}
+
+.workflow-settings-pane .settings-content-pane {
+    padding: 20px;
+}
+

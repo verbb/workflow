@@ -58,7 +58,7 @@ class Service extends Component
                 // Ensure current user is allowed to review the submission
                 // If the current user is the author, they can't edit their own submission
                 /** @var Submission $submission */
-                if ((!$submission->canUserReview($currentUser) || $submission->editorId == $currentUser->id) && $settings->lockDraftSubmissions) {
+                if ((!$submission->canUserReview($currentUser, $event->sender->site) || $submission->editorId == $currentUser->id) && $settings->lockDraftSubmissions) {
                     $event->isValid = false;
 
                     $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
@@ -210,7 +210,10 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        if (!$settings->editorUserGroup || !$settings->publisherUserGroup) {
+        $editorGroup = $settings->getEditorUserGroup($context['site']);
+        $publisherGroup = $settings->getPublisherUserGroup($context['site']);
+
+        if (!$editorGroup || !$publisherGroup) {
             Workflow::log('Editor and Publisher groups not set in settings.');
 
             return;
@@ -221,9 +224,6 @@ class Service extends Component
 
             return;
         }
-
-        $editorGroup = Craft::$app->userGroups->getGroupByUid($settings->editorUserGroup);
-        $publisherGroup = Craft::$app->userGroups->getGroupByUid($settings->publisherUserGroup);
 
         // If the user is in _both_ editor and publisher groups, work it out.
         if ($currentUser->isInGroup($editorGroup) && $currentUser->isInGroup($publisherGroup)) {
@@ -259,7 +259,7 @@ class Service extends Component
         $submissions = $this->_getSubmissionsFromContext($entry);
         $lastSubmission = empty($submissions) ? null : end($submissions);
 
-        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($lastSubmission) as $userGroup) {
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($context['site'], $lastSubmission) as $userGroup) {
             if ($currentUser->isInGroup($userGroup)) {
                 $event->html .= $this->_renderEntrySidebarPanel($entry, 'reviewer-pane');
                 return;

@@ -1,8 +1,9 @@
 <?php
 namespace verbb\workflow\models;
 
+use Craft;
 use craft\base\Model;
-use craft\helpers\Json;
+use craft\helpers\ArrayHelper;
 
 class Settings extends Model
 {
@@ -10,11 +11,11 @@ class Settings extends Model
     // =========================================================================
 
     // General
-    public mixed $editorUserGroup = null;
+    public array $editorUserGroup = [];
     public array $reviewerUserGroups = [];
-    public mixed $publisherUserGroup = null;
-    public bool $editorNotesRequired = false;
-    public bool $publisherNotesRequired = false;
+    public array $publisherUserGroup = [];
+    public array $editorNotesRequired = [];
+    public array $publisherNotesRequired = [];
     public bool $lockDraftSubmissions = true;
 
     // Notifications
@@ -32,13 +33,78 @@ class Settings extends Model
     // Public Methods
     // =========================================================================
 
-    public function getReviewerUserGroups(): array
+    public function getEditorUserGroup($site)
     {
-        // Protect against _somehow_ this not being an array...
-        if (!is_array($this->reviewerUserGroups)) {
-            return [];
+        $groupUid = $this->editorUserGroup[$site->uid] ?? null;
+
+        if ($groupUid) {
+            return Craft::$app->userGroups->getGroupByUid($groupUid);
         }
 
-        return $this->reviewerUserGroups;
+        return null;
+    }
+
+    public function getEditorUserGroupUid($site)
+    {
+        return $this->getEditorUserGroup($site)->uid ?? null;
+    }
+
+    public function getReviewerUserGroups($site)
+    {
+        $userGroups = [];
+        $siteGroups = $this->reviewerUserGroups[$site->uid] ?? [];
+
+        // For when no items are passed, this will be a string
+        if (!is_array($siteGroups)) {
+            $siteGroups = [];
+        }
+
+        foreach ($siteGroups as $siteGroup) {
+            // Get UID from first element in array
+            $uid = $siteGroup[0] ?? null;
+
+            if ($uid === null) {
+                continue;
+            }
+
+            $userGroup = Craft::$app->getUserGroups()->getGroupByUid($uid);
+
+            if ($userGroup !== null) {
+                $userGroups[] = $userGroup;
+            }
+        }
+
+        return $userGroups;
+    }
+
+    public function getReviewerUserGroupsUids($site)
+    {
+        return ArrayHelper::getColumn($this->getReviewerUserGroups($site), 'uid');
+    }
+
+    public function getPublisherUserGroup($site)
+    {
+        $groupUid = $this->publisherUserGroup[$site->uid] ?? null;
+
+        if ($groupUid) {
+            return Craft::$app->userGroups->getGroupByUid($groupUid);
+        }
+
+        return null;
+    }
+
+    public function getPublisherUserGroupUid($site)
+    {
+        return $this->getPublisherUserGroup($site)->uid ?? null;
+    }
+
+    public function getEditorNotesRequired($site)
+    {
+        return $this->editorNotesRequired[$site->uid] ?? false;
+    }
+
+    public function getPublisherNotesRequired($site)
+    {
+        return $this->publisherNotesRequired[$site->uid] ?? false;
     }
 }

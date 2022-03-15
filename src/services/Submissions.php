@@ -49,24 +49,9 @@ class Submissions extends Component
      * @param Submission|null $submission
      * @return UserGroup[]
      */
-    public function getReviewerUserGroups(Submission $submission = null): array
+    public function getReviewerUserGroups($site, Submission $submission = null): array
     {
-        $userGroups = [];
-
-        foreach (Workflow::$plugin->getSettings()->getReviewerUserGroups() as $reviewerUserGroup) {
-            // Get UID from first element in array
-            $uid = $reviewerUserGroup[0] ?? null;
-
-            if ($uid === null) {
-                continue;
-            }
-
-            $userGroup = Craft::$app->getUserGroups()->getGroupByUid($uid);
-
-            if ($userGroup !== null) {
-                $userGroups[] = $userGroup;
-            }
-        }
+        $userGroups = Workflow::$plugin->getSettings()->getReviewerUserGroups($site);
 
         // Fire an 'afterGetReviewerUserGroups' event
         if ($this->hasEventHandlers(self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS)) {
@@ -84,9 +69,9 @@ class Submissions extends Component
     /**
      * Returns the next reviewer user group for the given submission.
      */
-    public function getNextReviewerUserGroup(Submission $submission): ?UserGroup
+    public function getNextReviewerUserGroup(Submission $submission, $entry): ?UserGroup
     {
-        $reviewerUserGroups = $this->getReviewerUserGroups($submission);
+        $reviewerUserGroups = $this->getReviewerUserGroups($entry->site, $submission);
 
         $lastReviewer = $submission->getLastReviewer(true);
 
@@ -143,9 +128,9 @@ class Submissions extends Component
         if ($isNew) {
             // Trigger notification to reviewer
             if ($settings->reviewerNotifications) {
-                $this->sendReviewerNotificationEmail($submission);
+                $this->sendReviewerNotificationEmail($submission, $entry);
             } else if ($settings->publisherNotifications) {
-                $this->sendPublisherNotificationEmail($submission);
+                $this->sendPublisherNotificationEmail($submission, $entry);
             }
         }
 
@@ -361,17 +346,17 @@ class Submissions extends Component
         return true;
     }
 
-    public function sendReviewerNotificationEmail($submission): void
+    public function sendReviewerNotificationEmail($submission, $entry = null): void
     {
         Workflow::log('Preparing reviewer notification.');
 
-        $reviewerUserGroup = $this->getNextReviewerUserGroup($submission);
+        $reviewerUserGroup = $this->getNextReviewerUserGroup($submission, $entry);
 
         // If there is no next reviewer user group then send publisher notification email
         if ($reviewerUserGroup === null) {
             Workflow::log('No reviewer user groups. Send publisher email.');
 
-            $this->sendPublisherNotificationEmail($submission);
+            $this->sendPublisherNotificationEmail($submission, $entry);
 
             return;
         }
@@ -432,15 +417,19 @@ class Submissions extends Component
         }
     }
 
-    public function sendPublisherNotificationEmail($submission): void
+    public function sendPublisherNotificationEmail($submission, $entry = null): void
     {
         Workflow::log('Preparing publisher notification.');
 
         $settings = Workflow::$plugin->getSettings();
 
-        $groupId = Db::idByUid(Table::USERGROUPS, $settings->publisherUserGroup);
+        $publisherGroup = $settings->getPublisherUserGroup($entry->site);
 
-        $query = User::find()->groupId($groupId);
+        if (!$publisherGroup) {
+            Workflow::log('No publisher group found to send notifications to.');
+        }
+
+        $query = User::find()->groupId($publisherGroup->id);
 
         // Check settings to see if we should email all publishers or not
         if (isset($settings->selectedPublishers) && $settings->selectedPublishers != '*') {

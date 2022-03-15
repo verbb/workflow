@@ -207,8 +207,13 @@ class Submission extends Element
 
     public function getOwner(): ?Entry
     {
+        if ($this->_owner !== null) {
+            return $this->_owner;
+        }
+
+
         if ($this->ownerId !== null) {
-            return Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
+            return $this->_owner = Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
         }
 
         return null;
@@ -216,8 +221,12 @@ class Submission extends Element
 
     public function getEditor(): ?User
     {
+        if ($this->_editor !== null) {
+            return $this->_editor;
+        }
+
         if ($this->editorId !== null) {
-            return Craft::$app->getUsers()->getUserById($this->editorId);
+            return $this->_editor = Craft::$app->getUsers()->getUserById($this->editorId);
         }
 
         return null;
@@ -240,8 +249,12 @@ class Submission extends Element
 
     public function getPublisher(): ?User
     {
+        if ($this->_publisher !== null) {
+            return $this->_publisher;
+        }
+
         if ($this->publisherId !== null) {
-            return Craft::$app->getUsers()->getUserById($this->publisherId);
+            return $this->_publisher = Craft::$app->getUsers()->getUserById($this->publisherId);
         }
 
         return null;
@@ -272,7 +285,17 @@ class Submission extends Element
         return $this->getEditor()->fullName ?? '';
     }
 
+    public function getOwnerSite()
+    {
+        return $this->getOwner()->getSite() ?? Craft::$app->getSites()->getPrimarySite();
+    }
+
     public function getPublisherName(): string
+    {
+        return $this->getOwner()->getSite() ?? Craft::$app->getSites()->getPrimarySite();
+    }
+
+    public function getPublisherName()
     {
         return $this->getPublisher()->fullName ?? '';
     }
@@ -360,9 +383,10 @@ class Submission extends Element
     /**
      * Returns whether a user is allowed to review this submission.
      */
-    public function canUserReview(User $user): bool
+    public function canUserReview(User $user, $site): bool
     {
-        $publisherGroup = Craft::$app->userGroups->getGroupByUid(Workflow::$plugin->getSettings()->publisherUserGroup);
+        $settings = Workflow::$plugin->getSettings();
+        $publisherGroup = $settings->getPublisherUserGroup($site);
 
         if ($user->isInGroup($publisherGroup)) {
             return true;
@@ -376,7 +400,7 @@ class Submission extends Element
 
         $canReview = false;
 
-        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($this) as $key => $userGroup) {
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($site, $this) as $key => $userGroup) {
             if ($lastReviewer->isInGroup($userGroup)) {
                 $canReview = false;
             } else if ($user->isInGroup($userGroup)) {

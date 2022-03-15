@@ -24,6 +24,8 @@ class SubmissionsController extends BaseEntriesController
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
         $workflowAction = $request->getBodyParam('workflow-action');
+        $siteId = $request->getBodyParam('siteId');
+        $currentSite = Craft::$app->getSites()->getSiteById($siteId);
 
         $editorNotes = $request->getBodyParam('editorNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
@@ -36,7 +38,7 @@ class SubmissionsController extends BaseEntriesController
 
         if ($workflowAction === 'save-submission') {
             // We also need to validate notes fields, if required before we save the entry
-            if ($settings->editorNotesRequired && !$editorNotes) {
+            if ($settings->getEditorNotesRequired($currentSite) && !$editorNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
                     'editorNotesErrors' => [Craft::t('workflow', 'Editor notes are required')],
                     'entry' => $this->getDraftEntry(),
@@ -48,7 +50,7 @@ class SubmissionsController extends BaseEntriesController
 
         if ($workflowAction === 'approve-submission' || $workflowAction === 'approve-only-submission' || $workflowAction === 'reject-submission') {
             // We also need to validate notes fields, if required before we save the entry
-            if ($settings->publisherNotesRequired && !$publisherNotes) {
+            if ($settings->getPublisherNotesRequired($currentSite) && !$publisherNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
                     'publisherNotesErrors' => [Craft::t('workflow', 'Publisher notes are required')],
                     'entry' => $this->getDraftEntry(),
