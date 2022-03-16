@@ -1,7 +1,9 @@
 <?php
 namespace verbb\workflow\elements;
 
+use craft\elements\Entry;
 use craft\elements\User;
+use craft\models\Site;
 use craft\i18n\Locale;
 
 use verbb\workflow\Workflow;
@@ -21,7 +23,6 @@ use craft\helpers\UrlHelper;
 use DateTime;
 
 use Exception;
-use craft\elements\Entry;
 
 class Submission extends Element
 {
@@ -172,6 +173,10 @@ class Submission extends Element
     public ?DateTime $dateRejected = null;
     public ?DateTime $dateRevoked = null;
 
+    private mixed $_owner = null;
+    private mixed $_editor = null;
+    private mixed $_publisher = null;
+
 
     // Public Methods
     // =========================================================================
@@ -210,7 +215,6 @@ class Submission extends Element
         if ($this->_owner !== null) {
             return $this->_owner;
         }
-
 
         if ($this->ownerId !== null) {
             return $this->_owner = Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId);
@@ -285,17 +289,12 @@ class Submission extends Element
         return $this->getEditor()->fullName ?? '';
     }
 
-    public function getOwnerSite()
+    public function getOwnerSite(): Site
     {
         return $this->getOwner()->getSite() ?? Craft::$app->getSites()->getPrimarySite();
     }
 
     public function getPublisherName(): string
-    {
-        return $this->getOwner()->getSite() ?? Craft::$app->getSites()->getPrimarySite();
-    }
-
-    public function getPublisherName()
     {
         return $this->getPublisher()->fullName ?? '';
     }
