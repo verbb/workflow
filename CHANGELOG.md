@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0 - 2022-03-17
+
+### Added
+- Add multi-site support for plugin settings for editor/reviewer/publisher groups.
+
 ## 1.6.6 - 2021-11-26
 
 ### Fixed
