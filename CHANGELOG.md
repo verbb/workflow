@@ -4,6 +4,12 @@
 
 ### Added
 - Add multi-site support for plugin settings for editor/reviewer/publisher groups.
+- Add `EVENT_PREPARE_EDITOR_EMAIL`, `EVENT_PREPARE_REVIEWER_EMAIL`, and `EVENT_PREPARE_PUBLISHER_EMAIL` events.
+- Add `submission` param to `EVENT_BEFORE_SEND_` email events.
+
+### Changed
+- Allow `mail` param in `EVENT_BEFORE_SEND_` events to be modified by events.
+- Change `EVENT_BEFORE_SEND_` email events to be cancelable.
 
 ## 1.6.6 - 2021-11-26
 
