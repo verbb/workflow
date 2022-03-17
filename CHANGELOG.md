@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.7.1 - 2022-03-18
+
+### Added
+- Add deprecation notices for old settings, if you are using a configuration file. These will need to be updated before Craft 4.
+
+### Fixed
+- Fix backward compatibility handling of settings not working correctly.
+- Fix an error when trying to submit for review on a non-multi-site install.
+- Fix settings for Reviewers not being populated correctly in settings.
+
+### Deprecated
+- `editorNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `editorNotificationsOptions` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `reviewerNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `reviewerApprovalNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `publisherNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+
 ## 1.7.0 - 2022-03-17
 
 ### Added
