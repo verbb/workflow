@@ -35,6 +35,9 @@ class Settings extends Model
 
     public function getEditorUserGroup($site)
     {
+        // Backward-compatibility support for config files, which won't be migrated
+        $this->handleDeprecatedSetting('editorUserGroup', $site);
+
         $groupUid = $this->editorUserGroup[$site->uid] ?? null;
 
         if ($groupUid) {
@@ -51,6 +54,19 @@ class Settings extends Model
 
     public function getReviewerUserGroups($site)
     {
+        // Check for deprecated syntax using non-site UIDs as key
+        if (is_array($this->reviewerUserGroups) && isset($this->reviewerUserGroups[0])) {
+            Craft::$app->getDeprecator()->log('Workflow', 'The `reviewerUserGroups` setting has been updated, and will cause a fatal error in Craft 4. Please review our [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration).');
+
+            $uids = [];
+
+            foreach ($this->reviewerUserGroups as $uid) {
+                $uids[] = [$uid];
+            }
+
+            $this->reviewerUserGroups = [$site->uid => $uids];
+        }
+
         $userGroups = [];
         $siteGroups = $this->reviewerUserGroups[$site->uid] ?? [];
 
@@ -90,6 +106,9 @@ class Settings extends Model
 
     public function getPublisherUserGroup($site)
     {
+        // Backward-compatibility support for config files, which won't be migrated
+        $this->handleDeprecatedSetting('publisherUserGroup', $site);
+
         $groupUid = $this->publisherUserGroup[$site->uid] ?? null;
 
         if ($groupUid) {
@@ -106,11 +125,30 @@ class Settings extends Model
 
     public function getEditorNotesRequired($site)
     {
+        // Backward-compatibility support for config files, which won't be migrated
+        $this->handleDeprecatedSetting('editorNotesRequired', $site);
+
         return $this->editorNotesRequired[$site->uid] ?? false;
     }
 
     public function getPublisherNotesRequired($site)
     {
+        // Backward-compatibility support for config files, which won't be migrated
+        $this->handleDeprecatedSetting('publisherNotesRequired', $site);
+
         return $this->publisherNotesRequired[$site->uid] ?? false;
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function handleDeprecatedSetting($property, $site)
+    {
+        if (!is_array($this->$property)) {
+            Craft::$app->getDeprecator()->log('Workflow', 'The `' . $property . '` setting has been updated, and will cause a fatal error in Craft 4. Please review our [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration).');
+        
+            $this->$property = [$site->uid => $this->$property];
+        }
     }
 }
