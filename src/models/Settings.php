@@ -79,7 +79,13 @@ class Settings extends Model
 
     public function getReviewerUserGroupsUids($site)
     {
-        return ArrayHelper::getColumn($this->getReviewerUserGroups($site), 'uid');
+        $uids = [];
+
+        foreach (ArrayHelper::getColumn($this->getReviewerUserGroups($site), 'uid') as $value) {
+            $uids[] = [$value];
+        }
+
+        return $uids;
     }
 
     public function getPublisherUserGroup($site)
