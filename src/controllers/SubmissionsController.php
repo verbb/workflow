@@ -32,11 +32,13 @@ class SubmissionsController extends BaseEntriesController
         $action = $request->getBodyParam('workflow-action');
         $siteId = $request->getBodyParam('siteId');
 
+        $currentSite = null;
+
         // In some cases, no siteId is passed (non-multi-site)
         if ($siteId) {
             $currentSite = Craft::$app->getSites()->getSiteById($siteId);
         } else {
-            $currentSiteId = Craft::$app->getSites()->getCurrentSite();
+            $currentSite = Craft::$app->getSites()->getCurrentSite();
         }
 
         $editorNotes = $request->getBodyParam('editorNotes');
