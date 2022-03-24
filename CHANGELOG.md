@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.2 - 2022-03-24
+
+### Fixed
+- Fix an error when trying to submit for review on a non-multi-site install.
+
 ## 1.7.1 - 2022-03-18
 
 ### Added
