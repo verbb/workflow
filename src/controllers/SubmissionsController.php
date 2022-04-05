@@ -85,7 +85,7 @@ class SubmissionsController extends BaseEntriesController
 
     public function actionSaveDraft()
     {
-        // Set the param here, because the front-end can only suppose a single param form data
+        // Set the param here, because the front-end can only support a single param form data
         $params = Craft::$app->getRequest()->getBodyParams();
         $params['dropProvisional'] = true;
 
