@@ -89,7 +89,7 @@ class Submissions extends Component
         return $nextUserGroup;
     }
 
-    public function saveSubmission($entry = null)
+    public function saveSubmission($entry)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -136,7 +136,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Entry submitted for approval.'));
     }
 
-    public function revokeSubmission()
+    public function revokeSubmission($entry)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -160,7 +160,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Submission revoked.'));
     }
 
-    public function approveReview()
+    public function approveReview($entry)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -201,7 +201,7 @@ class Submissions extends Component
 
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
-            $this->sendReviewerNotificationEmail($submission);
+            $this->sendReviewerNotificationEmail($submission, $entry);
         } 
 
         // Trigger notification to editor - if configured to do so
@@ -212,7 +212,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
     }
 
-    public function rejectReview()
+    public function rejectReview($entry)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -261,7 +261,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
     }
 
-    public function approveSubmission($entry = null)
+    public function approveSubmission($entry)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -300,7 +300,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
     }
 
-    public function rejectSubmission()
+    public function rejectSubmission($entry)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -333,7 +333,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
     }
 
-    public function sendReviewerNotificationEmail($submission, $entry = null)
+    public function sendReviewerNotificationEmail($submission, $entry)
     {
         Workflow::log('Preparing reviewer notification.');
 
@@ -404,7 +404,7 @@ class Submissions extends Component
         }
     }
 
-    public function sendPublisherNotificationEmail($submission, $entry = null)
+    public function sendPublisherNotificationEmail($submission, $entry)
     {
         Workflow::log('Preparing publisher notification.');
 
