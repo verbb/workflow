@@ -140,19 +140,19 @@ class Service extends Component
         }
 
         if ($action == 'approve-review') {
-            Workflow::$plugin->getSubmissions()->approveReview();
+            Workflow::$plugin->getSubmissions()->approveReview($event->sender);
         }
 
         if ($action == 'reject-review') {
-            Workflow::$plugin->getSubmissions()->rejectReview();
+            Workflow::$plugin->getSubmissions()->rejectReview($event->sender);
         }
 
         if ($action == 'revoke-submission') {
-            Workflow::$plugin->getSubmissions()->revokeSubmission();
+            Workflow::$plugin->getSubmissions()->revokeSubmission($event->sender);
         }
 
         if ($action == 'reject-submission') {
-            Workflow::$plugin->getSubmissions()->rejectSubmission();
+            Workflow::$plugin->getSubmissions()->rejectSubmission($event->sender);
         }
 
         // For the cases where its been submitted from the front-end, its not a draft!
