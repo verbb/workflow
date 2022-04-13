@@ -45,7 +45,7 @@
             </div>
 
             <div class="workflow-submission-body">
-                {% set placeholderText = settings.getPublisherNotesRequired(context.site) ? 'Notes about your response (required)' : 'Notes about your response' %}
+                {% set placeholderText = settings.getPublisherNotesRequired(entry.site) ? 'Notes about your response (required)' : 'Notes about your response' %}
 
                 {{ forms.textareaField({
                     placeholder: placeholderText | t('workflow'),
@@ -54,7 +54,7 @@
                     class: 'field-notes',
                     rows: 2,
                     value: publisherNotes ?? '',
-                    required: settings.getPublisherNotesRequired(context.site),
+                    required: settings.getPublisherNotesRequired(entry.site),
                     errors: publisherNotesErrors is defined ? publisherNotesErrors,
                 }) }}
             </div>

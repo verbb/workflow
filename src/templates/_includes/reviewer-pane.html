@@ -18,7 +18,7 @@
 {% if pendingSubmissions | length %}
     {% set submission = pendingSubmissions[0] %}
 
-    {% if submission.canUserReview(currentUser, context.site) %}
+    {% if submission.canUserReview(currentUser, entry.site) %}
         <div class="pane workflow-pane">
             <div class="workflow-submission">
                 <div class="workflow-submission-heading">

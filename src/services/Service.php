@@ -210,8 +210,8 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        $editorGroup = $settings->getEditorUserGroup($context['site']);
-        $publisherGroup = $settings->getPublisherUserGroup($context['site']);
+        $editorGroup = $settings->getEditorUserGroup($entry->site);
+        $publisherGroup = $settings->getPublisherUserGroup($entry->site);
 
         if (!$editorGroup || !$publisherGroup) {
             Workflow::log('Editor and Publisher groups not set in settings.');
@@ -259,7 +259,7 @@ class Service extends Component
         $submissions = $this->_getSubmissionsFromContext($entry);
         $lastSubmission = empty($submissions) ? null : end($submissions);
 
-        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($context['site'], $lastSubmission) as $userGroup) {
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($entry->site, $lastSubmission) as $userGroup) {
             if ($currentUser->isInGroup($userGroup)) {
                 $event->html .= $this->_renderEntrySidebarPanel($entry, 'reviewer-pane');
                 return;
