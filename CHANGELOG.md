@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0-beta.2 - 2022-04-13
+
+### Changed
+- Now requires Workflow `1.7.0` in order to update from Craft 3.
+
+### Fixed
+- Fix minor errors and display issues.
+- Fix errors with `$context` changing due to `Entry::EVENT_DEFINE_SIDEBAR_HTML` event.
+
 ## 2.0.0-beta.1 - 2022-03-10
 
 ### Changed
