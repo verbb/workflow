@@ -24,7 +24,7 @@
         "children": [
             "template-guides/available-variables",
             "template-guides/front-end-submission",
-            "template-guides/notifications"
+            "template-guides/email-notifications"
         ]
     },
     {

@@ -1,5 +1,4 @@
 # Editors
-
 Editors are your content authors that can create content, but not publish live entries to the site. Whenever an editor saves and entry, it will be saved as disabled.
 
 After saving a new entry for the first time, Editors have access to the following panel on the right-hand side of the editing screen:

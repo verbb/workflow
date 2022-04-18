@@ -1,5 +1,4 @@
 # Front-end Submission
-
 Workflow submissions can also be triggered for entries created through the front-end. You'll need to adjust your templates to include a special tag that tells Workflow to check the incoming entry and send it as a submission to be approved.
 
 ```twig
@@ -74,5 +73,3 @@ Or, of course - being able to approve a submission for the publisher users, whic
 ```twig
 <input type="hidden" name="workflow-action" value="approve-submission">
 ```
- 
-

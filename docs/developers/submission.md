@@ -1,8 +1,7 @@
 # Submission
-
 Whenever you're dealing with a submission in your template, you're actually working with a `Submission` object.
 
-### Attributes
+## Attributes
 
 Attribute | Description
 --- | ---

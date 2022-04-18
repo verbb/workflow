@@ -1,8 +1,7 @@
 # Review
-
 A Review model is created for each submission if you are using [Reviews](docs:feature-tour/reviews).
 
-### Attributes
+## Attributes
 
 Attribute | Description
 --- | ---

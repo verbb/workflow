@@ -1,5 +1,4 @@
 # Events
-
 Events can be used to extend the functionality of Workflow.
 
 ## Submission related events
