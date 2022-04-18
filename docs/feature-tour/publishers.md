@@ -1,5 +1,5 @@
 # Publishers
-After an editor submits an entry for review, publishers will receive an email notification for this submission. They'll be prompted to login directly to the entry and review. Publishers will be met with the following screen:
+After an editor submits an entry for review, publishers will receive an email notification for this submission. They'll be prompted to log in directly to the entry and review. Publishers will be met with the following screen:
 
 ![](/docs/screenshots/review-pane3.png)
 
