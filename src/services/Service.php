@@ -118,15 +118,15 @@ class Service extends Component
             return;
         }
 
+        // This helps us maintain whether the after-save event has already been triggered for this
+        // request, and not to have it run again. This is most commonly caused by Preparse fields
+        // which re-save the element again, straight after it's first save. Then we end up with multiple
+        // submissions, created each time it's called.
+        $this->afterSaveRun = true;
+
         // Check if we're submitting a new submission
         if ($action == 'save-submission') {
             Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
-
-            // This helps us maintain whether the after-save event has already been triggered for this
-            // request, and not to have it run again. This is most commonly caused by Preparse fields
-            // which re-save the element again, straight after it's first save. Then we end up with multiple
-            // submissions, created each time it's called.
-            $this->afterSaveRun = true;
 
             // This doesn't seem to redirect properly, which is annoying!
             if ($request->getIsCpRequest()) {
