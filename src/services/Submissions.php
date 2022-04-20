@@ -201,6 +201,9 @@ class Submissions extends Component
 
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
+            // Modify the notes to be the reviewer notes, but still use the same email template
+            $submission->editorNotes = $reviewRecord->notes;
+
             $this->sendReviewerNotificationEmail($submission, $entry);
         } 
 
