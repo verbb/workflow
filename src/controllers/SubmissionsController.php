@@ -29,7 +29,7 @@ class SubmissionsController extends BaseEntriesController
         // Until I can find a better way to handle firing this before an action...
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
-        $action = $request->getBodyParam('workflow-action');
+        $workflowAction = $request->getBodyParam('workflow-action');
         $siteId = $request->getBodyParam('siteId');
 
         $currentSite = null;
@@ -50,7 +50,7 @@ class SubmissionsController extends BaseEntriesController
             'publisherNotes' => $publisherNotes,
         ]);
 
-        if ($action === 'save-submission') {
+        if ($workflowAction === 'save-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->getEditorNotesRequired($currentSite) && !$editorNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
@@ -62,7 +62,7 @@ class SubmissionsController extends BaseEntriesController
             }
         }
 
-        if ($action === 'approve-submission' || $action === 'approve-only-submission' || $action === 'reject-submission') {
+        if ($workflowAction === 'approve-submission' || $workflowAction === 'approve-only-submission' || $workflowAction === 'reject-submission') {
             // We also need to validate notes fields, if required before we save the entry
             if ($settings->getPublisherNotesRequired($currentSite) && !$publisherNotes) {
                 Craft::$app->getUrlManager()->setRouteParams([
