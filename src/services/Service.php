@@ -36,6 +36,7 @@ class Service extends Component
         $action = $request->getBodyParam('workflow-action');
 
         $editorNotes = $request->getBodyParam('editorNotes');
+        $reviewerNotes = $request->getBodyParam('reviewerNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
 
         // Disable auto-save for an entry that has been submitted. Only real way to do this.

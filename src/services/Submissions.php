@@ -184,7 +184,7 @@ class Submissions extends Component
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => true,
-            'notes' => $request->getParam('notes'),
+            'notes' => $request->getParam('reviewerNotes'),
         ]);
 
         if (!$reviewRecord->save()) {
@@ -238,7 +238,7 @@ class Submissions extends Component
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => false,
-            'notes' => $request->getParam('notes'),
+            'notes' => $request->getParam('reviewerNotes'),
         ]);
 
         if (!$reviewRecord->save()) {

@@ -42,11 +42,13 @@ class SubmissionsController extends BaseEntriesController
         }
 
         $editorNotes = $request->getBodyParam('editorNotes');
+        $reviewerNotes = $request->getBodyParam('reviewerNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
 
         // Save the notes for later, due to a number of different events triggering
         Craft::$app->getUrlManager()->setRouteParams([
             'editorNotes' => $editorNotes,
+            'reviewerNotes' => $reviewerNotes,
             'publisherNotes' => $publisherNotes,
         ]);
 
