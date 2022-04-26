@@ -87,11 +87,17 @@ class SubmissionsController extends BaseEntriesController
 
     public function actionSaveDraft()
     {
-        // Set the param here, because the front-end can only support a single param form data
-        $params = Craft::$app->getRequest()->getBodyParams();
-        $params['dropProvisional'] = true;
+        $request = Craft::$app->getRequest();
 
-        Craft::$app->getRequest()->setBodyParams($params);
+        // Set the param here, because the front-end can only support a single param form data
+        // Drop the provisional entry, only if this is a brand-new entry from the site. 
+        // Required when this is a new draft on an existing entry.
+        if ($request->getIsSiteRequest()) {
+            $params = $request->getBodyParams();
+            $params['dropProvisional'] = true;
+
+            $request->setBodyParams($params);
+        }
 
         // We're already checking validation in our beforeAction
         return Craft::$app->runAction('entry-revisions/save-draft');
