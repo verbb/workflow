@@ -75,7 +75,12 @@ class Service extends Component
             // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
             // can't publish. We quickly switch it on to make sure the entry validates correctly.
             $event->sender->setScenario(Element::SCENARIO_LIVE);
-            $event->sender->validate();
+
+            // Ensure to reset the draft state back to a provisional draft, which has already been switched at this
+            // point by `entry-revisions/save-draft`
+            if (!$event->sender->validate()) {
+                $event->sender->isProvisionalDraft = true;
+            }
         }
 
         if ($action === 'approve-submission') {
