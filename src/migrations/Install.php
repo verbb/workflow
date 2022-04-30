@@ -28,6 +28,7 @@ class Install extends Migration
 
     public function createTables(): void
     {
+        $this->archiveTableIfExists('{{%workflow_submissions}}');
         $this->createTable('{{%workflow_submissions}}', [
             'id' => $this->primaryKey(),
             'ownerId' => $this->integer(),
@@ -47,6 +48,7 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
+        $this->archiveTableIfExists('{{%workflow_reviews}}');
         $this->createTable('{{%workflow_reviews}}', [
             'id' => $this->primaryKey(),
             'submissionId' => $this->integer(),
@@ -67,25 +69,25 @@ class Install extends Migration
 
     public function createIndexes(): void
     {
-        $this->createIndex($this->db->getIndexName(), '{{%workflow_submissions}}', 'id', false);
-        $this->createIndex($this->db->getIndexName(), '{{%workflow_submissions}}', 'ownerId', false);
-        $this->createIndex($this->db->getIndexName(), '{{%workflow_submissions}}', 'ownerDraftId', false);
-        $this->createIndex($this->db->getIndexName(), '{{%workflow_submissions}}', 'ownerSiteId', false);
-        $this->createIndex($this->db->getIndexName(), '{{%workflow_submissions}}', 'editorId', false);
-        $this->createIndex($this->db->getIndexName(), '{{%workflow_submissions}}', 'publisherId', false);
+        $this->createIndex(null, '{{%workflow_submissions}}', 'id', false);
+        $this->createIndex(null, '{{%workflow_submissions}}', 'ownerId', false);
+        $this->createIndex(null, '{{%workflow_submissions}}', 'ownerDraftId', false);
+        $this->createIndex(null, '{{%workflow_submissions}}', 'ownerSiteId', false);
+        $this->createIndex(null, '{{%workflow_submissions}}', 'editorId', false);
+        $this->createIndex(null, '{{%workflow_submissions}}', 'publisherId', false);
     }
 
     public function addForeignKeys(): void
     {
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_submissions}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_submissions}}', 'ownerDraftId', '{{%drafts}}', 'id', 'SET NULL', null);
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_submissions}}', 'ownerSiteId', '{{%sites}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_submissions}}', 'editorId', '{{%users}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'SET NULL', null);
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_submissions}}', 'publisherId', '{{%users}}', 'id', 'CASCADE', null);
+        $this->addForeignKey(null, '{{%workflow_submissions}}', 'id', '{{%elements}}', 'id', 'CASCADE', null);
+        $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerDraftId', '{{%drafts}}', 'id', 'SET NULL', null);
+        $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerSiteId', '{{%sites}}', 'id', 'CASCADE', null);
+        $this->addForeignKey(null, '{{%workflow_submissions}}', 'editorId', '{{%users}}', 'id', 'CASCADE', null);
+        $this->addForeignKey(null, '{{%workflow_submissions}}', 'ownerId', '{{%elements}}', 'id', 'SET NULL', null);
+        $this->addForeignKey(null, '{{%workflow_submissions}}', 'publisherId', '{{%users}}', 'id', 'CASCADE', null);
 
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_reviews}}', 'submissionId', '{{%workflow_submissions}}', 'id', 'CASCADE', null);
-        $this->addForeignKey($this->db->getForeignKeyName(), '{{%workflow_reviews}}', 'userId', '{{%users}}', 'id', 'CASCADE', null);
+        $this->addForeignKey(null, '{{%workflow_reviews}}', 'submissionId', '{{%workflow_submissions}}', 'id', 'CASCADE', null);
+        $this->addForeignKey(null, '{{%workflow_reviews}}', 'userId', '{{%users}}', 'id', 'CASCADE', null);
     }
 
     public function dropForeignKeys(): void
