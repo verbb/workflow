@@ -10,7 +10,11 @@ use verbb\workflow\widgets\Submissions as SubmissionsWidget;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin;
+use craft\console\Application as ConsoleApplication;
+use craft\console\Controller as ConsoleController;
+use craft\console\controllers\ResaveController;
 use craft\elements\Entry;
+use craft\events\DefineConsoleActionsEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
 use craft\events\RegisterUrlRulesEvent;
@@ -65,6 +69,10 @@ class Workflow extends Plugin
         if (Craft::$app->getRequest()->getIsCpRequest()) {
             $this->_registerCpRoutes();
             $this->_registerWidgets();
+        }
+
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            $this->_registerResaveCommand();
         }
         
         if (Craft::$app->getEdition() === Craft::Pro) {
@@ -167,6 +175,25 @@ class Workflow extends Plugin
                     'workflow-overview' => ['label' => Craft::t('workflow', 'Overview')],
                     'workflow-settings' => ['label' => Craft::t('workflow', 'Settings')],
                 ],
+            ];
+        });
+    }
+
+    private function _registerResaveCommand(): void
+    {
+        if (!Craft::$app instanceof ConsoleApplication) {
+            return;
+        }
+
+        Event::on(ResaveController::class, ConsoleController::EVENT_DEFINE_ACTIONS, function(DefineConsoleActionsEvent $e) {
+            $e->actions['workflow-submissions'] = [
+                'action' => function(): int {
+                    $controller = Craft::$app->controller;
+                    $query = Submission::find();
+                    return $controller->resaveElements($query);
+                },
+                'options' => [],
+                'helpSummary' => 'Re-saves Workflow submissions.',
             ];
         });
     }
