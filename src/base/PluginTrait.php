@@ -4,12 +4,11 @@ namespace verbb\workflow\base;
 use verbb\workflow\Workflow;
 use verbb\workflow\services\Service;
 use verbb\workflow\services\Submissions;
+use verbb\base\BaseHelper;
 
 use Craft;
 
 use yii\log\Logger;
-
-use verbb\base\BaseHelper;
 
 trait PluginTrait
 {
@@ -22,13 +21,17 @@ trait PluginTrait
     // Static Methods
     // =========================================================================
 
-    public static function log($message): void
+    public static function log(string $message, array $params = []): void
     {
+        $message = Craft::t('workflow', $message, $params);
+
         Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'workflow');
     }
 
-    public static function error($message): void
+    public static function error(string $message, array $params = []): void
     {
+        $message = Craft::t('workflow', $message, $params);
+
         Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'workflow');
     }
 
@@ -50,7 +53,7 @@ trait PluginTrait
     // Private Methods
     // =========================================================================
 
-    private function _setPluginComponents(): void
+    private function _registerComponents(): void
     {
         $this->setComponents([
             'service' => Service::class,
@@ -60,7 +63,7 @@ trait PluginTrait
         BaseHelper::registerModule();
     }
 
-    private function _setLogging(): void
+    private function _registerLogTarget(): void
     {
         BaseHelper::setFileLogging('workflow');
     }
