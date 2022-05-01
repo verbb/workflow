@@ -57,13 +57,19 @@ class Workflow extends Plugin
 
         $this->_registerComponents();
         $this->_registerLogTarget();
-        $this->_registerCpRoutes();
         $this->_registerEmailMessages();
-        $this->_registerWidgets();
         $this->_registerVariables();
         $this->_registerCraftEventListeners();
         $this->_registerElementTypes();
-        $this->_registerPermissions();
+
+        if (Craft::$app->getRequest()->getIsCpRequest()) {
+            $this->_registerCpRoutes();
+            $this->_registerWidgets();
+        }
+        
+        if (Craft::$app->getEdition() === Craft::Pro) {
+            $this->_registerPermissions();
+        }
     }
 
     public function getSettingsResponse(): mixed
