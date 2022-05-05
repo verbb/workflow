@@ -1,5 +1,4 @@
 # Reviews
-
 Reviews exists as an optional middle-step in the editor-publisher approval workflow. This provides a means to have multiple reviewing parties, before finally approving and publishing a change.
 
 To visualise this, let's take an example hierarchy:
@@ -19,7 +18,7 @@ The overall review process will be top-down. So for example, you might have the 
 
 ![](/docs/screenshots/review-pane5.png)
 
-Where there are two Reviewer groups - Reviewers 1 and Reviewers 2. Submissions will be placed by users in the Editors user group, and submitted to the Reviewers 1 users group. After successful review and approval, this will be submitted to the Reviewers 2 user group. After successful review and approval, this will then be submitted to the Publishers user group for final review.
+Where there are two Reviewer groups - Reviewers 1 and Reviewers 2. Submissions will be placed by users in the Editors' user group, and submitted to the Reviewers 1 users group. After successful review and approval, this will be submitted to the Reviewers 2 user group. After successful review and approval, this will then be submitted to the Publishers' user group for final review.
 
 Visually, this process would look similar to:
 

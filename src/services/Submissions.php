@@ -139,7 +139,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function revokeSubmission(): bool
+    public function revokeSubmission($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -165,7 +165,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveReview(): bool
+    public function approveReview($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -189,7 +189,7 @@ class Submissions extends Component
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => true,
-            'notes' => $request->getParam('notes'),
+            'notes' => $request->getParam('reviewerNotes'),
         ]);
 
         if (!$reviewRecord->save()) {
@@ -206,8 +206,11 @@ class Submissions extends Component
 
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
-            $this->sendReviewerNotificationEmail($submission);
-        }
+            // Modify the notes to be the reviewer notes, but still use the same email template
+            $submission->editorNotes = $reviewRecord->notes;
+
+            $this->sendReviewerNotificationEmail($submission, $entry);
+        } 
 
         // Trigger notification to editor - if configured to do so
         if ($settings->editorNotifications && $settings->reviewerApprovalNotifications) {
@@ -219,7 +222,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function rejectReview(): bool
+    public function rejectReview($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -245,7 +248,7 @@ class Submissions extends Component
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => false,
-            'notes' => $request->getParam('notes'),
+            'notes' => $request->getParam('reviewerNotes'),
         ]);
 
         if (!$reviewRecord->save()) {
@@ -311,7 +314,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function rejectSubmission(): bool
+    public function rejectSubmission($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
 

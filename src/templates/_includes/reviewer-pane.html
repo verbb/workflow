@@ -44,12 +44,12 @@
                 <div class="workflow-submission-body">
                     {{ forms.textareaField({
                         placeholder: 'Notes about your response.' | t('workflow'),
-                        id: 'notes',
-                        name: 'notes',
+                        id: 'reviewerNotes',
+                        name: 'reviewerNotes',
                         class: 'field-notes',
                         rows: 2,
-                        value: notes ?? '',
-                        errors: notesErrors is defined ? notesErrors,
+                        value: reviewerNotes ?? '',
+                        errors: reviewerNotesErrors is defined ? reviewerNotesErrors,
                     }) }}
                 </div>
 

@@ -37,6 +37,7 @@ class Service extends Component
         $action = $request->getBodyParam('workflow-action');
 
         $editorNotes = $request->getBodyParam('editorNotes');
+        $reviewerNotes = $request->getBodyParam('reviewerNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
 
         // Disable auto-save for an entry that has been submitted. Only real way to do this.
@@ -75,7 +76,12 @@ class Service extends Component
             // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
             // can't publish. We quickly switch it on to make sure the entry validates correctly.
             $event->sender->setScenario(Element::SCENARIO_LIVE);
-            $event->sender->validate();
+
+            // Ensure to reset the draft state back to a provisional draft, which has already been switched at this
+            // point by `entry-revisions/save-draft`
+            if (!$event->sender->validate()) {
+                $event->sender->isProvisionalDraft = true;
+            }
         }
 
         if ($action === 'approve-submission') {
@@ -113,26 +119,20 @@ class Service extends Component
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
 
-        // Special-handling for front-end requests to keep things simple for user templates
-        // and without having to deal with entry revisions/drafts
-        if ($request->getIsSiteRequest()) {
-            $this->handleSiteRequest($event, $action);
-        }
-
         // When approving, we don't want to perform an action here - wait until the draft has been applied
         if (!$action || $event->sender->propagating || $event->isNew || $this->afterSaveRun) {
             return;
         }
 
+        // This helps us maintain whether the after-save event has already been triggered for this
+        // request, and not to have it run again. This is most commonly caused by Preparse fields
+        // which re-save the element again, straight after it's first save. Then we end up with multiple
+        // submissions, created each time it's called.
+        $this->afterSaveRun = true;
+
         // Check if we're submitting a new submission
         if ($action == 'save-submission') {
             Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
-
-            // This helps us maintain whether the after-save event has already been triggered for this
-            // request, and not to have it run again. This is most commonly caused by Preparse fields
-            // which re-save the element again, straight after it's first save. Then we end up with multiple
-            // submissions, created each time it's called.
-            $this->afterSaveRun = true;
 
             // This doesn't seem to redirect properly, which is annoying!
             if ($request->getIsCpRequest()) {
@@ -147,19 +147,19 @@ class Service extends Component
         }
 
         if ($action == 'approve-review') {
-            Workflow::$plugin->getSubmissions()->approveReview();
+            Workflow::$plugin->getSubmissions()->approveReview($event->sender);
         }
 
         if ($action == 'reject-review') {
-            Workflow::$plugin->getSubmissions()->rejectReview();
+            Workflow::$plugin->getSubmissions()->rejectReview($event->sender);
         }
 
         if ($action == 'revoke-submission') {
-            Workflow::$plugin->getSubmissions()->revokeSubmission();
+            Workflow::$plugin->getSubmissions()->revokeSubmission($event->sender);
         }
 
         if ($action == 'reject-submission') {
-            Workflow::$plugin->getSubmissions()->rejectSubmission();
+            Workflow::$plugin->getSubmissions()->rejectSubmission($event->sender);
         }
 
         // For the cases where it's been submitted from the front-end, it's not a draft!

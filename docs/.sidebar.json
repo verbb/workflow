@@ -24,7 +24,7 @@
         "children": [
             "template-guides/available-variables",
             "template-guides/front-end-submission",
-            "template-guides/notifications"
+            "template-guides/email-notifications"
         ]
     },
     {
@@ -41,13 +41,6 @@
             "developers/submission",
             "developers/review",
             "developers/events"
-        ]
-    },
-    {
-        "title": "Support",
-        "collapsable": false,
-        "children": [
-            "support/get-support"
         ]
     }
 ]

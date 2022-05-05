@@ -25,14 +25,24 @@ class SubmissionsController extends BaseEntriesController
         $request = Craft::$app->getRequest();
         $workflowAction = $request->getBodyParam('workflow-action');
         $siteId = $request->getBodyParam('siteId');
-        $currentSite = Craft::$app->getSites()->getSiteById($siteId);
+
+        $currentSite = null;
+
+        // In some cases, no siteId is passed (non-multi-site)
+        if ($siteId) {
+            $currentSite = Craft::$app->getSites()->getSiteById($siteId);
+        } else {
+            $currentSite = Craft::$app->getSites()->getCurrentSite();
+        }
 
         $editorNotes = $request->getBodyParam('editorNotes');
+        $reviewerNotes = $request->getBodyParam('reviewerNotes');
         $publisherNotes = $request->getBodyParam('publisherNotes');
 
         // Save the notes for later, due to a number of different events triggering
         Craft::$app->getUrlManager()->setRouteParams([
             'editorNotes' => $editorNotes,
+            'reviewerNotes' => $reviewerNotes,
             'publisherNotes' => $publisherNotes,
         ]);
 
@@ -71,11 +81,14 @@ class SubmissionsController extends BaseEntriesController
 
     public function actionSaveDraft(): ?Response
     {
-        // Set the param here, because the front-end can only support a single param form data
-        $params = Craft::$app->getRequest()->getBodyParams();
-        $params['dropProvisional'] = true;
+        $request = Craft::$app->getRequest();
 
-        Craft::$app->getRequest()->setBodyParams($params);
+        // Set the param here, because the front-end can only support a single param form data
+        // Drop the provisional entry, only if this is a brand-new entry from the site. 
+        // Required when this is a new draft on an existing entry.
+        $params = $request->getBodyParams();
+        $params['dropProvisional'] = true;
+        $request->setBodyParams($params);
 
         // We're already checking validation in our beforeAction
         return Craft::$app->runAction('elements/save-draft');

@@ -1,5 +1,4 @@
 # Events
-
 Events can be used to extend the functionality of Workflow.
 
 ## Submission related events
@@ -49,7 +48,7 @@ Event::on(Submissions::class, Submissions::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
 
 
 ### The `prepareEditorEmail` event
-The event that is triggered when preparing the editor to send an email to.
+The event that is triggered when preparing the editor email.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
 
@@ -86,7 +85,7 @@ Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_EDITOR_EMAIL, funct
 
 
 ### The `prepareReviewerEmail` event
-The event that is triggered when preparing the reviewers to send an email to.
+The event that is triggered when preparing the reviewer email.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
 
@@ -123,7 +122,7 @@ Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_REVIEWER_EMAIL, fun
 
 
 ### The `preparePublisherEmail` event
-The event that is triggered when preparing the publishers to send an email to.
+The event that is triggered when preparing the publisher email.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
 

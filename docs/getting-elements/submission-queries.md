@@ -1,14 +1,13 @@
 # Submission Queries
-
 You can fetch submissions in your templates or PHP submission using **submission queries**.
 
 :::code
-```twig
+```twig Twig
 {# Create a new submission query #}
 {% set myQuery = craft.workflow.submissions() %}
 ```
 
-```php
+```php PHP
 // Create a new submission query
 $myQuery = \verbb\workflow\elements\Submission::find();
 ```
@@ -21,7 +20,6 @@ See Introduction to [Element Queries](https://docs.craftcms.com/v3/dev/element-q
 :::
 
 ## Example
-
 We can display submissions for a given entry by doing the following:
 
 1. Create a submission query with `craft.workflow.submissions()`.
@@ -46,13 +44,11 @@ We can display submissions for a given entry by doing the following:
 ```
 
 ## Parameters
-
 Submission queries support the following parameters:
 
 <!-- BEGIN PARAMS -->
 
 ### `after`
-
 Narrows the query results to only submissions that were posted on or after a certain date.
 
 Possible values include:

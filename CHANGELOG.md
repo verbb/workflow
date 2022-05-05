@@ -15,10 +15,38 @@
 - Now requires PHP `^8.0.2`.
 - Now requires Craft `^4.0.0-beta.1`.
 
+## 1.7.2 - 2022-03-24
+
+### Fixed
+- Fix an error when trying to submit for review on a non-multi-site install.
+
+## 1.7.1 - 2022-03-18
+
+### Added
+- Add deprecation notices for old settings, if you are using a configuration file. These will need to be updated before Craft 4.
+
+### Fixed
+- Fix backward compatibility handling of settings not working correctly.
+- Fix an error when trying to submit for review on a non-multi-site install.
+- Fix settings for Reviewers not being populated correctly in settings.
+
+### Deprecated
+- `editorNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `editorNotificationsOptions` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `reviewerNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `reviewerApprovalNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+- `publisherNotifications` has been updated to be multi-site compatible. Refer to [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration) if you are using a configuration file.
+
 ## 1.7.0 - 2022-03-17
 
 ### Added
 - Add multi-site support for plugin settings for editor/reviewer/publisher groups.
+- Add `EVENT_PREPARE_EDITOR_EMAIL`, `EVENT_PREPARE_REVIEWER_EMAIL`, and `EVENT_PREPARE_PUBLISHER_EMAIL` events.
+- Add `submission` param to `EVENT_BEFORE_SEND_` email events.
+
+### Changed
+- Allow `mail` param in `EVENT_BEFORE_SEND_` events to be modified by events.
+- Change `EVENT_BEFORE_SEND_` email events to be cancelable.
 
 ## 1.6.6 - 2021-11-26
 
