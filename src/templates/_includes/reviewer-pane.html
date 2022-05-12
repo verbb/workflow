@@ -98,7 +98,7 @@
 
 {% if nonPendingSubmissions | length %}
     <div class="pane workflow-pane workflow-history-pane">
-        {% for submission in submissions if submission.status != 'pending' %}
+        {% for submission in submissions %}
             {% if submission.status == 'approved' %}
                 <div class="workflow-history">
                     <div class="workflow-history-heading">
