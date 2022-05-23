@@ -8,10 +8,11 @@ Events can be used to extend the functionality of Workflow.
 Plugins can get notified before a submission is saved. Event handlers can prevent the submission from getting sent by setting `$event->isValid` to false.
 
 ```php
+use craft\events\ModelEvent;
 use verbb\workflow\elements\Submission;
 use yii\base\Event;
 
-Event::on(Submission::class, Submission::EVENT_BEFORE_SAVE, function(Event $e) {
+Event::on(Submission::class, Submission::EVENT_BEFORE_SAVE, function(ModelEvent $e) {
     $submission = $event->sender;
     $event->isValid = false;
 });
@@ -22,10 +23,11 @@ Event::on(Submission::class, Submission::EVENT_BEFORE_SAVE, function(Event $e) {
 Plugins can get notified after a submission has been saved
 
 ```php
+use craft\events\ModelEvent;
 use verbb\workflow\elements\Submission;
 use yii\base\Event;
 
-Event::on(Submission::class, Submission::EVENT_AFTER_SAVE, function(Event $e) {
+Event::on(Submission::class, Submission::EVENT_AFTER_SAVE, function(ModelEvent $e) {
     $submission = $event->sender;
 });
 ```

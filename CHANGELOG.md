@@ -15,6 +15,19 @@
 - Now requires PHP `^8.0.2`.
 - Now requires Craft `^4.0.0-beta.1`.
 
+## 1.7.3 - 2022-05-23
+
+### Fixed
+- Fix an error with reviewer user groups stored in the deprecated format (pre 1.7.0).
+- Fix required fields validation error leading to "Entry draft not found" when saving draft for review.
+- Fix an error when creating a new submission on an existing entry, when required field validation fails.
+- Fix reviewer notes not populating email notifications.
+- Fix reviewer submissions triggering multiple times when containing Preparse fields.
+- Fix entering in reviewer notes updating the entry draft notes.
+- Fix an error overriding the action for controllers, when other plugins rely on `Controller::beforeAction()`.
+- Fix an error when trying to fetch the next reviewer group.
+- Fix front-end entry form creating multiple submissions.
+
 ## 1.7.2 - 2022-03-24
 
 ### Fixed
