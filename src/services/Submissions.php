@@ -264,7 +264,7 @@ class Submissions extends Component
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
     }
 
-    public function approveSubmission($entry)
+    public function approveSubmission($entry, $published = true)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -280,7 +280,7 @@ class Submissions extends Component
         $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
         // Update the owner to be the newly published entry, and remove the ownerDraftId - it no longer exists!
-        if ($entry) {
+        if ($entry && $published) {
             $submission->ownerId = $entry->id;
             $submission->ownerDraftId = null;
         }

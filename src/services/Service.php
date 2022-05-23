@@ -170,6 +170,11 @@ class Service extends Component
                 Workflow::$plugin->getSubmissions()->approveSubmission($event->sender);
             }
         }
+
+        // We're approving-only, so basically the draft is just saved, but the submission lifecycle completed
+        if ($action == 'approve-only-submission') {
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->sender, false);
+        }
     }
 
     public function onAfterApplyDraft(DraftEvent $event)
@@ -183,7 +188,7 @@ class Service extends Component
 
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
-        if ($action == 'approve-submission' || $action == 'approve-only-submission') {
+        if ($action == 'approve-submission') {
             Workflow::$plugin->getSubmissions()->approveSubmission($event->source);
         }
     }
