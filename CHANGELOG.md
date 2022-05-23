@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0-beta.3 - 2022-05-23
+
+### Added
+- Add resave console command for elements.
+- Add checks for registering events for performance.
+- Add `archiveTableIfExists()` to install migration.
+
+### Changed
+- Rename base plugin methods.
+
+### Fixed
+- Fix a Twig error in pending submissions pane.
+
 ## 2.0.0-beta.2 - 2022-04-13
 
 ### Changed
