@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.7.4 - 2022-05-23
+## 1.7.3 - 2022-05-23
 
 ### Fixed
 - Fix an error with reviewer user groups stored in the deprecated format (pre 1.7.0).
