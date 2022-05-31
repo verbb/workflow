@@ -59,7 +59,7 @@ Possible values include:
 | a [DateTime](http://php.net/class.datetime) object | that were posted after the date represented by the object.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions posted this month #}
 {% set firstDayOfMonth = date('first day of this month') %}
 
@@ -68,7 +68,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions posted this month
 $firstDayOfMonth = new \DateTime('first day of this month');
 
@@ -85,14 +85,14 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Clears out the [status()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all submissions, regardless of status #}
 {% set submissions = craft.workflow.submissions()
     .anyStatus()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all submissions, regardless of status
 $submissions = \verbb\workflow\elements\Submission::find()
     ->anyStatus()
@@ -107,14 +107,14 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Causes the query to return matching submissions as arrays of data, rather than [Submission](docs:developers/submission) objects.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions as arrays #}
 {% set submissions = craft.workflow.submissions()
     .asArray()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions as arrays
 $submissions = \verbb\workflow\elements\Submission::find()
     ->asArray()
@@ -136,7 +136,7 @@ Possible values include:
 | a [DateTime](http://php.net/class.datetime) object | that were posted before the date represented by the object.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions posted before this month #}
 {% set firstDayOfMonth = date('first day of this month') %}
 
@@ -145,7 +145,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions posted before this month
 $firstDayOfMonth = new \DateTime('first day of this month');
 
@@ -170,7 +170,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were approved between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions approved last month #}
 {% set start = date('first day of last month') | atom %}
 {% set end = date('first day of this month') | atom %}
@@ -180,7 +180,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions approved last month
 $start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
 $end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
@@ -206,7 +206,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were created between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions created last month #}
 {% set start = date('first day of last month') | atom %}
 {% set end = date('first day of this month') | atom %}
@@ -216,7 +216,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions created last month
 $start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
 $end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
@@ -242,7 +242,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were rejected between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions rejected last month #}
 {% set start = date('first day of last month') | atom %}
 {% set end = date('first day of this month') | atom %}
@@ -252,7 +252,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions rejected last month
 $start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
 $end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
@@ -278,7 +278,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were revoked between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions revoked last month #}
 {% set start = date('first day of last month') | atom %}
 {% set end = date('first day of this month') | atom %}
@@ -288,7 +288,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions revoked last month
 $start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
 $end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
@@ -314,7 +314,7 @@ Possible values include:
 | `['and', '>= 2018-04-04', '< 2018-05-01']` | that were updated between 2018-04-01 and 2018-05-01.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions updated in the last week #}
 {% set lastWeek = date('1 week ago')|atom %}
 
@@ -323,7 +323,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions updated in the last week
 $lastWeek = new \DateTime('1 week ago')->format(\DateTime::ATOM);
 
@@ -349,14 +349,14 @@ Possible values include:
 | `['not', 1, 2]` | not with a user with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the current user's submissions #}
 {% set submissions = craft.workflow.submissions()
     .editorId(currentUser.id)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch the current user's submissions
 $user = Craft::$app->user->getIdentity();
 
@@ -373,7 +373,7 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Causes the query results to be returned in the order specified by [id](#id).
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions in a specific order #}
 {% set submissions = craft.workflow.submissions()
     .id([1, 2, 3, 4, 5])
@@ -381,7 +381,7 @@ Causes the query results to be returned in the order specified by [id](#id).
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions in a specific order
 $submissions = \verbb\workflow\elements\Submission::find()
     ->id([1, 2, 3, 4, 5])
@@ -406,14 +406,14 @@ Possible values include:
 | `['not', 1, 2]` | not with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the submission by its ID #}
 {% set submission = craft.workflow.submissions()
     .id(1)
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the submission by its ID
 $submission = \verbb\workflow\elements\Submission::find()
     ->id(1)
@@ -432,14 +432,14 @@ This can be combined with [fixedOrder](#fixedorder) if you want the results to b
 Causes the query results to be returned in reverse order.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions in reverse #}
 {% set submissions = craft.workflow.submissions()
     .inReverse()
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions in reverse
 $submissions = \verbb\workflow\elements\Submission::find()
     ->inReverse()
@@ -454,14 +454,14 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Determines the number of submissions that should be returned.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch up to 10 submissions  #}
 {% set submissions = craft.workflow.submissions()
     .limit(10)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch up to 10 submissions
 $submissions = \verbb\workflow\elements\Submission::find()
     ->limit(10)
@@ -476,14 +476,14 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Determines how many submissions should be skipped in the results.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all submissions except for the first 3 #}
 {% set submissions = craft.workflow.submissions()
     .offset(3)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all submissions except for the first 3
 $submissions = \verbb\workflow\elements\Submission::find()
     ->offset(3)
@@ -498,14 +498,14 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Determines the order that the submissions should be returned in.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch all submissions in order of date created #}
 {% set submissions = craft.workflow.submissions()
     .orderBy('elements.dateCreated asc')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch all submissions in order of date created
 $submissions = \verbb\workflow\elements\Submission::find()
     ->orderBy('elements.dateCreated asc')
@@ -520,14 +520,14 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Sets the [ownerId](#ownerid) and [siteId](#siteid) parameters based on a given element.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions created for this entry #}
 {% set submissions = craft.workflow.submissions()
     .owner(myEntry)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions created for this entry
 $submissions = \verbb\workflow\elements\Submission::find()
     ->owner($myEntry)
@@ -551,14 +551,14 @@ Possible values include:
 | `['not', 1, 2]` | not created for an element with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions created for an element with an ID of 1 #}
 {% set submissions = craft.workflow.submissions()
     .ownerId(1)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions created for an element with an ID of 1
 $submissions = \verbb\workflow\elements\Submission::find()
     ->ownerId(1)
@@ -580,7 +580,7 @@ Possible values include:
 | `a [Site](https://docs.craftcms.com/api/v3/craft-models-site.html)` object | created for an element in the site represented by the object.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions created for an element with an ID of 1, for a site with a handle of 'foo' #}
 {% set submissions = craft.workflow.submissions()
     .ownerId(1)
@@ -588,7 +588,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions created for an element with an ID of 1, for a site with a handle of 'foo'
 $submissions = \verbb\workflow\elements\Submission::find()
     ->ownerId(1)
@@ -611,7 +611,7 @@ Possible values include:
 | `':empty:'` | created in a field that isn’t set to manage blocks on a per-site basis.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch submissions created for an element with an ID of 1, for a site with an ID of 2 #}
 {% set submissions = craft.workflow.submissions()
     .ownerId(1)
@@ -619,7 +619,7 @@ Possible values include:
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch submissions created for an element with an ID of 1, for a site with an ID of 2
 $submissions = \verbb\workflow\elements\Submission::find()
     ->ownerId(1)
@@ -644,14 +644,14 @@ Possible values include:
 | `['not', 1, 2]` | not with a user with an ID of 1 or 2.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the current user's submissions #}
 {% set submissions = craft.workflow.submissions()
     .publisherId(currentUser.id)
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch the current user's submissions
 $user = Craft::$app->user->getIdentity();
 
@@ -678,14 +678,14 @@ Possible values include:
 | `['live', 'pending']` | that are live or pending.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch disabled submissions #}
 {% set submissions = craft.workflow.submissions()
     .status('disabled')
     .all() %}
 ```
 
-```php
+```php PHP
 // Fetch disabled submissions
 $submissions = \verbb\workflow\elements\Submission::find()
     ->status('disabled')
@@ -700,14 +700,14 @@ $submissions = \verbb\workflow\elements\Submission::find()
 Narrows the query results based on the submissions’ UIDs.
 
 ::: code
-```twig
+```twig Twig
 {# Fetch the submission by its UID #}
 {% set submission = craft.workflow.submissions()
     .uid('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')
     .one() %}
 ```
 
-```php
+```php PHP
 // Fetch the submission by its UID
 $submission = \verbb\workflow\elements\Submission::find()
     ->uid('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')
