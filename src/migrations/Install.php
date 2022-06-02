@@ -92,14 +92,14 @@ class Install extends Migration
 
     public function dropForeignKeys(): void
     {
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['id'], $this);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId'], $this);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerSiteId'], $this);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['editorId'], $this);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId'], $this);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['publisherId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['id']);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId']);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerSiteId']);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['editorId']);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId']);
+        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['publisherId']);
 
-        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['submissionId'], $this);
-        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['userId'], $this);
+        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['submissionId']);
+        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['userId']);
     }
 }
