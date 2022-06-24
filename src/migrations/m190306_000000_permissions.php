@@ -67,7 +67,7 @@ class m190306_000000_permissions extends Migration
 
             $this->batchInsert('{{%userpermissions_usergroups}}', ['permissionId', 'groupId'], $data);
         }
-    
+
         return true;
     }
 

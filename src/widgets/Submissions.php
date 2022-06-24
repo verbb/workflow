@@ -39,12 +39,12 @@ class Submissions extends Widget
             'submissions' => $submissions,
         ]);
     }
-    
+
     public function getSettingsHtml()
     {
         return Craft::$app->getView()->renderTemplate('workflow/_widget/settings', [
             'widget' => $this,
         ]);
     }
-    
+
 }

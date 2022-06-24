@@ -286,7 +286,7 @@ class Service extends Component
         $routeParams = Craft::$app->getUrlManager()->getRouteParams();
         unset($routeParams['template'], $routeParams['template']);
 
-        return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, array_merge([
+        return Craft::$app->getView()->renderTemplate('workflow/_includes/' . $template, array_merge([
             'context' => $context,
             'submissions' => $submissions,
             'settings' => $settings,

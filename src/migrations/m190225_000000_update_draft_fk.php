@@ -18,7 +18,7 @@ class m190225_000000_update_draft_fk extends Migration
     public function safeUp()
     {
         MigrationHelper::dropForeignKeyIfExists('{{%workflow_submissions}}', ['draftId'], $this);
-        
+
         $this->addForeignKey(null, '{{%workflow_submissions}}', 'draftId', '{{%entrydrafts}}', 'id', 'SET NULL', null);
     }
 

@@ -358,7 +358,7 @@ Possible values include:
 
 ```php PHP
 // Fetch the current user's submissions
-$user = Craft::$app->user->getIdentity();
+$user = Craft::$app->getUser()->getIdentity();
 
 $submissions = \verbb\workflow\elements\Submission::find()
     ->editorId($user->id)
@@ -653,7 +653,7 @@ Possible values include:
 
 ```php PHP
 // Fetch the current user's submissions
-$user = Craft::$app->user->getIdentity();
+$user = Craft::$app->getUser()->getIdentity();
 
 $submissions = \verbb\workflow\elements\Submission::find()
     ->publisherId($user->id)

@@ -65,7 +65,7 @@ class Workflow extends Plugin
         $this->_registerElementTypes();
         $this->_registerPermissions();
 
-        Craft::$app->view->hook('cp.entries.edit.details', [$this->getService(), 'renderEntrySidebar']);
+        Craft::$app->getView()->hook('cp.entries.edit.details', [$this->getService(), 'renderEntrySidebar']);
     }
 
     public function getSettingsResponse()

@@ -41,7 +41,7 @@ class Settings extends Model
         $groupUid = $this->editorUserGroup[$site->uid] ?? null;
 
         if ($groupUid) {
-            return Craft::$app->userGroups->getGroupByUid($groupUid);
+            return Craft::$app->getUserGroups()->getGroupByUid($groupUid);
         }
 
         return null;
@@ -114,7 +114,7 @@ class Settings extends Model
         $groupUid = $this->publisherUserGroup[$site->uid] ?? null;
 
         if ($groupUid) {
-            return Craft::$app->userGroups->getGroupByUid($groupUid);
+            return Craft::$app->getUserGroups()->getGroupByUid($groupUid);
         }
 
         return null;

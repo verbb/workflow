@@ -7,7 +7,7 @@
       "uuidString" : "ECE3F09A-2816-43C6-9715-3F4A30BD28C5"
     }
   ],
-  "creatorBuild" : "34359",
+  "creatorBuild" : "34365",
   "files" : {
     "\/.github" : {
       "ft" : 65536,
@@ -243,8 +243,8 @@
     "creationDate" : 528723773,
     "displayValue" : "workflow",
     "displayValueWasSetByUser" : 0,
-    "iconImageName" : "meme-ariel",
-    "iconImageWasSetByUser" : 0
+    "iconImageName" : "brackets-koamaru",
+    "iconImageWasSetByUser" : 1
   },
   "projectSettings" : {
     "abortBuildOnError" : 1,

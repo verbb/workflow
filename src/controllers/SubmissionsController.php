@@ -170,7 +170,7 @@ class SubmissionsController extends BaseEntriesController
         if (($expiryDate = $request->getBodyParam('expiryDate')) !== null) {
             $draft->expiryDate = DateTimeHelper::toDateTime($expiryDate) ?: null;
         }
-        
+
         $enabledForSite = $this->enabledForSiteValue();
         if (is_array($enabledForSite)) {
             // Set the global status to true if it's enabled for *any* sites, or if already enabled.

@@ -28,7 +28,7 @@ class m200518_000000_add_reviews extends Migration
             $this->addForeignKey(null, '{{%workflow_reviews}}', 'submissionId', '{{%workflow_submissions}}', 'id', 'CASCADE', null);
             $this->addForeignKey(null, '{{%workflow_reviews}}', 'userId', '{{%users}}', 'id', 'CASCADE', null);
 
-            Craft::$app->db->schema->refresh();
+            Craft::$app->getDb()->schema->refresh();
         }
     }
 

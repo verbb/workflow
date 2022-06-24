@@ -88,7 +88,7 @@ class Submission extends Element
             self::STATUS_APPROVED => Craft::t('workflow', 'Approved'),
             self::STATUS_PENDING => Craft::t('workflow', 'Pending'),
             self::STATUS_REJECTED => Craft::t('workflow', 'Rejected'),
-            self::STATUS_REVOKED => Craft::t('workflow', 'Revoked')
+            self::STATUS_REVOKED => Craft::t('workflow', 'Revoked'),
         ];
     }
 
@@ -103,7 +103,7 @@ class Submission extends Element
             '*' => [
                 'key' => '*',
                 'label' => Craft::t('workflow', 'All submissions'),
-            ]
+            ],
         ];
 
         return $sources;
@@ -363,8 +363,7 @@ class Submission extends Element
         foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($site, $this) as $key => $userGroup) {
             if ($lastReviewer->isInGroup($userGroup)) {
                 $canReview = false;
-            }
-            elseif ($user->isInGroup($userGroup)) {
+            } else if ($user->isInGroup($userGroup)) {
                 $canReview = true;
             }
         }
@@ -477,9 +476,9 @@ class Submission extends Element
                 }
 
                 $formatter = Craft::$app->getFormatter();
-                    return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
-                        'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT)
-                    ]);
+                return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
+                    'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT),
+                ]);
             }
             case 'dateApproved':
             case 'dateRejected': {

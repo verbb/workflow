@@ -51,7 +51,7 @@ class SetStatus extends ElementAction
             if ($this->status === 'approved') {
                 $submission->publisherId = $currentUser->id;
                 $submission->dateApproved = new \DateTime;
-                        
+
                 $ownerId = $submission->ownerId;
                 $ownerSiteId = $submission->ownerSiteId;
                 $ownerDraftId = $submission->ownerDraftId;

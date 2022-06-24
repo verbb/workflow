@@ -205,7 +205,7 @@ class Submissions extends Component
             $submission->editorNotes = $reviewRecord->notes;
 
             $this->sendReviewerNotificationEmail($submission, $entry);
-        } 
+        }
 
         // Trigger notification to editor - if configured to do so
         if ($settings->editorNotifications && $settings->reviewerApprovalNotifications) {

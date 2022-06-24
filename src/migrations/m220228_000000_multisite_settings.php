@@ -18,7 +18,7 @@ class m220228_000000_multisite_settings extends Migration
         // Don't make the same config changes twice
         $projectConfig = Craft::$app->getProjectConfig();
         $schemaVersion = $projectConfig->get('plugins.workflow.schemaVersion', true);
-        
+
         if (version_compare($schemaVersion, '2.1.6', '>=')) {
             return;
         }
