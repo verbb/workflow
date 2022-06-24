@@ -65,8 +65,6 @@ class Settings extends Model
             }
 
             $this->reviewerUserGroups = [$site->uid => $uids];
-        } else {
-            $this->reviewerUserGroups = [];
         }
 
         $userGroups = [];
