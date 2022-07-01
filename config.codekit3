@@ -390,25 +390,6 @@
       "q" : 100,
       "rq" : 75
     },
-    "\/docs\/support\/get-support.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/support\/get-support.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
     "\/docs\/template-guides\/available-variables.md" : {
       "cB" : 0,
       "cS" : 0,
@@ -428,6 +409,25 @@
       "rFN" : 0,
       "uCM" : 0
     },
+    "\/docs\/template-guides\/email-notifications.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/template-guides\/email-notifications.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
     "\/docs\/template-guides\/front-end-submission.md" : {
       "cB" : 0,
       "cS" : 0,
@@ -439,25 +439,6 @@
       "hM" : 0,
       "oA" : 1,
       "oAP" : "\/docs\/template-guides\/front-end-submission.html",
-      "oF" : 0,
-      "oFM" : 0,
-      "oS" : 0,
-      "pHT" : 0,
-      "pME" : 1,
-      "rFN" : 0,
-      "uCM" : 0
-    },
-    "\/docs\/template-guides\/notifications.md" : {
-      "cB" : 0,
-      "cS" : 0,
-      "eF" : 1,
-      "eL" : 1,
-      "ema" : 1,
-      "eSQ" : 1,
-      "ft" : 4096,
-      "hM" : 0,
-      "oA" : 1,
-      "oAP" : "\/docs\/template-guides\/notifications.html",
       "oF" : 0,
       "oFM" : 0,
       "oS" : 0,
@@ -683,8 +664,8 @@
     "creationDate" : 528723773,
     "displayValue" : "workflow",
     "displayValueWasSetByUser" : 0,
-    "iconImageName" : "meme-ariel",
-    "iconImageWasSetByUser" : 0
+    "iconImageName" : "brackets-koamaru",
+    "iconImageWasSetByUser" : 1
   },
   "projectSettings" : {
     "abortBuildOnError" : 1,
