@@ -61,22 +61,24 @@
 
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
-            {% set endpoint = 'workflow/submissions/publish-entry' %}
+            {% set publishEndpoint = 'workflow/submissions/publish-entry' %}
+            {% set approveEndpoint = 'workflow/submissions/save-entry' %}
 
             {% if entry.getIsDraft() %}
                 {% set endpoint = 'workflow/submissions/publish-draft' %}
+                {% set approveEndpoint = 'workflow/submissions/save-draft' %}
             {% endif %}
 
             <div class="workflow-submission-footer btngroup">
                 <div id="save-btn-container" class="btngroup submit">
-                    <a class="btn formsubmit submit" data-action="{{ endpoint }}" data-param="workflow-action" data-value="approve-submission">{{ "Approve and publish" | t('workflow') }}</a>
+                    <a class="btn formsubmit submit" data-action="{{ publishEndpoint }}" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Approve and publish" | t('workflow') }}</a>
 
                     <div class="btn submit menubtn"></div>
 
                     <div class="menu" data-align="right">
                         <ul>
                             <li>
-                                <a class="formsubmit" data-action="{{ endpoint }}" data-param="workflow-action" data-value="approve-only-submission" data-redirect="{{ craft.app.request.url | hash }}">
+                                <a class="formsubmit" data-action="{{ approveEndpoint }}" data-param="workflow-action" data-value="approve-only-submission" data-redirect="{{ craft.app.request.url | hash }}">
                                     {{ "Approve only" | t('workflow') }}
                                 </a>
                             </li>

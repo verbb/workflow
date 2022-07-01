@@ -28,6 +28,12 @@
 - Now requires PHP `^8.0.2`.
 - Now requires Craft `^4.0.0-beta.1`.
 
+## 1.7.4 - 2022-07-01
+
+### Fixed
+- Fix behaviour of “Approve only” for publishers, to not publish a draft, instead only save it.
+- Fix reviewer groups not saving correctly.
+
 ## 1.7.3 - 2022-05-23
 
 ### Fixed

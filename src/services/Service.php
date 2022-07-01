@@ -171,6 +171,11 @@ class Service extends Component
                 Workflow::$plugin->getSubmissions()->approveSubmission($event->sender);
             }
         }
+
+        // We're approving-only, so basically the draft is just saved, but the submission lifecycle completed
+        if ($action == 'approve-only-submission') {
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->sender, false);
+        }
     }
 
     public function onAfterApplyDraft(DraftEvent $event): void
@@ -184,8 +189,8 @@ class Service extends Component
 
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
-        if ($action == 'approve-submission' || $action == 'approve-only-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->canonical);
+        if ($action == 'approve-submission') {
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->source);
         }
     }
 
@@ -303,7 +308,7 @@ class Service extends Component
         $routeParams = Craft::$app->getUrlManager()->getRouteParams();
         unset($routeParams['template'], $routeParams['template']);
 
-        return Craft::$app->view->renderTemplate('workflow/_includes/' . $template, array_merge([
+        return Craft::$app->getView()->renderTemplate('workflow/_includes/' . $template, array_merge([
             'entry' => $entry,
             'submissions' => $submissions,
             'settings' => $settings,

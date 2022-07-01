@@ -210,7 +210,7 @@ class Submissions extends Component
             $submission->editorNotes = $reviewRecord->notes;
 
             $this->sendReviewerNotificationEmail($submission, $entry);
-        } 
+        }
 
         // Trigger notification to editor - if configured to do so
         if ($settings->editorNotifications && $settings->reviewerApprovalNotifications) {
@@ -273,7 +273,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveSubmission($entry = null): bool
+    public function approveSubmission($entry, $published = true)
     {
         $settings = Workflow::$plugin->getSettings();
 
@@ -289,7 +289,7 @@ class Submissions extends Component
         $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
 
         // Update the owner to be the newly published entry, and remove the ownerDraftId - it no longer exists!
-        if ($entry) {
+        if ($entry && $published) {
             $submission->ownerId = $entry->id;
             $submission->ownerDraftId = null;
         }
