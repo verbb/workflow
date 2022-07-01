@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.4 - 2022-07-01
+
+### Fixed
+- Fix an error when uninstalling.
+
 ## 2.0.0-beta.3 - 2022-05-23
 
 ### Added
