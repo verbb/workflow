@@ -14,7 +14,7 @@
 
 {% set title = 'Workflow ' ~ tabs[selectedTab].label ?? '' %}
 
-{% set content %}
+{% block content %}
     {% block blockContent %}
 
     {% endblock %}
@@ -42,4 +42,4 @@
             </a>
         </div>
     </div>
-{% endset %}
+{% endblock %}
