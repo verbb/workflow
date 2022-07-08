@@ -87,13 +87,8 @@ class Install extends Migration
 
     public function dropTables(): void
     {
-        if ($this->db->tableExists('{{%workflow_submissions}}')) {
-            $this->dropTable('{{%workflow_submissions}}');
-        }
-
-        if ($this->db->tableExists('{{%workflow_reviews}}')) {
-            $this->dropTable('{{%workflow_reviews}}');
-        }
+        $this->dropTableIfExists('{{%workflow_submissions}}');
+        $this->dropTableIfExists('{{%workflow_reviews}}');
     }
 
     public function dropForeignKeys(): void
