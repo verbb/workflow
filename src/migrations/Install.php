@@ -3,6 +3,7 @@ namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
 use craft\helpers\Db;
+use craft\helpers\MigrationHelper;
 
 class Install extends Migration
 {
@@ -23,7 +24,7 @@ class Install extends Migration
         $this->dropForeignKeys();
         $this->dropTables();
 
-        return false;
+        return true;
     }
 
     public function createTables(): void
@@ -61,12 +62,6 @@ class Install extends Migration
         ]);
     }
 
-    public function dropTables(): void
-    {
-        $this->dropTable('{{%workflow_submissions}}');
-        $this->dropTable('{{%workflow_reviews}}');
-    }
-
     public function createIndexes(): void
     {
         $this->createIndex(null, '{{%workflow_submissions}}', 'id', false);
@@ -90,16 +85,25 @@ class Install extends Migration
         $this->addForeignKey(null, '{{%workflow_reviews}}', 'userId', '{{%users}}', 'id', 'CASCADE', null);
     }
 
+    public function dropTables(): void
+    {
+        if ($this->db->tableExists('{{%workflow_submissions}}')) {
+            $this->dropTable('{{%workflow_submissions}}');
+        }
+
+        if ($this->db->tableExists('{{%workflow_reviews}}')) {
+            $this->dropTable('{{%workflow_reviews}}');
+        }
+    }
+
     public function dropForeignKeys(): void
     {
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['id']);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerDraftId']);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerSiteId']);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['editorId']);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['ownerId']);
-        Db::dropForeignKeyIfExists('{{%workflow_submissions}}', ['publisherId']);
+        if ($this->db->tableExists('{{%workflow_submissions}}')) {
+            MigrationHelper::dropAllForeignKeysOnTable('{{%workflow_submissions}}', $this);
+        }
 
-        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['submissionId']);
-        Db::dropForeignKeyIfExists('{{%workflow_reviews}}', ['userId']);
+        if ($this->db->tableExists('{{%workflow_reviews}}')) {
+            MigrationHelper::dropAllForeignKeysOnTable('{{%workflow_reviews}}', $this);
+        }
     }
 }
