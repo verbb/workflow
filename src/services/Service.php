@@ -190,7 +190,7 @@ class Service extends Component
         // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
         // We want to keep the link, so we need to supply the source, not the draft.
         if ($action == 'approve-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->source);
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->draft);
         }
     }
 

@@ -103,7 +103,7 @@ class SubmissionsController extends BaseEntriesController
     public function actionPublishEntry(): ?Response
     {
         // We're already checking validation in our beforeAction
-        return Craft::$app->runAction('elements/save');
+        return Craft::$app->runAction('elements/apply-draft');
     }
 
 
