@@ -97,12 +97,6 @@ class Submission extends Element
     {
         $actions = [];
 
-        $actions[] = Craft::$app->getElements()->createAction([
-            'type' => Delete::class,
-            'confirmationMessage' => Craft::t('workflow', 'Are you sure you want to delete the selected submissions?'),
-            'successMessage' => Craft::t('workflow', 'Submissions deleted.'),
-        ]);
-
         $actions[] = SetStatus::class;
 
         return $actions;
@@ -193,6 +187,31 @@ class Submission extends Element
     public function getStatus(): ?string
     {
         return $this->status;
+    }
+
+    public function canView(User $user): bool
+    {
+        return false;
+    }
+
+    public function canSave(User $user): bool
+    {
+        return false;
+    }
+
+    public function canDuplicate(User $user): bool
+    {
+        return false;
+    }
+
+    public function canDelete(User $user): bool
+    {
+        return true;
+    }
+
+    public function canCreateDrafts(User $user): bool
+    {
+        return false;
     }
 
     public function getCpEditUrl(): ?string

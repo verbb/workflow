@@ -5,10 +5,11 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementAction;
 use craft\elements\Entry;
+use craft\elements\actions\SetStatus as BaseSetStatus;
 use craft\elements\db\ElementQueryInterface;
 use DateTime;
 
-class SetStatus extends ElementAction
+class SetStatus extends BaseSetStatus
 {
     // Properties
     // =========================================================================
