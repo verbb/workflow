@@ -166,6 +166,13 @@ class Submission extends Element
 
         return '';
     }
+    
+    public function setOwner($owner)
+    {
+        $this->_owner = $owner;
+
+        return $this;
+    }
 
     public function getOwner()
     {
