@@ -98,6 +98,7 @@ class Submissions extends Component
         $session = Craft::$app->getSession();
 
         $submission = $this->_setSubmissionFromPost();
+        $submission->setOwner($entry);
         $submission->ownerId = $entry->id;
         $submission->ownerSiteId = $entry->siteId;
         $submission->editorId = $currentUser->id;
