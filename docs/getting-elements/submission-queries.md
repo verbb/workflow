@@ -16,7 +16,7 @@ $myQuery = \verbb\workflow\elements\Submission::find();
 Once you’ve created a submission query, you can set parameters on it to narrow down the results, and then execute it by calling `.all()`. An array of [Submission](docs:developers/submission) objects will be returned.
 
 :::tip
-See Introduction to [Element Queries](https://docs.craftcms.com/v3/dev/element-queries/) in the Craft docs to learn about how element queries work.
+See Introduction to [Element Queries](https://craftcms.com/docs/4.x/element-queries/) in the Craft docs to learn about how element queries work.
 :::
 
 ## Example
@@ -82,7 +82,7 @@ $submissions = \verbb\workflow\elements\Submission::find()
 
 ### `anyStatus`
 
-Clears out the [status()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v3/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
+Clears out the [status()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-status) and [enabledForSite()](https://docs.craftcms.com/api/v4/craft-elements-db-elementquery.html#method-enabledforsite) parameters.
 
 ::: code
 ```twig Twig
@@ -577,7 +577,7 @@ Possible values include:
 | Value | Fetches submissions…
 | - | -
 | `'foo'` | created for an element in a site with a handle of `foo`.
-| `a [Site](https://docs.craftcms.com/api/v3/craft-models-site.html)` object | created for an element in the site represented by the object.
+| `a [Site](https://docs.craftcms.com/api/v4/craft-models-site.html)` object | created for an element in the site represented by the object.
 
 ::: code
 ```twig Twig

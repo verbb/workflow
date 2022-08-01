@@ -10,7 +10,7 @@ To access these, visit Utilities → System Messages.
 Variable | Description
 --- | ---
 `submission` | A [Submission](docs:developers/submission) element.
-`user` | A [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) element.
+`user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
 
 ### Example Subject
 
@@ -38,7 +38,7 @@ Variable | Description
 --- | ---
 `submission` | A [Submission](docs:developers/submission) element.
 `review` | A [Review](docs:developers/review) model.
-`user` | A [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) element.
+`user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
 
 ### Example Subject
 
@@ -65,7 +65,7 @@ Your submission for {{ submission.owner.title }} has been {{ review.approved ? '
 Variable | Description
 --- | ---
 `submission` | A [Submission](docs:developers/submission) element.
-`user` | A [User](https://docs.craftcms.com/api/v3/craft-elements-user.html) element.
+`user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
 
 ### Example Subject
 
