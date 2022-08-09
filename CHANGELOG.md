@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.0.0-beta.5 - 2022-08-09
+
+### Added
+- Add missing English Translations.
+
+### Fixed
+- Fix an error when uninstalling.
+- Fix an error when uninstalling the plugin.
+- Fix being unable to view submissions in the control panel.
+- Fix permission checks.
+- Fix Workflow CSS not rendering for submissions index.
+- Fix an error when trying to publish a submission.
+- Fix element actions for submissions.
+
 ## 2.0.0-beta.4 - 2022-07-01
 
 ### Fixed
