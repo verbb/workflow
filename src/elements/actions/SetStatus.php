@@ -1,12 +1,15 @@
 <?php
 namespace verbb\workflow\elements\actions;
 
+use verbb\workflow\elements\Submission;
+
 use Craft;
 use craft\base\Element;
 use craft\base\ElementAction;
 use craft\elements\Entry;
 use craft\elements\actions\SetStatus as BaseSetStatus;
 use craft\elements\db\ElementQueryInterface;
+
 use DateTime;
 
 class SetStatus extends BaseSetStatus
@@ -110,5 +113,23 @@ class SetStatus extends BaseSetStatus
         }
 
         return true;
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    /**
+     * @inheritdoc
+     */
+    protected function defineRules(): array
+    {
+        // Overwrite the parent rules
+        $rules = [];
+
+        $rules[] = [['status'], 'required'];
+        $rules[] = [['status'], 'in', 'range' => array_keys(Submission::statuses())];
+
+        return $rules;
     }
 }
