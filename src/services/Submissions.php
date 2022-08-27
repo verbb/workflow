@@ -294,6 +294,11 @@ class Submissions extends Component
             $submission->ownerDraftId = null;
         }
 
+        // One final check if the owner ID actually exists anymore, as it's likely been deleted
+        if (!Craft::$app->getElements()->getElementById($entry->id)) {
+            $submission->ownerId = null;
+        }
+
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not approve and publish.'));
 
