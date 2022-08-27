@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0-beta.6 - 2022-08-27
+
+### Fixed
+- Fix an error when approving a draft.
+- Fix an error when trying to change the status of submissions from the element index actions.
+
 ## 2.0.0-beta.5 - 2022-08-09
 
 ### Added

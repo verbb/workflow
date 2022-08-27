@@ -2,7 +2,7 @@
     "name": "verbb/workflow",
     "description": "A Craft CMS plugin to create a workflow for publishing entries.",
     "type": "craft-plugin",
-    "version": "2.0.0-beta.5",
+    "version": "2.0.0-beta.6",
     "keywords": [
         "craft",
         "cms",
