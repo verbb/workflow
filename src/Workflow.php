@@ -189,8 +189,8 @@ class Workflow extends Plugin
             $e->actions['workflow-submissions'] = [
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
-                    $query = Submission::find();
-                    return $controller->resaveElements($query);
+
+                    return $controller->resaveElements(Submission::class);
                 },
                 'options' => [],
                 'helpSummary' => 'Re-saves Workflow submissions.',
