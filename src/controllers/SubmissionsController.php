@@ -11,6 +11,7 @@ use craft\elements\Entry;
 use craft\errors\InvalidElementException;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\ElementHelper;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use craft\models\Section;
 use craft\web\Controller;
@@ -41,9 +42,10 @@ class SubmissionsController extends BaseEntriesController
             $currentSite = Craft::$app->getSites()->getCurrentSite();
         }
 
-        $editorNotes = $request->getBodyParam('editorNotes');
-        $reviewerNotes = $request->getBodyParam('reviewerNotes');
-        $publisherNotes = $request->getBodyParam('publisherNotes');
+        // Sanitize notes first
+        $editorNotes = StringHelper::htmlEncode((string)$request->getBodyParam('editorNotes'));
+        $reviewerNotes = StringHelper::htmlEncode((string)$request->getBodyParam('reviewerNotes'));
+        $publisherNotes = StringHelper::htmlEncode((string)$request->getBodyParam('publisherNotes'));
 
         // Save the notes for later, due to a number of different events triggering
         Craft::$app->getUrlManager()->setRouteParams([
