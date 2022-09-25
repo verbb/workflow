@@ -58,6 +58,11 @@
 - Now requires PHP `^8.0.2`.
 - Now requires Craft `^4.0.0-beta.1`.
 
+## 1.7.5 - 2022-09-23
+
+### Changed
+- Submission notes are now sanitized when containing HTML.
+
 ## 1.7.4 - 2022-07-01
 
 ### Fixed

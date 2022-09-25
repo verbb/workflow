@@ -15,6 +15,7 @@ use craft\db\Table;
 use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\Db;
+use craft\helpers\StringHelper;
 use craft\models\UserGroup;
 use Exception;
 use Throwable;
@@ -104,8 +105,8 @@ class Submissions extends Component
         $submission->editorId = $currentUser->id;
         $submission->status = Submission::STATUS_PENDING;
         $submission->dateApproved = null;
-        $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
-        $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
+        $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
+        $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
 
         if ($entry->draftId) {
             $submission->ownerDraftId = $entry->draftId;
@@ -207,7 +208,7 @@ class Submissions extends Component
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
             // Modify the notes to be the reviewer notes, but still use the same email template
-            $submission->editorNotes = $reviewRecord->notes;
+            $submission->editorNotes = StringHelper::htmlEncode((string)$reviewRecord->notes);
 
             $this->sendReviewerNotificationEmail($submission, $entry);
         }
@@ -285,8 +286,8 @@ class Submissions extends Component
         $submission->status = Submission::STATUS_APPROVED;
         $submission->publisherId = $currentUser->id;
         $submission->dateApproved = new DateTime;
-        $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
-        $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
+        $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
+        $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
 
         // Update the owner to be the newly published entry, and remove the ownerDraftId - it no longer exists!
         if ($entry && $published) {
@@ -331,8 +332,8 @@ class Submissions extends Component
         $submission->status = Submission::STATUS_REJECTED;
         $submission->publisherId = $currentUser->id;
         $submission->dateRejected = new DateTime;
-        $submission->editorNotes = $request->getParam('editorNotes', $submission->editorNotes);
-        $submission->publisherNotes = $request->getParam('publisherNotes', $submission->publisherNotes);
+        $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
+        $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not reject submission.'));

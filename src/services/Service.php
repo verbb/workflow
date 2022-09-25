@@ -11,10 +11,11 @@ use craft\db\Table;
 use craft\events\DefineHtmlEvent;
 use craft\events\DraftEvent;
 use craft\events\ModelEvent;
-use craft\helpers\DateTimeHelper;
 use craft\helpers\ArrayHelper;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 
 use DateTime;
@@ -35,10 +36,11 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
-
-        $editorNotes = $request->getBodyParam('editorNotes');
-        $reviewerNotes = $request->getBodyParam('reviewerNotes');
-        $publisherNotes = $request->getBodyParam('publisherNotes');
+        
+        // Sanitize notes first
+        $editorNotes = StringHelper::htmlEncode((string)$request->getBodyParam('editorNotes'));
+        $reviewerNotes = StringHelper::htmlEncode((string)$request->getBodyParam('reviewerNotes'));
+        $publisherNotes = StringHelper::htmlEncode((string)$request->getBodyParam('publisherNotes'));
 
         // Disable auto-save for an entry that has been submitted. Only real way to do this.
         // Check to see if this is a draft first
