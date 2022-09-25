@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.7 - 2022-09-25
+
+### Fixed
+- Fix an error running `resave` console commands.
+
 ## 2.0.0-beta.6 - 2022-08-27
 
 ### Fixed
