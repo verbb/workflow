@@ -2,6 +2,7 @@
 namespace verbb\workflow\base;
 
 use verbb\workflow\Workflow;
+use verbb\workflow\services\Emails;
 use verbb\workflow\services\Service;
 use verbb\workflow\services\Submissions;
 use verbb\base\BaseHelper;
@@ -39,6 +40,11 @@ trait PluginTrait
     // Public Methods
     // =========================================================================
 
+    public function getEmails(): Emails
+    {
+        return $this->get('emails');
+    }
+
     public function getService(): Service
     {
         return $this->get('service');
@@ -56,6 +62,7 @@ trait PluginTrait
     private function _registerComponents(): void
     {
         $this->setComponents([
+            'emails' => Emails::class,
             'service' => Service::class,
             'submissions' => Submissions::class,
         ]);

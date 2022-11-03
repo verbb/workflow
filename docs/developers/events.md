@@ -49,6 +49,8 @@ Event::on(Submissions::class, Submissions::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
 ```
 
 
+## Submission email related events
+
 ### The `prepareEditorEmail` event
 The event that is triggered when preparing the editor email.
 
@@ -56,10 +58,10 @@ The `isValid` event property can be set to `false` to prevent the email from bei
 
 ```php
 use verbb\workflow\events\PrepareEmailEvent;
-use verbb\workflow\services\Submissions;
+use verbb\workflow\services\Emails;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_PREPARE_EDITOR_EMAIL, function(PrepareEmailEvent $event) {
+Event::on(Emails::class, Emails::EVENT_PREPARE_EDITOR_EMAIL, function(PrepareEmailEvent $event) {
     $editor = $event->editor;
     $submission = $event->submission;
     // ...
@@ -74,10 +76,10 @@ The `isValid` event property can be set to `false` to prevent the email from bei
 
 ```php
 use verbb\workflow\events\EmailEvent;
-use verbb\workflow\services\Submissions;
+use verbb\workflow\services\Emails;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_EDITOR_EMAIL, function(EmailEvent $event) {
+Event::on(Emails::class, Emails::EVENT_BEFORE_SEND_EDITOR_EMAIL, function(EmailEvent $event) {
     $mail = $event->mail;
     $user = $event->user;
     $submission = $event->submission;
@@ -93,10 +95,10 @@ The `isValid` event property can be set to `false` to prevent the email from bei
 
 ```php
 use verbb\workflow\events\PrepareEmailEvent;
-use verbb\workflow\services\Submissions;
+use verbb\workflow\services\Emails;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_PREPARE_REVIEWER_EMAIL, function(PrepareEmailEvent $event) {
+Event::on(Emails::class, Emails::EVENT_PREPARE_REVIEWER_EMAIL, function(PrepareEmailEvent $event) {
     $reviewers = $event->reviewers;
     $submission = $event->submission;
     // ...
@@ -111,10 +113,10 @@ The `isValid` event property can be set to `false` to prevent the email from bei
 
 ```php
 use verbb\workflow\events\EmailEvent;
-use verbb\workflow\services\Submissions;
+use verbb\workflow\services\Emails;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_REVIEWER_EMAIL, function(EmailEvent $event) {
+Event::on(Emails::class, Emails::EVENT_BEFORE_SEND_REVIEWER_EMAIL, function(EmailEvent $event) {
     $mail = $event->mail;
     $user = $event->user;
     $submission = $event->submission;
@@ -130,10 +132,10 @@ The `isValid` event property can be set to `false` to prevent the email from bei
 
 ```php
 use verbb\workflow\events\PrepareEmailEvent;
-use verbb\workflow\services\Submissions;
+use verbb\workflow\services\Emails;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_PREPARE_PUBLISHER_EMAIL, function(PrepareEmailEvent $event) {
+Event::on(Emails::class, Emails::EVENT_PREPARE_PUBLISHER_EMAIL, function(PrepareEmailEvent $event) {
     $publishers = $event->publishers;
     $submission = $event->submission;
     // ...
@@ -148,10 +150,10 @@ The `isValid` event property can be set to `false` to prevent the email from bei
 
 ```php
 use verbb\workflow\events\EmailEvent;
-use verbb\workflow\services\Submissions;
+use verbb\workflow\services\Emails;
 use yii\base\Event;
 
-Event::on(Submissions::class, Submissions::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, function(EmailEvent $event) {
+Event::on(Emails::class, Emails::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, function(EmailEvent $event) {
     $mail = $event->mail;
     $user = $event->user;
     $submission = $event->submission;
