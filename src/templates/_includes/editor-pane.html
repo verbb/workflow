@@ -2,6 +2,7 @@
 
 {% import '_includes/forms' as forms %}
 
+{% set canSubmitForReview = true %}
 {% set pendingSubmissions = [] %}
 {% set nonPendingSubmissions = [] %}
 
@@ -15,41 +16,51 @@
     {% endfor %}
 {% endif %}
 
-{% if not pendingSubmissions | length %}
-    <div class="pane workflow-pane">
-        <div class="workflow-submission">
-            <div class="workflow-submission-heading">
-                <label>{{ "Submit for review" | t('workflow') }}</label>
-            </div>
+{# Check if the editor has to create a new draft on an existing entry #}
+{% set isUnpublishedDraft = entry.getIsUnpublishedDraft() %}
+{% set isCurrent = entry.getIsCanonical() or entry.isProvisionalDraft %}
+{% set canonical = entry.getCanonical(true) %}
 
-            <div class="instructions">
-                <p>{{ "Submitting this entry for review will lock further edits and notify the next editors in the approval process that this entry is ready for approval." | t('workflow') }}</p>
-            </div>
+{% set canCreateDrafts = canonical.canCreateDrafts(currentUser) %}
+{% set canSave = entry.isProvisionalDraft ? canonical.canSave(currentUser) : entry.canSave(currentUser) %}
 
-            <div class="workflow-submission-body">
-                {% set placeholderText = settings.getEditorNotesRequired(entry.site) ? 'Notes about your submission (required)' : 'Notes about your submission' %}
+{% if (isCurrent and not isUnpublishedDraft and canCreateDrafts and not canSave) %}
+    {% set canSubmitForReview = false %}
+{% endif %}
 
-                {{ forms.textareaField({
-                    placeholder: placeholderText | t('workflow'),
-                    id: 'editorNotes',
-                    name: 'editorNotes',
-                    class: 'field-notes',
-                    rows: 2,
-                    value: editorNotes ?? '',
-                    required: settings.getEditorNotesRequired(entry.site),
-                    errors: editorNotesErrors is defined ? editorNotesErrors,
-                }) }}
-            </div>
+{% if not pendingSubmissions %}
+    {% if canSubmitForReview %}
+        <div class="pane workflow-pane">
+            <div class="workflow-submission">
+                <div class="workflow-submission-heading">
+                    <label>{{ "Submit for review" | t('workflow') }}</label>
+                </div>
 
-            <div class="workflow-submission-footer btngroup">
-                {% if entry.getIsUnpublishedDraft() %}
-                    <a class="btn formsubmit submit" data-action="workflow/submissions/unsaved-draft-submission" data-param="workflow-action" data-value="save-submission">{{ "Save draft and submit for review" | t('workflow') }}</a>
-                {% else %}
-                    <a class="btn formsubmit submit" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="save-submission">{{ "Save draft and submit for review" | t('workflow') }}</a>
-                {% endif %}
+                <div class="instructions">
+                    <p>{{ "Submitting this entry for review will lock further edits and notify the next editors in the approval process that this entry is ready for approval." | t('workflow') }}</p>
+                </div>
+
+                <div class="workflow-submission-body">
+                    {% set placeholderText = settings.getEditorNotesRequired(entry.site) ? 'Notes about your submission (required)' : 'Notes about your submission' %}
+
+                    {{ forms.textareaField({
+                        placeholder: placeholderText | t('workflow'),
+                        id: 'editorNotes',
+                        name: 'editorNotes',
+                        class: 'field-notes',
+                        rows: 2,
+                        value: editorNotes ?? '',
+                        required: settings.getEditorNotesRequired(entry.site),
+                        errors: editorNotesErrors is defined ? editorNotesErrors,
+                    }) }}
+                </div>
+
+                <div class="workflow-submission-footer btngroup">
+                    <a class="btn formsubmit submit" data-param="workflow-action" data-value="save-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ "Save draft and submit for review" | t('workflow') }}</a>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 
 {% else %}
     {% set submission = pendingSubmissions[0] %}
@@ -84,7 +95,7 @@
         <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
         <div class="workflow-submission-footer">
-            <a class="btn formsubmit" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Revoke submission" | t('workflow') }}</a>
+            <a class="btn formsubmit" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ "Revoke submission" | t('workflow') }}</a>
         </div>
     </div>
 {% endif %}
@@ -176,8 +187,8 @@
     </div>
 {% endif %}
 
-{# Disable saving if there's a submission #}
-{% if submissions | length %}
+{# Disable saving if there's a pending submission #}
+{% if submissions | length and settings.lockDraftSubmissions %}
     {% for submission in submissions %}
         {% if submission.status == 'pending' %}
             {# Hide first so we don't see a flicker #}
@@ -189,15 +200,20 @@
                 var buttonClicked = false;
 
                 {# Disable any type of form submitting unless we're doing a workflow action #}
-                $('#main-form').on('submit', function(e) {
+                $(document).on('submit', 'form', function(e) {
                     if (!buttonClicked) {
                         e.preventDefault();
                     }
                 });
 
                 {# Allow only workflow actions to submit #}
-                $('[data-param="workflow-action"]').on('click', function(e) {
+                $(document).on('click', '[data-param="workflow-action"]', function(e) {
                     buttonClicked = true;
+
+                    // Wait for a moment and submit again
+                    setTimeout(function() {
+                        $('form:last').submit();
+                    }, 100);
                 });
 
                 {# Remove the submit button #}

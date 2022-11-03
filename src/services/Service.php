@@ -8,8 +8,10 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\db\Table;
+use craft\elements\Entry;
 use craft\events\DefineHtmlEvent;
 use craft\events\DraftEvent;
+use craft\events\ElementEvent;
 use craft\events\ModelEvent;
 use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
@@ -36,6 +38,11 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
+
+        // Don't trigger for propagating elements
+        if ($event->sender->propagating) {
+            return;
+        }
         
         // Sanitize notes first
         $editorNotes = StringHelper::htmlEncode((string)$request->getBodyParam('editorNotes'));
@@ -70,35 +77,22 @@ class Service extends Component
         }
 
         if ($action === 'save-submission') {
-            // Don't trigger for propagating elements
-            if ($event->sender->propagating) {
-                return;
-            }
-
             // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
             // can't publish. We quickly switch it on to make sure the entry validates correctly.
             $event->sender->setScenario(Element::SCENARIO_LIVE);
-
-            // Ensure to reset the draft state back to a provisional draft, which has already been switched at this
-            // point by `entry-revisions/save-draft`
-            if (!$event->sender->validate()) {
-                $event->sender->isProvisionalDraft = true;
-            }
+            $event->sender->validate();
         }
 
         if ($action === 'approve-submission') {
-            // Don't trigger for propagating elements
-            if ($event->sender->propagating) {
-                return;
-            }
-
             // For multi-sites, we only want to act on the current site's entry. Returning early will respect the
             // section defaults for enabling the entry per-site.
             if (Craft::$app->getIsMultiSite()) {
                 $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id;
 
                 if ($siteHandle = $request->getParam('site')) {
-                    $currentSiteId = Craft::$app->getSites()->getSiteByHandle($siteHandle)->id;
+                    if ($currentSite = Craft::$app->getSites()->getSiteByHandle($siteHandle)) {
+                        $currentSiteId = $currentSite->id;
+                    }
                 }
 
                 if ($event->sender->siteId != $currentSiteId) {
@@ -106,6 +100,7 @@ class Service extends Component
                 }
             }
 
+            // Automatically set the entry "live", saving users from having to enable and set a post date manually.
             $event->sender->enabled = true;
             $event->sender->enabledForSite = true;
             $event->sender->setScenario(Element::SCENARIO_LIVE);
@@ -116,13 +111,17 @@ class Service extends Component
         }
     }
 
-    public function onAfterSaveEntry(ModelEvent $event): void
+    public function onAfterSaveElement(ElementEvent $event): void
     {
+        if (!($event->element instanceof Entry)) {
+            return;
+        }
+
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
 
         // When approving, we don't want to perform an action here - wait until the draft has been applied
-        if (!$action || $event->sender->propagating || $event->isNew || $this->afterSaveRun) {
+        if (!$action || $event->element->propagating || $this->afterSaveRun) {
             return;
         }
 
@@ -134,79 +133,33 @@ class Service extends Component
 
         // Check if we're submitting a new submission
         if ($action == 'save-submission') {
-            Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
-
-            // This doesn't seem to redirect properly, which is annoying!
-            if ($request->getIsCpRequest()) {
-                $url = $event->sender->getCpEditUrl();
-
-                if ($event->sender->draftId) {
-                    $url = UrlHelper::cpUrl($url, ['draftId' => $event->sender->draftId]);
-                }
-
-                Craft::$app->getResponse()->redirect($url)->send();
-            }
+            Workflow::$plugin->getSubmissions()->saveSubmission($event->element);
         }
 
         if ($action == 'approve-review') {
-            Workflow::$plugin->getSubmissions()->approveReview($event->sender);
+            Workflow::$plugin->getSubmissions()->approveReview($event->element);
         }
 
         if ($action == 'reject-review') {
-            Workflow::$plugin->getSubmissions()->rejectReview($event->sender);
+            Workflow::$plugin->getSubmissions()->rejectReview($event->element);
         }
 
         if ($action == 'revoke-submission') {
-            Workflow::$plugin->getSubmissions()->revokeSubmission($event->sender);
+            Workflow::$plugin->getSubmissions()->revokeSubmission($event->element);
         }
 
         if ($action == 'reject-submission') {
-            Workflow::$plugin->getSubmissions()->rejectSubmission($event->sender);
+            Workflow::$plugin->getSubmissions()->rejectSubmission($event->element);
         }
 
         // For the cases where it's been submitted from the front-end, it's not a draft!
         if ($action === 'approve-submission') {
-            // Probably a better way to deal with this, but at this point, its no longer a draft
-            // it's now a fully realised entry. We rely on the query param to determine if this was
-            // a draft that was approved and saved, or a regular entry that was approved.
-            if (!$request->getParam('draftId')) {
-                Workflow::$plugin->getSubmissions()->approveSubmission($event->sender);
-            }
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->element);
         }
 
         // We're approving-only, so basically the draft is just saved, but the submission lifecycle completed
         if ($action == 'approve-only-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->sender, false);
-        }
-    }
-
-    public function onAfterApplyDraft(DraftEvent $event): void
-    {
-        $request = Craft::$app->getRequest();
-        $action = $request->getBodyParam('workflow-action');
-
-        if (!$action) {
-            return;
-        }
-
-        // At this point, the draft entry has already been deleted, and our submissions' ownerId set to null
-        // We want to keep the link, so we need to supply the source, not the draft.
-        if ($action == 'approve-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->draft);
-        }
-    }
-
-    public function handleSiteRequest($event, $action): void
-    {
-        if (!$action || $event->sender->propagating || ElementHelper::isDraftOrRevision($event->sender)) {
-            return;
-        }
-
-        // When we're saving a brand-new entry for submission, we need to create a new draft
-        // and work with that, as opposed to the original entry.
-        if ($action == 'save-submission') {
-            // Perform the Workflow submission on this new entry
-            Workflow::$plugin->getSubmissions()->saveSubmission($event->sender);
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->element, false);
         }
     }
 

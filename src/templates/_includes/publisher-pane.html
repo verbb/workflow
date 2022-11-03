@@ -61,35 +61,32 @@
 
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
-            {% set publishEndpoint = 'workflow/submissions/publish-entry' %}
-            {% set approveEndpoint = 'workflow/submissions/save-entry' %}
-
-            {# Don't redirect back to the draft, it'll be gone #}
-            {% set redirectUrl = entry.getCpEditUrl() | replace('/\\&draftId=[\\d]+/', '') | replace('/\\?draftId=[\\d]+/', '') %}
-
-            {% if entry.getIsDraft() %}
-                {% set endpoint = 'workflow/submissions/publish-draft' %}
-                {% set approveEndpoint = 'workflow/submissions/save-draft' %}
-            {% endif %}
-
             <div class="workflow-submission-footer btngroup">
                 <div id="save-btn-container" class="btngroup submit">
-                    <a class="btn formsubmit submit" data-action="{{ publishEndpoint }}" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ redirectUrl | hash }}">{{ "Approve and publish" | t('workflow') }}</a>
+                    <a class="btn formsubmit submit" data-action="elements/apply-draft" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ "Approve and publish" | t('workflow') }}</a>
 
                     <div class="btn submit menubtn"></div>
 
                     <div class="menu" data-align="right">
                         <ul>
                             <li>
-                                <a class="formsubmit" data-action="{{ approveEndpoint }}" data-param="workflow-action" data-value="approve-only-submission" data-redirect="{{ redirectUrl | hash }}">
-                                    {{ "Approve only" | t('workflow') }}
-                                </a>
+                                {# When trying to approve-only on a published entry's draft, there's an issue with not reloading #}
+                                {# when the params are specifically set (but it does work), so add a check (both does the same thing) #}
+                                {% if entry.getIsUnpublishedDraft() %}
+                                    <a class="formsubmit" data-action="elements/save-draft" data-param="workflow-action" data-value="approve-only-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">
+                                        {{ "Approve only" | t('workflow') }}
+                                    </a>
+                                {% else %}
+                                    <a class="formsubmit" data-param="workflow-action" data-value="approve-only-submission">
+                                        {{ "Approve only" | t('workflow') }}
+                                    </a>
+                                {% endif %}
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <a class="formsubmit btn" data-action="workflow/submissions/save-draft" data-param="workflow-action" data-value="reject-submission" data-redirect="{{ craft.app.request.url | hash }}">{{ "Reject" | t('workflow') }}</a>
+                <a class="formsubmit btn" data-param="workflow-action" data-value="reject-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ "Reject" | t('workflow') }}</a>
             </div>
         </div>
     </div>

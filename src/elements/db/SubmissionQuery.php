@@ -14,6 +14,7 @@ class SubmissionQuery extends ElementQuery
     public mixed $ownerId = null;
     public mixed $ownerSiteId = null;
     public mixed $ownerDraftId = null;
+    public mixed $ownerCanonicalId = null;
     public mixed $editorId = null;
     public mixed $publisherId = null;
     public mixed $editorNotes = null;
@@ -33,15 +34,21 @@ class SubmissionQuery extends ElementQuery
         return $this;
     }
 
+    public function ownerSiteId($value): static
+    {
+        $this->ownerSiteId = $value;
+        return $this;
+    }
+
     public function ownerDraftId($value): static
     {
         $this->ownerDraftId = $value;
         return $this;
     }
 
-    public function ownerSiteId($value): static
+    public function ownerCanonicalId($value): static
     {
-        $this->ownerSiteId = $value;
+        $this->ownerCanonicalId = $value;
         return $this;
     }
 
@@ -87,12 +94,16 @@ class SubmissionQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerId', $this->ownerId));
         }
 
+        if ($this->ownerSiteId) {
+            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerSiteId', $this->ownerSiteId));
+        }
+
         if ($this->ownerDraftId) {
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerDraftId', $this->ownerDraftId));
         }
 
-        if ($this->ownerSiteId) {
-            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerSiteId', $this->ownerSiteId));
+        if ($this->ownerCanonicalId) {
+            $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerCanonicalId', $this->ownerCanonicalId));
         }
 
         if ($this->editorId) {

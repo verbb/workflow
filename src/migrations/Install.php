@@ -35,6 +35,7 @@ class Install extends Migration
             'ownerId' => $this->integer(),
             'ownerSiteId' => $this->integer(),
             'ownerDraftId' => $this->integer(),
+            'ownerCanonicalId' => $this->integer(),
             'editorId' => $this->integer(),
             'publisherId' => $this->integer(),
             'status' => $this->enum('status', ['approved', 'pending', 'rejected', 'revoked']),
@@ -66,6 +67,7 @@ class Install extends Migration
     {
         $this->createIndex(null, '{{%workflow_submissions}}', 'id', false);
         $this->createIndex(null, '{{%workflow_submissions}}', 'ownerId', false);
+        $this->createIndex(null, '{{%workflow_submissions}}', 'ownerCanonicalId', false);
         $this->createIndex(null, '{{%workflow_submissions}}', 'ownerDraftId', false);
         $this->createIndex(null, '{{%workflow_submissions}}', 'ownerSiteId', false);
         $this->createIndex(null, '{{%workflow_submissions}}', 'editorId', false);

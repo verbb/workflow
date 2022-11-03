@@ -16,6 +16,7 @@ use verbb\workflow\records\Submission as SubmissionRecord;
 use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
+use craft\helpers\Cp;
 use craft\helpers\Html;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
@@ -40,7 +41,7 @@ class Submission extends Element
 
     public static function displayName(): string
     {
-        return Craft::t('workflow', 'Workflow Submission');
+        return Craft::t('workflow', 'Submission');
     }
 
     public static function refHandle(): ?string
@@ -89,6 +90,7 @@ class Submission extends Element
             '*' => [
                 'key' => '*',
                 'label' => Craft::t('workflow', 'All submissions'),
+                'defaultSort' => ['dateCreated', 'desc'],
             ],
         ];
     }
@@ -105,7 +107,7 @@ class Submission extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-            'id' => ['label' => Craft::t('workflow', 'Entry')],
+            'ownerId' => ['label' => Craft::t('workflow', 'Entry')],
             'siteId' => ['label' => Craft::t('workflow', 'Site')],
             'dateCreated' => ['label' => Craft::t('workflow', 'Date Submitted')],
             'editor' => ['label' => Craft::t('workflow', 'Editor')],
@@ -122,7 +124,7 @@ class Submission extends Element
     protected static function defineDefaultTableAttributes(string $source): array
     {
         return [
-            'id',
+            'ownerId',
             'editor',
             'dateCreated',
             'reviewer',
@@ -136,7 +138,7 @@ class Submission extends Element
     protected static function defineSortOptions(): array
     {
         return [
-            'id' => Craft::t('workflow', 'Entry'),
+            'ownerId' => Craft::t('workflow', 'Entry'),
             'editorId' => Craft::t('workflow', 'Editor'),
             'dateCreated' => Craft::t('workflow', 'Date Submitted'),
             'publisherId' => Craft::t('workflow', 'Publisher'),
@@ -157,6 +159,7 @@ class Submission extends Element
     public ?int $ownerId = null;
     public ?int $ownerSiteId = null;
     public ?int $ownerDraftId = null;
+    public ?int $ownerCanonicalId = null;
     public ?int $editorId = null;
     public ?int $publisherId = null;
     public ?string $status = null;
@@ -178,7 +181,7 @@ class Submission extends Element
     public function __toString(): string
     {
         if ($owner = $this->getOwner()) {
-            return (string)$owner->title;
+            return Craft::t('workflow', 'Submission for “' . $owner->title . '” on ' . Craft::$app->formatter->asDateTime($this->dateCreated, Locale::LENGTH_SHORT));
         }
 
         return Craft::t('workflow', '[Deleted element]');
@@ -216,17 +219,7 @@ class Submission extends Element
 
     public function getCpEditUrl(): ?string
     {
-        if ($owner = $this->getOwner()) {
-            $url = $owner->getCpEditUrl();
-
-            if ($this->ownerDraftId) {
-                $url = UrlHelper::cpUrl($url, ['draftId' => $this->ownerDraftId]);
-            }
-
-            return $url;
-        }
-
-        return '';
+        return UrlHelper::cpUrl('workflow/' . $this->id);
     }
 
     public function getOwner(): ?Entry
@@ -240,6 +233,13 @@ class Submission extends Element
         }
 
         return null;
+    }
+
+    public function setOwner(Entry $owner): void
+    {
+        $this->_owner = $owner;
+        $this->ownerId = $owner->id;
+        $this->ownerSiteId = $owner->siteId;
     }
 
     public function getEditor(): ?User
@@ -445,6 +445,7 @@ class Submission extends Element
         $record->ownerId = $this->ownerId;
         $record->ownerSiteId = $this->ownerSiteId;
         $record->ownerDraftId = $this->ownerDraftId;
+        $record->ownerCanonicalId = $this->ownerCanonicalId;
         $record->editorId = $this->editorId;
         $record->publisherId = $this->publisherId;
         $record->status = $this->status;
@@ -470,19 +471,15 @@ class Submission extends Element
     {
         switch ($attribute) {
             case 'publisher':
-            {
-                return $this->getPublisherUrl() ?: '-';
-            }
+                $user = $this->getPublisher();
+                return $user ? Cp::elementHtml($user) : '-';
             case 'editor':
-            {
-                return $this->getEditorUrl() ?: '-';
-            }
+                $user = $this->getEditor();
+                return $user ? Cp::elementHtml($user) : '-';
             case 'reviewer':
-            {
-                return $this->getLastReviewerUrl() ?: '-';
-            }
+                $user = $this->getLastReviewer();
+                return $user ? Cp::elementHtml($user) : '-';
             case 'lastReviewDate':
-            {
                 $lastReview = $this->getLastReview();
 
                 if ($lastReview === null) {
@@ -493,24 +490,23 @@ class Submission extends Element
                 return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
                     'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT),
                 ]);
-            }
             case 'dateApproved':
             case 'dateRejected':
-            {
                 return ($this->$attribute) ? parent::tableAttributeHtml($attribute) : '-';
-            }
             case 'siteId':
-            {
                 if ($this->ownerSiteId && $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
                     return $site->name;
                 }
 
                 return '';
-            }
+            case 'ownerId':
+                if ($this->ownerId && $entry = Craft::$app->getEntries()->getEntryById($this->ownerId, $this->ownerSiteId)) {
+                    return Cp::elementHtml($entry);
+                }
+
+                return '-';
             default:
-            {
                 return parent::tableAttributeHtml($attribute);
-            }
         }
     }
 }

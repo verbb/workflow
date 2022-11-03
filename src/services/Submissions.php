@@ -100,16 +100,17 @@ class Submissions extends Component
         $session = Craft::$app->getSession();
 
         $submission = $this->_setSubmissionFromPost();
-        $submission->ownerId = $entry->id;
-        $submission->ownerSiteId = $entry->siteId;
+        $submission->setOwner($entry);
         $submission->editorId = $currentUser->id;
         $submission->status = Submission::STATUS_PENDING;
         $submission->dateApproved = null;
         $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
         $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
 
-        if ($entry->draftId) {
+        // If this is a draft, we need to keep track the ID of the canonical entry for later.
+        if ($entry->getIsDraft()) {
             $submission->ownerDraftId = $entry->draftId;
+            $submission->ownerCanonicalId = $entry->getCanonicalId();
         }
 
         $submission->data = $this->_getRevisionData($entry);
@@ -289,15 +290,12 @@ class Submissions extends Component
         $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
         $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
 
-        // Update the owner to be the newly published entry, and remove the ownerDraftId - it no longer exists!
-        if ($entry && $published) {
-            $submission->ownerId = $entry->id;
-            $submission->ownerDraftId = null;
-        }
-
-        // One final check if the owner ID actually exists anymore, as it's likely been deleted
-        if (!Craft::$app->getElements()->getElementById($entry->id)) {
-            $submission->ownerId = null;
+        // If this was a draft, the `ownerId` and `ownerDraftId` will now be gone thanks to foreign key checks.
+        // But, we want to switch back to the canonical, original entry
+        if ($published && $submission->ownerCanonicalId) {
+            if ($entry = Craft::$app->getElements()->getElementById($submission->ownerCanonicalId)) {
+                $submission->setOwner($entry);
+            }
         }
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
