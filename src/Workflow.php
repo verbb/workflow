@@ -40,7 +40,7 @@ class Workflow extends Plugin
 
     public bool $hasCpSection = true;
     public bool $hasCpSettings = true;
-    public string $schemaVersion = '2.2.0';
+    public string $schemaVersion = '2.3.0';
     public string $minVersionRequired = '1.7.0';
 
 
@@ -158,10 +158,11 @@ class Workflow extends Plugin
             return;
         }
 
+        // Use `Entry::EVENT_BEFORE_SAVE` in order to add validation errors. `Elements::EVENT_BEFORE_SAVE_ELEMENT` doesn't work
         Event::on(Entry::class, Entry::EVENT_BEFORE_SAVE, [$this->getService(), 'onBeforeSaveEntry']);
-        Event::on(Entry::class, Entry::EVENT_AFTER_SAVE, [$this->getService(), 'onAfterSaveEntry']);
 
-        Event::on(Drafts::class, Drafts::EVENT_AFTER_APPLY_DRAFT, [$this->getService(), 'onAfterApplyDraft']);
+        // Use `Elements::EVENT_AFTER_SAVE_ELEMENT` so that the element is fully finished with propagating, etc.
+        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getService(), 'onAfterSaveElement']);
 
         Event::on(Entry::class, Entry::EVENT_DEFINE_SIDEBAR_HTML, [$this->getService(), 'renderEntrySidebar']);
     }
