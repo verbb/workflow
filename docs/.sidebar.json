@@ -41,7 +41,8 @@
         "children": [
             "developers/submission",
             "developers/review",
-            "developers/events"
+            "developers/events",
+            "developers/graphql"
         ]
     }
 ]

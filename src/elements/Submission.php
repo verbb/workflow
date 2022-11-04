@@ -153,6 +153,11 @@ class Submission extends Element
         return ['ownerTitle', 'editorName', 'publisherName'];
     }
 
+    public static function gqlTypeNameByContext(mixed $context): string
+    {
+        return 'Submission';
+    }
+
 
     // Properties
     // =========================================================================

@@ -3,6 +3,8 @@ namespace verbb\workflow;
 
 use verbb\workflow\base\PluginTrait;
 use verbb\workflow\elements\Submission;
+use verbb\workflow\gql\interfaces\SubmissionInterface;
+use verbb\workflow\gql\queries\SubmissionQuery;
 use verbb\workflow\models\Settings;
 use verbb\workflow\variables\WorkflowVariable;
 use verbb\workflow\widgets\Submissions as SubmissionsWidget;
@@ -17,12 +19,16 @@ use craft\elements\Entry;
 use craft\events\DefineConsoleActionsEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterEmailMessagesEvent;
+use craft\events\RegisterGqlQueriesEvent;
+use craft\events\RegisterGqlSchemaComponentsEvent;
+use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
 use craft\services\Drafts;
 use craft\services\Elements;
+use craft\services\Gql;
 use craft\services\SystemMessages;
 use craft\services\UserPermissions;
 use craft\web\UrlManager;
@@ -65,6 +71,7 @@ class Workflow extends Plugin
         $this->_registerVariables();
         $this->_registerCraftEventListeners();
         $this->_registerElementTypes();
+        $this->_registerGraphQl();
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
             $this->_registerCpRoutes();
@@ -195,6 +202,27 @@ class Workflow extends Plugin
                 },
                 'options' => [],
                 'helpSummary' => 'Re-saves Workflow submissions.',
+            ];
+        });
+    }
+
+    private function _registerGraphQl(): void
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_TYPES, function(RegisterGqlTypesEvent $event) {
+            $event->types[] = SubmissionInterface::class;
+        });
+
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_QUERIES, function(RegisterGqlQueriesEvent $event) {
+            foreach (SubmissionQuery::getQueries() as $key => $value) {
+                $event->queries[$key] = $value;
+            }
+        });
+
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_SCHEMA_COMPONENTS, function(RegisterGqlSchemaComponentsEvent $event) {
+            $label = Craft::t('workflow', 'Workflow');
+
+            $event->queries[$label] = [
+                'workflowSubmissions:read' => ['label' => Craft::t('workflow', 'View submissions')],
             ];
         });
     }
