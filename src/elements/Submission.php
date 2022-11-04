@@ -118,6 +118,7 @@ class Submission extends Element
             'publisherNotes' => ['label' => Craft::t('workflow', 'Publisher Notes')],
             'dateApproved' => ['label' => Craft::t('workflow', 'Date Approved')],
             'dateRejected' => ['label' => Craft::t('workflow', 'Date Rejected')],
+            'status' => ['label' => Craft::t('workflow', 'Status')],
         ];
     }
 
@@ -525,6 +526,13 @@ class Submission extends Element
                 }
 
                 return '-';
+            case 'status':
+                $status = $this->getStatus();
+                $statusDef = static::statuses()[$status] ?? null;
+                $icon = Html::tag('span', '', ['class' => ['status', $statusDef['color'] ?? $status]]);
+                $label = $statusDef['label'] ?? $statusDef ?? ucfirst($status);
+                
+                return $icon . Html::tag('span', $label);
             default:
                 return parent::tableAttributeHtml($attribute);
         }
