@@ -12,6 +12,7 @@
 - **Breaking Change** Move email functions to own service. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1).
 - Revamped submission process for more reliably and simplified handling with Craft 4+ updates.
 - Switch `Entry::class, Entry::EVENT_AFTER_SAVE` to `Elements::EVENT_AFTER_SAVE_ELEMENT` to handle some edge-cases.
+- Changed default title of a submission to `Submission for “{entry.title}” on {date}`.
 
 ### Fixed
 - Fix submissions made on published entry drafts and the “[Deleted Element]” because once applied the drafts are deleted
