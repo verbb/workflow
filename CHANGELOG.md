@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.0.0-beta.8 - 2022-11-04
+
+### Added
+- Now store `ownerCanonicalId` to help resolve the submission against the original entry after the draft is deleted.
+- Add emoji support for submission notes.
+- Add “status” column to submissions index.
+- Add GraphQL support for querying submissions.
+
+### Changed
+- **Breaking Change** Move email functions to own service. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1).
+- Revamped submission process for more reliably and simplified handling with Craft 4+ updates.
+- Switch `Entry::class, Entry::EVENT_AFTER_SAVE` to `Elements::EVENT_AFTER_SAVE_ELEMENT` to handle some edge-cases.
+
+### Fixed
+- Fix submissions made on published entry drafts and the “[Deleted Element]” because once applied the drafts are deleted
+- Fix numerous UI issues.
+- Fix widget for an editor on a published entry showing, before a draft has been created.
+- Fix being able to save a submitted draft when it should be locked.
+
+### Removed
+- Removed `SubmissionsController` as no longer needed.
+
 ## 2.0.0-beta.7 - 2022-09-25
 
 ### Fixed
