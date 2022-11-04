@@ -97,8 +97,8 @@ class Submissions extends Component
         $submission->editorId = $currentUser->id;
         $submission->status = Submission::STATUS_PENDING;
         $submission->dateApproved = null;
-        $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
-        $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
+        $submission->setEditorNotes((string)$request->getParam('editorNotes'));
+        $submission->setPublisherNotes((string)$request->getParam('publisherNotes'));
 
         // If this is a draft, we need to keep track the ID of the canonical entry for later.
         if ($entry->getIsDraft()) {
@@ -180,12 +180,14 @@ class Submissions extends Component
             return false;
         }
 
-        $reviewRecord = new ReviewRecord([
+        $review = new Review([
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => true,
             'notes' => $request->getParam('reviewerNotes'),
         ]);
+
+        $reviewRecord = new ReviewRecord($review->getConfig());
 
         if (!$reviewRecord->save()) {
             $session->setError(Craft::t('workflow', 'Could not approve submission.'));
@@ -202,7 +204,7 @@ class Submissions extends Component
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
             // Modify the notes to be the reviewer notes, but still use the same email template
-            $submission->editorNotes = StringHelper::htmlEncode((string)$reviewRecord->notes);
+            $submission->setEditorNotes((string)$reviewRecord->notes);
 
             Workflow::$plugin->getEmails()->sendReviewerNotificationEmail($submission, $entry);
         }
@@ -239,12 +241,14 @@ class Submissions extends Component
             return false;
         }
 
-        $reviewRecord = new ReviewRecord([
+        $review = new Review([
             'submissionId' => $submission->id,
             'userId' => $currentUser->id,
             'approved' => false,
             'notes' => $request->getParam('reviewerNotes'),
         ]);
+
+        $reviewRecord = new ReviewRecord($review->getConfig());
 
         if (!$reviewRecord->save()) {
             $session->setError(Craft::t('workflow', 'Could not reject submission.'));
@@ -280,8 +284,8 @@ class Submissions extends Component
         $submission->status = Submission::STATUS_APPROVED;
         $submission->publisherId = $currentUser->id;
         $submission->dateApproved = new DateTime;
-        $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
-        $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
+        $submission->setEditorNotes((string)$request->getParam('editorNotes'));
+        $submission->setPublisherNotes((string)$request->getParam('publisherNotes'));
 
         // If this was a draft, the `ownerId` and `ownerDraftId` will now be gone thanks to foreign key checks.
         // But, we want to switch back to the canonical, original entry
@@ -323,8 +327,8 @@ class Submissions extends Component
         $submission->status = Submission::STATUS_REJECTED;
         $submission->publisherId = $currentUser->id;
         $submission->dateRejected = new DateTime;
-        $submission->editorNotes = StringHelper::htmlEncode((string)$request->getParam('editorNotes', $submission->editorNotes));
-        $submission->publisherNotes = StringHelper::htmlEncode((string)$request->getParam('publisherNotes', $submission->publisherNotes));
+        $submission->setEditorNotes((string)$request->getParam('editorNotes'));
+        $submission->setPublisherNotes((string)$request->getParam('publisherNotes'));
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not reject submission.'));

@@ -1,14 +1,10 @@
 <?php
 namespace verbb\workflow\elements;
 
-use craft\elements\Entry;
-use craft\elements\User;
-use craft\models\Site;
-use craft\i18n\Locale;
-
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
+use verbb\workflow\helpers\StringHelper;
 use verbb\workflow\models\Review;
 use verbb\workflow\records\Review as ReviewRecord;
 use verbb\workflow\records\Submission as SubmissionRecord;
@@ -16,10 +12,14 @@ use verbb\workflow\records\Submission as SubmissionRecord;
 use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
+use craft\elements\Entry;
+use craft\elements\User;
 use craft\helpers\Cp;
 use craft\helpers\Html;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
+use craft\i18n\Locale;
+use craft\models\Site;
 
 use DateTime;
 
@@ -163,8 +163,6 @@ class Submission extends Element
     public ?int $editorId = null;
     public ?int $publisherId = null;
     public ?string $status = null;
-    public ?string $editorNotes = null;
-    public ?string $publisherNotes = null;
     public ?array $data = null;
     public ?DateTime $dateApproved = null;
     public ?DateTime $dateRejected = null;
@@ -173,6 +171,8 @@ class Submission extends Element
     private mixed $_owner = null;
     private mixed $_editor = null;
     private mixed $_publisher = null;
+    public ?string $_editorNotes = null;
+    public ?string $_publisherNotes = null;
 
 
     // Public Methods
@@ -318,6 +318,26 @@ class Submission extends Element
         return $this->getPublisher()->fullName ?? '';
     }
 
+    public function setEditorNotes($value): void
+    {
+        $this->_editorNotes = StringHelper::sanitizeNotes($value);
+    }
+
+    public function getEditorNotes(bool $sanitize = true): ?string
+    {
+        return $sanitize ? StringHelper::unSanitizeNotes($this->_editorNotes) : $this->_editorNotes;
+    }
+
+    public function setPublisherNotes($value): void
+    {
+        $this->_publisherNotes = StringHelper::sanitizeNotes($value);
+    }
+
+    public function getPublisherNotes(bool $sanitize = true): ?string
+    {
+        return $sanitize ? StringHelper::unSanitizeNotes($this->_publisherNotes) : $this->_publisherNotes;
+    }
+
     /**
      * Returns the reviews, optionally filtered by whether approved or not.
      *
@@ -449,8 +469,8 @@ class Submission extends Element
         $record->editorId = $this->editorId;
         $record->publisherId = $this->publisherId;
         $record->status = $this->status;
-        $record->editorNotes = $this->editorNotes;
-        $record->publisherNotes = $this->publisherNotes;
+        $record->editorNotes = $this->getEditorNotes(false);
+        $record->publisherNotes = $this->getPublisherNotes(false);
         $record->data = $this->data;
         $record->dateApproved = $this->dateApproved;
         $record->dateRejected = $this->dateRejected;

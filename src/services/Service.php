@@ -3,6 +3,7 @@ namespace verbb\workflow\services;
 
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
+use verbb\workflow\helpers\StringHelper;
 
 use Craft;
 use craft\base\Component;
@@ -17,7 +18,6 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
-use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 
 use DateTime;
@@ -43,12 +43,19 @@ class Service extends Component
         if ($event->sender->propagating) {
             return;
         }
-        
-        // Sanitize notes first
-        $editorNotes = StringHelper::htmlEncode((string)$request->getBodyParam('editorNotes'));
-        $reviewerNotes = StringHelper::htmlEncode((string)$request->getBodyParam('reviewerNotes'));
-        $publisherNotes = StringHelper::htmlEncode((string)$request->getBodyParam('publisherNotes'));
 
+        // Sanitize notes first
+        $editorNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('editorNotes'));
+        $reviewerNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('reviewerNotes'));
+        $publisherNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('publisherNotes'));
+
+        // Save the notes for later, due to a number of different events triggering
+        Craft::$app->getUrlManager()->setRouteParams([
+            'editorNotes' => StringHelper::unSanitizeNotes($editorNotes),
+            'reviewerNotes' => StringHelper::unSanitizeNotes($reviewerNotes),
+            'publisherNotes' => StringHelper::unSanitizeNotes($publisherNotes),
+        ]);
+        
         // Disable auto-save for an entry that has been submitted. Only real way to do this.
         // Check to see if this is a draft first
         if (!$action && $event->sender->getIsDraft()) {
