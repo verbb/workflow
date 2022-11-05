@@ -2,6 +2,7 @@
 namespace verbb\workflow\records;
 
 use craft\db\ActiveRecord;
+use craft\records\Element;
 use craft\records\User;
 
 use craft\db\ActiveQuery;
@@ -24,6 +25,11 @@ class Review extends ActiveRecord
     public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'userId']);
+    }
+
+    public function getElement(): ActiveQuery
+    {
+        return $this->hasOne(Element::class, ['id' => 'id']);
     }
 }
 

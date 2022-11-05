@@ -1,7 +1,9 @@
 <?php
 namespace verbb\workflow\elements\actions;
 
+use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
+use verbb\workflow\models\Review;
 
 use Craft;
 use craft\base\Element;
@@ -39,7 +41,7 @@ class SetStatus extends BaseSetStatus
 
     public function performAction(ElementQueryInterface $query): bool
     {
-        $elementsService = Craft::$app->getElements();
+        $submissionsService = Workflow::$plugin->getSubmissions();
 
         $submissions = $query->all();
         $failCount = 0;
@@ -52,45 +54,21 @@ class SetStatus extends BaseSetStatus
                 continue;
             }
 
-            $submission->status = $this->status;
-
-            // Check if approving
-            if ($this->status === 'approved') {
-                $submission->publisherId = $currentUser->id;
-                $submission->dateApproved = new DateTime;
-
-                $ownerId = $submission->ownerId;
-                $ownerSiteId = $submission->ownerSiteId;
-                $ownerDraftId = $submission->ownerDraftId;
-
-                // If trying to approve their own submission, fail
-                if ($submission->editorId == $currentUser->id) {
-                    $failCount++;
-
-                    continue;
-                }
-
-                if ($ownerDraftId) {
-                    $draft = Entry::find()->draftId($ownerDraftId)->siteId($ownerSiteId)->status(null)->one();
-
-                    if ($draft) {
-                        $draft->setScenario(Element::SCENARIO_LIVE);
-                        $draft->enabled = true;
-
-                        // Publish Draft
-                        $newEntry = Craft::$app->getDrafts()->applyDraft($draft);
-
-                        // Update the submission info now the draft is gone
-                        $submission->ownerId = $newEntry->id;
-                        $submission->ownerDraftId = null;
-                    }
-                }
-            }
-
-            if ($elementsService->saveElement($submission) === false) {
-                // Validation error
+            // If trying to approve their own submission, fail
+            if ($this->status === Review::STATUS_APPROVED && $submission->editorId === $currentUser->id) {
                 $failCount++;
+
+                continue;
             }
+
+            if (!$submissionsService->triggerSubmissionStatus($this->status, $submission)) {
+                $failCount++;
+
+                continue;
+            }
+
+            // Update it to reflect it back in the table
+            $submission->clearReviews();
         }
 
         // Did all of them fail?

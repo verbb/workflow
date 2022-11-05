@@ -1,0 +1,92 @@
+{% import '_includes/forms' as forms %}
+
+{% extends 'workflow/_sidebar/_layout' %}
+
+{% block reviewBlock %}
+    <div class="workflow-history-action">
+        {% if submission.canUserReview(currentUser, entry.site) %}
+            <div class="workflow-submission">
+                <div class="workflow-submission-heading">
+                    <span class="status pending"></span>
+                    <label>{{ 'Awaiting review' | t('workflow') }}</label>
+                    <a class="fieldtoggle" data-target="workflow-submission-info"></a>
+                </div>
+
+                <div id="workflow-submission-info" class="hidden">
+                    <div class="instructions">
+                        <p>{{ review.userUrl }} {{ 'submitted this entry for review on {date}. Please review this entry before approving' | t('workflow', { date: review.dateCreated | datetime('medium') }) }}</p>
+
+                        {% if review.notes %}
+                            <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="workflow-submission-body">
+                    {{ forms.textareaField({
+                        placeholder: 'Notes about your response.' | t('workflow'),
+                        id: 'workflowNotes',
+                        name: 'workflowNotes',
+                        class: 'field-notes',
+                        rows: 2,
+                        value: workflowNotes ?? '',
+                        errors: reviewerNotesErrors is defined ? reviewerNotesErrors,
+                    }) }}
+                </div>
+
+                <input type="hidden" name="submissionId" value="{{ submission.id }}">
+
+                <div class="workflow-submission-footer">
+                    <div id="save-btn-container" class="submit">
+                        {# For an un-applied draft, there seems to be some JS in Craft that prevents the page from reloading #}
+                        {# when the `data-action` and `data-redirect` params are set, so check to remove them #}
+                        {{ tag('a', {
+                            class: 'btn formsubmit submit',
+                            text: 'Approve' | t('workflow'),
+                            data: {
+                                param: 'workflow-action',
+                                value: 'approve-review',
+                                action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
+                                redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
+                            },
+                        }) }}
+                    </div>
+
+                    {# For an un-applied draft, there seems to be some JS in Craft that prevents the page from reloading #}
+                    {# when the `data-action` and `data-redirect` params are set, so check to remove them #}
+                    {{ tag('a', {
+                        class: 'btn formsubmit',
+                        text: 'Reject' | t('workflow'),
+                        data: {
+                            param: 'workflow-action',
+                            value: 'reject-review',
+                            action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
+                            redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
+                        },
+                    }) }}
+                </div>
+            </div>
+        {% else %}
+            <div class="workflow-submission">
+                <div class="workflow-submission-heading">
+                    <span class="status pending"></span>
+                    <label>{{ 'Awaiting approval' | t('workflow') }}</label>
+                    <a class="fieldtoggle" data-target="workflow-submission-info"></a>
+                </div>
+
+                <div id="workflow-submission-info" class="hidden">
+                    <div class="instructions">
+                        <p style="color: #da5a47;">{{ 'This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved.' | t('workflow', { date: review.dateCreated | datetime('medium') }) }}</p>
+
+                        {% if review.notes %}
+                            <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# Disable the save button if there's a pending submission #}
+            {% include 'workflow/_sidebar/_includes/scripts' %}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -9,6 +9,7 @@ use verbb\workflow\records\Review as ReviewRecord;
 
 use Craft;
 use craft\base\Component;
+use craft\base\ElementInterface;
 use craft\db\Table;
 use craft\elements\Entry;
 use craft\elements\User;
@@ -26,6 +27,12 @@ class Submissions extends Component
     // =========================================================================
 
     public const EVENT_AFTER_GET_REVIEWER_USER_GROUPS = 'afterGetReviewerUserGroups';
+
+
+    // Properties
+    // =========================================================================
+
+    public ?Submission $submission = null;
 
 
     // Public Methods
@@ -87,26 +94,14 @@ class Submissions extends Component
     public function saveSubmission($entry = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
-
-        $currentUser = Craft::$app->getUser()->getIdentity();
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
         $submission = $this->_setSubmissionFromPost();
-        $submission->setOwner($entry);
-        $submission->editorId = $currentUser->id;
-        $submission->status = Submission::STATUS_PENDING;
-        $submission->dateApproved = null;
-        $submission->setEditorNotes((string)$request->getParam('editorNotes'));
-        $submission->setPublisherNotes((string)$request->getParam('publisherNotes'));
-
-        // If this is a draft, we need to keep track the ID of the canonical entry for later.
-        if ($entry->getIsDraft()) {
-            $submission->ownerDraftId = $entry->draftId;
-            $submission->ownerCanonicalId = $entry->getCanonicalId();
-        }
-
-        $submission->data = $this->_getRevisionData($entry);
+        $submission->siteId = $entry->siteId;
+        $submission->ownerId = $entry->getCanonicalId();
+        $submission->ownerSiteId = $entry->siteId;
+        $submission->isComplete = false;
+        $submission->isPending = true;
 
         $isNew = !$submission->id;
 
@@ -115,6 +110,22 @@ class Submissions extends Component
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'submission' => $submission,
+            ]);
+
+            return false;
+        }
+
+        // Create a new review
+        $review = $this->_setReviewFromPost($submission, $entry);
+        $review->role = Review::ROLE_EDITOR;
+        $review->status = Review::STATUS_PENDING;
+
+        if (!Workflow::$plugin->getReviews()->saveReview($review)) {
+            $session->setError(Craft::t('workflow', 'Could not save review.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+                'review' => $review,
             ]);
 
             return false;
@@ -137,19 +148,34 @@ class Submissions extends Component
     public function revokeSubmission($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
-
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
+        // Revoking a submission will set it as complete
         $submission = $this->_setSubmissionFromPost();
-        $submission->status = Submission::STATUS_REVOKED;
-        $submission->dateRevoked = new DateTime;
+        $submission->isComplete = true;
+        $submission->isPending = false;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not revoke submission.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'submission' => $submission,
+            ]);
+
+            return false;
+        }
+
+        // Create a new review
+        $review = $this->_setReviewFromPost($submission, $entry);
+        $review->role = Review::ROLE_EDITOR;
+        $review->status = Review::STATUS_REVOKED;
+
+        if (!Workflow::$plugin->getReviews()->saveReview($review)) {
+            $session->setError(Craft::t('workflow', 'Could not save review.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+                'review' => $review,
             ]);
 
             return false;
@@ -163,43 +189,25 @@ class Submissions extends Component
     public function approveReview($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
-
-        $currentUser = Craft::$app->getUser()->getIdentity();
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
         $submission = $this->_setSubmissionFromPost();
 
-        if (!Craft::$app->getElements()->saveElement($submission)) {
-            $session->setError(Craft::t('workflow', 'Could not approve submission.'));
+        // Create a new review
+        $review = $this->_setReviewFromPost($submission, $entry);
+        $review->role = Review::ROLE_REVIEWER;
+        $review->status = Review::STATUS_APPROVED;
+
+        if (!Workflow::$plugin->getReviews()->saveReview($review)) {
+            $session->setError(Craft::t('workflow', 'Could not save review.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'submission' => $submission,
+                'review' => $review,
             ]);
 
             return false;
         }
-
-        $review = new Review([
-            'submissionId' => $submission->id,
-            'userId' => $currentUser->id,
-            'approved' => true,
-            'notes' => $request->getParam('reviewerNotes'),
-        ]);
-
-        $reviewRecord = new ReviewRecord($review->getConfig());
-
-        if (!$reviewRecord->save()) {
-            $session->setError(Craft::t('workflow', 'Could not approve submission.'));
-
-            Craft::$app->getUrlManager()->setRouteParams([
-                'submission' => $submission,
-            ]);
-
-            return false;
-        }
-
-        $review = Review::populateModel($reviewRecord);
 
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
@@ -222,17 +230,14 @@ class Submissions extends Component
     public function rejectReview($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
-
-        $currentUser = Craft::$app->getUser()->getIdentity();
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
+        // Rejecting a submission will reset the pending state
         $submission = $this->_setSubmissionFromPost();
-        $submission->status = Submission::STATUS_REJECTED;
-        $submission->dateRejected = new DateTime;
+        $submission->isPending = false;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
-            $session->setError(Craft::t('workflow', 'Could not approve submission.'));
+            $session->setError(Craft::t('workflow', 'Could not revoke submission.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'submission' => $submission,
@@ -241,26 +246,21 @@ class Submissions extends Component
             return false;
         }
 
-        $review = new Review([
-            'submissionId' => $submission->id,
-            'userId' => $currentUser->id,
-            'approved' => false,
-            'notes' => $request->getParam('reviewerNotes'),
-        ]);
+        // Create a new review
+        $review = $this->_setReviewFromPost($submission, $entry);
+        $review->role = Review::ROLE_REVIEWER;
+        $review->status = Review::STATUS_REJECTED;
 
-        $reviewRecord = new ReviewRecord($review->getConfig());
-
-        if (!$reviewRecord->save()) {
-            $session->setError(Craft::t('workflow', 'Could not reject submission.'));
+        if (!Workflow::$plugin->getReviews()->saveReview($review)) {
+            $session->setError(Craft::t('workflow', 'Could not save review.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'submission' => $submission,
+                'review' => $review,
             ]);
 
             return false;
         }
-
-        $review = Review::populateModel($reviewRecord);
 
         // Trigger notification to editor
         if ($settings->editorNotifications) {
@@ -275,31 +275,34 @@ class Submissions extends Component
     public function approveSubmission($entry, $published = true)
     {
         $settings = Workflow::$plugin->getSettings();
-
-        $currentUser = Craft::$app->getUser()->getIdentity();
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
+        // Approving the submission will complete the process
         $submission = $this->_setSubmissionFromPost();
-        $submission->status = Submission::STATUS_APPROVED;
-        $submission->publisherId = $currentUser->id;
-        $submission->dateApproved = new DateTime;
-        $submission->setEditorNotes((string)$request->getParam('editorNotes'));
-        $submission->setPublisherNotes((string)$request->getParam('publisherNotes'));
-
-        // If this was a draft, the `ownerId` and `ownerDraftId` will now be gone thanks to foreign key checks.
-        // But, we want to switch back to the canonical, original entry
-        if ($published && $submission->ownerCanonicalId) {
-            if ($entry = Craft::$app->getElements()->getElementById($submission->ownerCanonicalId)) {
-                $submission->setOwner($entry);
-            }
-        }
+        $submission->isComplete = true;
+        $submission->isPending = false;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Could not approve and publish.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'submission' => $submission,
+            ]);
+
+            return false;
+        }
+
+        // Create a new review
+        $review = $this->_setReviewFromPost($submission, $entry);
+        $review->role = Review::ROLE_PUBLISHER;
+        $review->status = Review::STATUS_APPROVED;
+
+        if (!Workflow::$plugin->getReviews()->saveReview($review)) {
+            $session->setError(Craft::t('workflow', 'Could not save review.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+                'review' => $review,
             ]);
 
             return false;
@@ -318,23 +321,33 @@ class Submissions extends Component
     public function rejectSubmission($entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
-
-        $currentUser = Craft::$app->getUser()->getIdentity();
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
+        // Rejecting a submission will reset the pending state
         $submission = $this->_setSubmissionFromPost();
-        $submission->status = Submission::STATUS_REJECTED;
-        $submission->publisherId = $currentUser->id;
-        $submission->dateRejected = new DateTime;
-        $submission->setEditorNotes((string)$request->getParam('editorNotes'));
-        $submission->setPublisherNotes((string)$request->getParam('publisherNotes'));
+        $submission->isPending = false;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
-            $session->setError(Craft::t('workflow', 'Could not reject submission.'));
+            $session->setError(Craft::t('workflow', 'Could not revoke submission.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'submission' => $submission,
+            ]);
+
+            return false;
+        }
+        
+        // Create a new review
+        $review = $this->_setReviewFromPost($submission, $entry);
+        $review->role = Review::ROLE_PUBLISHER;
+        $review->status = Review::STATUS_REJECTED;
+
+        if (!Workflow::$plugin->getReviews()->saveReview($review)) {
+            $session->setError(Craft::t('workflow', 'Could not save review.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+                'review' => $review,
             ]);
 
             return false;
@@ -350,12 +363,45 @@ class Submissions extends Component
         return true;
     }
 
+    public function triggerSubmissionStatus(string $status, Submission $submission): bool
+    {
+        // Set the submission for context
+        $this->submission = $submission;
+        $entry = $submission->getOwner();
+
+        if ($status === Review::STATUS_APPROVED) {
+            // Assume we want to approve and publish
+            $result = $this->approveSubmission($entry, true);
+
+            if ($lastReview = $submission->getLastReview()) {
+                if ($element = $lastReview->getElement()) {
+                    if ($element->getIsDraft()) {
+                        Craft::$app->getDrafts()->applyDraft($element);
+                    }
+                }
+            }
+
+            return $result;
+        } else if ($status === Review::STATUS_REJECTED) {
+            return $this->rejectSubmission($entry);
+        } else if ($status === Review::STATUS_REVOKED) {
+            return $this->revokeSubmission($entry);
+        }
+
+        return true;
+    }
+
 
     // Private Methods
     // =========================================================================
 
     private function _setSubmissionFromPost(): Submission
     {
+        // Allow the submission to be set on this class
+        if ($this->submission) {
+            return $this->submission;
+        }
+
         $request = Craft::$app->getRequest();
         $submissionId = $request->getParam('submissionId');
 
@@ -372,6 +418,22 @@ class Submissions extends Component
         return $submission;
     }
 
+    private function _setReviewFromPost(Submission $submission, ElementInterface $entry): Review
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $request = Craft::$app->getRequest();
+
+        $review = new Review();
+        $review->submissionId = $submission->id;
+        $review->elementId = $entry->id;
+        $review->draftId = $entry->draftId;
+        $review->userId = $currentUser->id;
+        $review->setNotes((string)$request->getParam('workflowNotes'));
+        $review->data = $this->_getRevisionData($entry);
+
+        return $review;
+    }
+
     private function _getRevisionData(Entry $revision): array
     {
         $revisionData = [
@@ -382,7 +444,6 @@ class Submissions extends Component
             'postDate' => $revision->postDate ? $revision->postDate->getTimestamp() : null,
             'expiryDate' => $revision->expiryDate ? $revision->expiryDate->getTimestamp() : null,
             'enabled' => $revision->enabled,
-            // 'newParentId' => $revision->newParentId,
             'fields' => [],
         ];
 

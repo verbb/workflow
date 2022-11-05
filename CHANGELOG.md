@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0 - Unreleased
+
+### Changed
+- Revamped Submissions and Reviews. Now captures information each time an action is performed on an entry for better review tracking. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1) for a more thorough explanation.
+
 ## 2.0.0-beta.8 - 2022-11-04
 
 ### Added

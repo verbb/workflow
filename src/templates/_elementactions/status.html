@@ -1,14 +1,19 @@
-<div class="btn menubtn">{{ "Set status" | t('workflow') }}</div>
+<div class="btn menubtn">{{ 'Set status' | t('workflow') }}</div>
 <div class="menu">
     <ul>
         <li>
             <a class="formsubmit" data-param="status" data-value="approved">
-                <span class="status green"></span> {{ "Approved" | t('workflow') }}
+                <span class="status green"></span> {{ 'Approved' | t('workflow') }}
             </a>
         </li>
         <li>
-            <a class="formsubmit" data-param="status" data-value="pending">
-                <span class="status orange"></span> {{ "Pending" | t('workflow') }}
+            <a class="formsubmit" data-param="status" data-value="revoked">
+                <span class="status"></span> {{ 'Revoked' | t('workflow') }}
+            </a>
+        </li>
+        <li>
+            <a class="formsubmit" data-param="status" data-value="rejected">
+                <span class="status red"></span> {{ 'Rejected' | t('workflow') }}
             </a>
         </li>
     </ul>

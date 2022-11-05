@@ -77,6 +77,25 @@
       "rFN" : 0,
       "uCM" : 0
     },
+    "\/docs\/developers\/graphql.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/developers\/graphql.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
     "\/docs\/developers\/review.md" : {
       "cB" : 0,
       "cS" : 0,
@@ -153,7 +172,7 @@
       "rFN" : 0,
       "uCM" : 0
     },
-    "\/docs\/feature-tour\/reviews.md" : {
+    "\/docs\/feature-tour\/reviewers.md" : {
       "cB" : 0,
       "cS" : 0,
       "eF" : 1,
@@ -163,7 +182,7 @@
       "ft" : 4096,
       "hM" : 0,
       "oA" : 1,
-      "oAP" : "\/docs\/feature-tour\/reviews.html",
+      "oAP" : "\/docs\/feature-tour\/reviewers.html",
       "oF" : 0,
       "oFM" : 0,
       "oS" : 0,
@@ -240,6 +259,25 @@
       "hM" : 0,
       "oA" : 1,
       "oAP" : "\/docs\/get-started\/requirements.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
+    },
+    "\/docs\/get-started\/upgrading-from-v1.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 1,
+      "oAP" : "\/docs\/get-started\/upgrading-from-v1.html",
       "oF" : 0,
       "oFM" : 0,
       "oS" : 0,
@@ -533,6 +571,68 @@
       "oAP" : "\/src\/events\/ReviewerUserGroupsEvent.php",
       "oF" : 0
     },
+    "\/src\/events\/ReviewEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/ReviewEvent.php",
+      "oF" : 0
+    },
+    "\/src\/gql\/arguments\/SubmissionArguments.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/gql\/arguments\/SubmissionArguments.php",
+      "oF" : 0
+    },
+    "\/src\/gql\/interfaces\/SubmissionInterface.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/gql\/interfaces\/SubmissionInterface.php",
+      "oF" : 0
+    },
+    "\/src\/gql\/queries\/SubmissionQuery.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/gql\/queries\/SubmissionQuery.php",
+      "oF" : 0
+    },
+    "\/src\/gql\/resolvers\/SubmissionResolver.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/gql\/resolvers\/SubmissionResolver.php",
+      "oF" : 0
+    },
+    "\/src\/gql\/types\/generators\/SubmissionGenerator.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/gql\/types\/generators\/SubmissionGenerator.php",
+      "oF" : 0
+    },
+    "\/src\/gql\/types\/SubmissionType.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/gql\/types\/SubmissionType.php",
+      "oF" : 0
+    },
+    "\/src\/helpers" : {
+      "ft" : 65536,
+      "oA" : 1,
+      "oAP" : "\/src\/helpers",
+      "oF" : 0
+    },
     "\/src\/icon-mask.svg" : {
       "ft" : 2097152,
       "miP" : 0,
@@ -662,7 +762,7 @@
   },
   "projectAttributes" : {
     "creationDate" : 528723773,
-    "displayValue" : "workflow",
+    "displayValue" : "workflow-next",
     "displayValueWasSetByUser" : 0,
     "iconImageName" : "brackets-koamaru",
     "iconImageWasSetByUser" : 1

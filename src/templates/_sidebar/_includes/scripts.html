@@ -1,0 +1,30 @@
+{% if settings.lockDraftSubmissions %}
+    {# Hide first so we don't see a flicker #}
+    {% css %}
+        #main #header .btn.submit { display: none; }
+    {% endcss %}
+
+    {% js %}
+        var buttonClicked = false;
+
+        {# Disable any type of form submitting unless we're doing a workflow action #}
+        $(document).on('submit', 'form', function(e) {
+            if (!buttonClicked) {
+                e.preventDefault();
+            }
+        });
+
+        {# Allow only workflow actions to submit #}
+        $(document).on('click', '[data-param="workflow-action"]', function(e) {
+            buttonClicked = true;
+
+            // Wait for a moment and submit again
+            setTimeout(function() {
+                $('form:last').submit();
+            }, 100);
+        });
+
+        {# Remove the submit button #}
+        $('#main #header .btn.submit').remove();
+    {% endjs %}
+{% endif %}

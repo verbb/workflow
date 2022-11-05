@@ -1,46 +1,78 @@
 <?php
 namespace verbb\workflow\models;
 
+use verbb\workflow\Workflow;
+use verbb\workflow\elements\Submission;
 use verbb\workflow\helpers\StringHelper;
-use verbb\workflow\records\Review as ReviewRecord;
 
+use Craft;
+use craft\base\ElementInterface;
 use craft\base\Model;
+use craft\elements\User;
+use craft\helpers\Html;
+use craft\helpers\Template;
 
 use DateTime;
 
+use Twig\Markup;
+
 class Review extends Model
 {
+    // Constants
+    // =========================================================================
+
+    public const ROLE_EDITOR = 'editor';
+    public const ROLE_REVIEWER = 'reviewer';
+    public const ROLE_PUBLISHER = 'publisher';
+
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_REVOKED = 'revoked';
+
+
     // Static Methods
     // =========================================================================
 
-    /**
-     * Populates a new model instance with a given set of attributes.
-     *
-     * @param mixed $values
-     * @return Review
-     */
-    public static function populateModel(mixed $values): Review
+    public static function statuses(): array
     {
-        if ($values instanceof Model || $values instanceof ReviewRecord) {
-            $values = $values->getAttributes();
-        }
-
-        $review = new Review();
-        $review->setAttributes($values, false);
-
-        return $review;
+        return [
+            self::STATUS_APPROVED => Craft::t('workflow', 'Approved'),
+            self::STATUS_PENDING => Craft::t('workflow', 'Pending'),
+            self::STATUS_REJECTED => Craft::t('workflow', 'Rejected'),
+            self::STATUS_REVOKED => Craft::t('workflow', 'Revoked'),
+        ];
     }
-    
+
+    public static function roles(): array
+    {
+        return [
+            self::ROLE_EDITOR => Craft::t('workflow', 'Editor'),
+            self::ROLE_REVIEWER => Craft::t('workflow', 'Reviewer'),
+            self::ROLE_PUBLISHER => Craft::t('workflow', 'Publisher'),
+        ];
+    }
+
 
     // Properties
     // =========================================================================
 
+    public ?int $id = null;
     public ?int $submissionId = null;
+    public ?int $elementId = null;
+    public ?int $draftId = null;
     public ?int $userId = null;
-    public bool $approved = true;
+    public ?string $role = null;
+    public ?string $status = null;
+    public ?array $data = null;
     public ?DateTime $dateCreated = null;
+    public ?DateTime $dateUpdated = null;
+    public ?string $uid = null;
 
     private ?string $_notes = null;
+    private ?Submission $_submission = null;
+    private ?ElementInterface $_element = null;
+    private ?ElementInterface $_user = null;
 
 
     // Public Methods
@@ -64,15 +96,56 @@ class Review extends Model
         return $sanitize ? StringHelper::unSanitizeNotes($this->_notes) : $this->_notes;
     }
 
-    public function getConfig(): array
+    public function getSubmission(): ?Submission
     {
-        return [
-            'submissionId' => $this->submissionId,
-            'userId' => $this->userId,
-            'approved' => $this->approved,
-            'dateCreated' => $this->dateCreated,
-            'notes' => $this->getNotes(false),
-        ];
+        if (!isset($this->_submission)) {
+            $this->_submission = Workflow::$plugin->getSubmissions()->getSubmissionById($this->submissionId);
+        }
+
+        return $this->_submission;
+    }
+
+    public function getElement(): ?ElementInterface
+    {
+        if (!isset($this->_element)) {
+            $this->_element = Craft::$app->getElements()->getElementById($this->elementId);
+        }
+
+        return $this->_element;
+    }
+
+    public function getUser(): ?User
+    {
+        if (!isset($this->_user)) {
+            $this->_user = Craft::$app->getUsers()->getUserById($this->userId);
+        }
+
+        return $this->_user;
+    }
+
+    public function getUserUrl(): ?Markup
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        if ($user = $this->getUser()) {
+            if ($currentUser->can('editUsers')) {
+                return Template::raw(Html::a($user, $user->cpEditUrl));
+            }
+
+            return Template::raw($user);
+        }
+
+        return null;
+    }
+
+    public function getStatusName(): ?string
+    {
+        return self::statuses()[$this->status] ?? ucfirst($this->status);
+    }
+
+    public function getRoleName(): ?string
+    {
+        return self::roles()[$this->role] ?? ucfirst($this->role);
     }
 
 }

@@ -1,0 +1,107 @@
+{% import '_includes/forms' as forms %}
+
+{% set canSubmitForReview = true %}
+
+{# Check if the editor has to create a new draft on an existing entry #}
+{% set isUnpublishedDraft = entry.getIsUnpublishedDraft() %}
+{% set isCurrent = entry.getIsCanonical() or entry.isProvisionalDraft %}
+{% set canonical = entry.getCanonical(true) %}
+
+{% set canCreateDrafts = canonical.canCreateDrafts(currentUser) %}
+{% set canSave = entry.isProvisionalDraft ? canonical.canSave(currentUser) : entry.canSave(currentUser) %}
+
+{% if (isCurrent and not isUnpublishedDraft and canCreateDrafts and not canSave) %}
+    {% set canSubmitForReview = false %}
+{% endif %}
+
+{% extends 'workflow/_sidebar/_layout' %}
+
+{% set newSubmissionHtml %}
+    <div class="workflow-submission">
+        <div class="workflow-submission-heading">
+            <label>{{ 'Submit for review' | t('workflow') }}</label>
+        </div>
+
+        <div class="instructions">
+            <p>{{ 'Submitting this entry for review will lock further edits and notify the next editors in the approval process that this entry is ready for approval.' | t('workflow') }}</p>
+        </div>
+
+        <div class="workflow-submission-body">
+            {% set placeholderText = settings.getEditorNotesRequired(entry.site) ? 'Notes about your submission (required)' : 'Notes about your submission' %}
+
+            {{ forms.textareaField({
+                placeholder: placeholderText | t('workflow'),
+                id: 'workflowNotes',
+                name: 'workflowNotes',
+                class: 'field-notes',
+                rows: 2,
+                value: workflowNotes ?? '',
+                required: settings.getEditorNotesRequired(entry.site),
+                errors: editorNotesErrors is defined ? editorNotesErrors,
+            }) }}
+        </div>
+
+        <div class="workflow-submission-footer">
+            <a class="btn formsubmit submit" data-param="workflow-action" data-value="save-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ 'Save draft and submit for review' | t('workflow') }}</a>
+        </div>
+    </div>
+{% endset %}
+
+{# Determine if this is a brand-new submission #}
+{% set isNewSubmission = true %}
+
+{% for submission in submissions %}
+    {% if not submission.isComplete %}
+        {% set isNewSubmission = false %}
+    {% endif %}
+{% endfor %}
+
+{% block emptyPane %}
+    {% if canSubmitForReview and isNewSubmission %}
+        <div class="pane workflow-pane">
+            {{ newSubmissionHtml }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block newPane %}
+    {% if canSubmitForReview and not submission.isComplete and not submission.isPending %}
+        <div class="workflow-history-action">
+            {{ newSubmissionHtml }}
+
+            {# We're re-submitting on an existing, incomplete submission, so don't start again #}
+            <input type="hidden" name="submissionId" value="{{ submission.id ?? '' }}">
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block reviewBlock %}
+    <div class="workflow-history-action">
+        <div class="workflow-submission">
+            <div class="workflow-submission-heading">
+                <span class="status pending"></span>
+                <label>{{ 'Awaiting approval' | t('workflow') }}</label>
+                <a class="fieldtoggle" data-target="workflow-submission-info"></a>
+            </div>
+
+            <div id="workflow-submission-info" class="hidden">
+                <div class="instructions">
+                    <p style="color: #da5a47;">{{ 'This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved.' | t('workflow', { date: review.dateCreated | datetime('medium') }) }}</p>
+
+                    {% if review.notes %}
+                        <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="submissionId" value="{{ submission.id }}">
+
+        <div class="workflow-submission-footer">
+            <a class="btn formsubmit" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ 'Revoke submission' | t('workflow') }}</a>
+        </div>
+
+        {# Disable the save button if there's a pending submission #}
+        {% include 'workflow/_sidebar/_includes/scripts' %}
+    </div>
+{% endblock %}

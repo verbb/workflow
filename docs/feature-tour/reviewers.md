@@ -1,5 +1,5 @@
-# Reviews
-Reviews exists as an optional middle-step in the editor-publisher approval workflow. This provides a means to have multiple reviewing parties, before finally approving and publishing a change.
+# Reviewers
+Reviewers exists as an optional middle-step in the editor-publisher approval workflow. This provides a means to have multiple reviewing parties, before finally approving and publishing a change.
 
 To visualise this, let's take an example hierarchy:
 - Junior Editor

@@ -45,15 +45,11 @@ class Service extends Component
         }
 
         // Sanitize notes first
-        $editorNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('editorNotes'));
-        $reviewerNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('reviewerNotes'));
-        $publisherNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('publisherNotes'));
+        $workflowNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('workflowNotes'));
 
         // Save the notes for later, due to a number of different events triggering
         Craft::$app->getUrlManager()->setRouteParams([
-            'editorNotes' => StringHelper::unSanitizeNotes($editorNotes),
-            'reviewerNotes' => StringHelper::unSanitizeNotes($reviewerNotes),
-            'publisherNotes' => StringHelper::unSanitizeNotes($publisherNotes),
+            'workflowNotes' => StringHelper::unSanitizeNotes($workflowNotes),
         ]);
         
         // Disable auto-save for an entry that has been submitted. Only real way to do this.
@@ -61,12 +57,12 @@ class Service extends Component
         if (!$action && $event->sender->getIsDraft()) {
             // Check to see if there's a matching pending (submitted) Workflow submission
             $submission = Submission::find()
-                ->ownerId($event->sender->id)
+                ->ownerId($event->sender->getCanonicalId())
                 ->ownerSiteId($event->sender->siteId)
                 ->ownerDraftId($event->sender->draftId)
                 ->limit(1)
-                ->status('pending')
-                ->orderBy('dateCreated desc')
+                ->isComplete(false)
+                ->isPending(true)
                 ->one();
 
             if ($submission !== null) {
@@ -270,7 +266,7 @@ class Service extends Component
         $routeParams = Craft::$app->getUrlManager()->getRouteParams();
         unset($routeParams['template'], $routeParams['template']);
 
-        return Craft::$app->getView()->renderTemplate('workflow/_includes/' . $template, array_merge([
+        return Craft::$app->getView()->renderTemplate('workflow/_sidebar/' . $template, array_merge([
             'entry' => $entry,
             'submissions' => $submissions,
             'settings' => $settings,
@@ -280,14 +276,17 @@ class Service extends Component
     private function _getSubmissionsFromContext($entry): array
     {
         // Get existing submissions
-        $ownerId = $entry->id ?? ':empty:';
+        $ownerId = $entry->getCanonicalId() ?? ':empty:';
         $draftId = $entry->draftId ?? ':empty:';
         $siteId = $entry->siteId ?? Craft::$app->getSites()->getCurrentSite()->id;
 
-        return Submission::find()
+        // Always refer to the canonical entry (the entry itself if non-draft, or the draft's parent)
+        $submissions = Submission::find()
             ->ownerId($ownerId)
             ->ownerSiteId($siteId)
             ->ownerDraftId($draftId)
             ->all();
+
+        return $submissions;
     }
 }

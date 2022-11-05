@@ -49,6 +49,8 @@
 
 .workflow-submission-footer {
     margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .workflow-pane .field {
@@ -56,12 +58,17 @@
     margin-right: 0;
 }
 
+.workflow-history-pane-heading,
 .workflow-submission-heading,
 .workflow-history-heading {
     position: relative;
     display: flex;
     align-items: center;
     padding: 0 0 5px;
+}
+
+.workflow-history-pane-heading {
+    padding: 0;
 }
 
 .workflow-submission-heading label,
@@ -71,6 +78,7 @@
     flex: 1;
 }
 
+.workflow-history-pane-heading a.fieldtoggle,
 .workflow-submission-heading a.fieldtoggle,
 .workflow-history-heading a.fieldtoggle {
     position: absolute;
@@ -89,15 +97,29 @@
     font-size: 12px;
     line-height: 1.5;
     padding: 0;
+    overflow: hidden;
+}
+
+.workflow-history-pane-heading-wrap {
+    padding: 7px 20px;
+    margin: 0;
+    border-bottom: 1px solid #e3e5e8;
+    font-weight: 400;
+    background: #e5edf6;
 }
 
 .workflow-history {
-    padding: 10px 24px;
+    padding: 10px 20px;
     border-bottom: 1px solid #e3e5e8;
 
     &:last-child {
         border-bottom: 0;
     }
+}
+
+.workflow-history-action {
+    padding: 10px 20px;
+    border-bottom: 1px solid #e3e5e8;
 }
 
 .workflow-history-heading {
@@ -115,42 +137,37 @@
 // ==========================================================================
 
 .workflow-widget .workflow-block {
-    position: relative;
-    margin-left: 0;
-    margin-bottom: 10px;
-
-    &:last-child {
-        margin-bottom: 0;
+    small {
+        color: #9399a0;
+        font-size: 85%;
     }
 
-    .status {
-        position: absolute;
-        top: 5px;
+    .draft-label {
+        font-size: 12px;
+    }
+
+    body.ltr & .element.large:not(.hasthumb).hasstatus,
+    body.ltr & .element.small.hasstatus {
+        padding-left: 16px;
+    }
+
+    body.ltr &.element.large:not(.hasthumb).hasstatus .status,
+    body.ltr & .element.small.hasstatus .status,
+    body.ltr & .element.large:not(.hasthumb).hasstatus .icon:not(.delete),
+    body.ltr & .element.small.hasstatus .icon:not(.delete) {
         left: 0;
     }
-    
-    a {
-        margin-left: 20px;
-        display: block;
 
-        small {
-            color: #aaa;
-            font-size: 85%;
-            display: block;
-        }
+    body.rtl & .element.large:not(.hasthumb).hasstatus,
+    body.rtl & .element.small.hasstatus {
+        padding-right: 16px;
+    }
 
-        &:hover {
-            text-decoration: none;
-        }
-
-        &:hover small {
-            color: #666;
-            text-decoration: none;
-        }
-
-        &:hover span {
-            text-decoration: underline;
-        }
+    body.rtl & .element.large:not(.hasthumb).hasstatus .status,
+    body.rtl & .element.small.hasstatus .status,
+    body.rtl & .element.large:not(.hasthumb).hasstatus .icon:not(.delete),
+    body.rtl & .element.small.hasstatus .icon:not(.delete) {
+        right: 0;
     }
 }
 

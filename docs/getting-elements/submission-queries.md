@@ -157,42 +157,6 @@ $submissions = \verbb\workflow\elements\Submission::find()
 
 
 
-### `dateApproved`
-
-Narrows the query results based on the submissions’ creation approved date.
-
-Possible values include:
-
-| Value | Fetches submissions…
-| - | -
-| `'>= 2018-04-01'` | that were approved on or after 2018-04-01.
-| `'< 2018-05-01'` | that were approved before 2018-05-01
-| `['and', '>= 2018-04-04', '< 2018-05-01']` | that were approved between 2018-04-01 and 2018-05-01.
-
-::: code
-```twig Twig
-{# Fetch submissions approved last month #}
-{% set start = date('first day of last month') | atom %}
-{% set end = date('first day of this month') | atom %}
-
-{% set submissions = craft.workflow.submissions()
-    .dateApproved(['and', ">= #{start}", "< #{end}"])
-    .all() %}
-```
-
-```php PHP
-// Fetch submissions approved last month
-$start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
-$end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
-
-$submissions = \verbb\workflow\elements\Submission::find()
-    ->dateApproved(['and', ">= {$start}", "< {$end}"])
-    ->all();
-```
-:::
-
-
-
 ### `dateCreated`
 
 Narrows the query results based on the submissions’ creation dates.
@@ -226,79 +190,6 @@ $submissions = \verbb\workflow\elements\Submission::find()
     ->all();
 ```
 :::
-
-
-
-### `dateRejected`
-
-Narrows the query results based on the submissions’ rejected dates.
-
-Possible values include:
-
-| Value | Fetches submissions…
-| - | -
-| `'>= 2018-04-01'` | that were rejected on or after 2018-04-01.
-| `'< 2018-05-01'` | that were rejected before 2018-05-01
-| `['and', '>= 2018-04-04', '< 2018-05-01']` | that were rejected between 2018-04-01 and 2018-05-01.
-
-::: code
-```twig Twig
-{# Fetch submissions rejected last month #}
-{% set start = date('first day of last month') | atom %}
-{% set end = date('first day of this month') | atom %}
-
-{% set submissions = craft.workflow.submissions()
-    .dateRejected(['and', ">= #{start}", "< #{end}"])
-    .all() %}
-```
-
-```php PHP
-// Fetch submissions rejected last month
-$start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
-$end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
-
-$submissions = \verbb\workflow\elements\Submission::find()
-    ->dateRejected(['and', ">= {$start}", "< {$end}"])
-    ->all();
-```
-:::
-
-
-
-### `dateRevoked`
-
-Narrows the query results based on the submissions’ revoked dates.
-
-Possible values include:
-
-| Value | Fetches submissions…
-| - | -
-| `'>= 2018-04-01'` | that were revoked on or after 2018-04-01.
-| `'< 2018-05-01'` | that were revoked before 2018-05-01
-| `['and', '>= 2018-04-04', '< 2018-05-01']` | that were revoked between 2018-04-01 and 2018-05-01.
-
-::: code
-```twig Twig
-{# Fetch submissions revoked last month #}
-{% set start = date('first day of last month') | atom %}
-{% set end = date('first day of this month') | atom %}
-
-{% set submissions = craft.workflow.submissions()
-    .dateRevoked(['and', ">= #{start}", "< #{end}"])
-    .all() %}
-```
-
-```php PHP
-// Fetch submissions revoked last month
-$start = new \DateTime('first day of next month')->format(\DateTime::ATOM);
-$end = new \DateTime('first day of this month')->format(\DateTime::ATOM);
-
-$submissions = \verbb\workflow\elements\Submission::find()
-    ->dateRevoked(['and', ">= {$start}", "< {$end}"])
-    ->all();
-```
-:::
-
 
 
 ### `dateUpdated`
@@ -663,6 +554,61 @@ $submissions = \verbb\workflow\elements\Submission::find()
 
 
 
+### `reviewerId`
+
+Narrows the query results based on the reviewer, per their ID.
+
+Possible values include:
+
+| Value | Fetches submissions…
+| - | -
+| `1` | with a user with an ID of 1.
+| `'not 1'` | not with a user with an ID of 1.
+| `[1, 2]` | with a user with an ID of 1 or 2.
+| `['not', 1, 2]` | not with a user with an ID of 1 or 2.
+
+::: code
+```twig Twig
+{# Fetch the current user's submissions #}
+{% set submissions = craft.workflow.submissions()
+    .reviewerId(currentUser.id)
+    .all() %}
+```
+
+```php PHP
+// Fetch the current user's submissions
+$user = Craft::$app->getUser()->getIdentity();
+
+$submissions = \verbb\workflow\elements\Submission::find()
+    ->reviewerId($user->id)
+    ->all();
+```
+:::
+
+
+
+### `role`
+
+Narrows the query results based on the submissions’ most recent review role.
+
+::: code
+```twig Twig
+{# Fetch the submission by its reviewer role #}
+{% set submission = craft.workflow.submissions()
+    .role('editor')
+    .one() %}
+```
+
+```php PHP
+// Fetch the submission by its reviewer role
+$submission = \verbb\workflow\elements\Submission::find()
+    ->role('editor')
+    ->one();
+```
+:::
+
+
+
 ### `status`
 
 Narrows the query results based on the submissions’ statuses.
@@ -671,24 +617,24 @@ Possible values include:
 
 | Value | Fetches submissions…
 | - | -
-| `'live'` _(default)_ | that are live.
-| `'pending'` | that are pending (enabled with a Post Date in the future).
-| `'expired'` | that are expired (enabled with an Expiry Date in the past).
-| `'disabled'` | that are disabled.
-| `['live', 'pending']` | that are live or pending.
+| `'pending'` | that are pending.
+| `'approved'` | that are approved.
+| `'revoked'` | that are revoked.
+| `'rejected'` | that are rejected.
+| `['revoked', 'rejected']` | that are revoked or rejected.
 
 ::: code
 ```twig Twig
-{# Fetch disabled submissions #}
+{# Fetch approved submissions #}
 {% set submissions = craft.workflow.submissions()
-    .status('disabled')
+    .status('approved')
     .all() %}
 ```
 
 ```php PHP
-// Fetch disabled submissions
+// Fetch approved submissions
 $submissions = \verbb\workflow\elements\Submission::find()
-    ->status('disabled')
+    ->status('approved')
     ->all();
 ```
 :::

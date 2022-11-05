@@ -1,0 +1,51 @@
+{% do view.registerAssetBundle('verbb\\workflow\\assetbundles\\WorkflowAsset') %}
+
+{% block emptyPane %}{% endblock %}
+
+{% for submission in submissions %}
+    <div class="pane workflow-pane workflow-history-pane">
+        <div class="workflow-history-pane-heading-wrap">
+            <div class="workflow-history-pane-heading">
+                <label>{{ 'Submission on {date}.' | t('workflow', { date: submission.dateCreated | datetime('medium') }) }}</label>
+
+                {% if submission.isComplete %}
+                    <a class="fieldtoggle" data-target="history-pane-{{ loop.index }}"></a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% block newPane %}{% endblock %}
+        
+        <div id="history-pane-{{ loop.index }}" {% if submission.isComplete %}class="hidden"{% endif %}>
+            {% for review in submission.getReviews() | reverse %}
+                {# Allow is to include role-specific content for the latest review, if incomplete, and if pending #}
+                {% if loop.first and not submission.isComplete and submission.isPending %}
+                    {% block reviewBlock %}{% endblock %}
+                {% endif %}
+
+                {% set anchorKey = 'history-info-' ~ loop.parent.loop.index ~ '-' ~ loop.index %}
+
+                {# Swap out 'pending' for 'created' to keep with past-tense action #}
+                {% set statusText = (review.status == 'pending') ? 'created' | t('workflow') : review.status %}
+
+                <div class="workflow-history">
+                    <div class="workflow-history-heading">
+                        <span class="status {{ review.status }}"></span>
+                        <label>{{ '{status} submission' | t('workflow', { status: statusText | title }) }}</label>
+                        <a class="fieldtoggle" data-target="{{ anchorKey }}"></a>
+                    </div>
+
+                    <div id="{{ anchorKey }}" class="workflow-history-info hidden">
+                        <div class="instructions">
+                            <p>{{ review.userUrl }} {{ '{status} this submission on {date}.' | t('workflow', { status: statusText, date: review.dateCreated | datetime('medium') }) }}</p>
+
+                            {% if review.notes %}
+                                <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
