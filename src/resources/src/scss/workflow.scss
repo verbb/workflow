@@ -172,6 +172,197 @@
 }
 
 
+// ==========================================================================
+// Workflow Single
+// ==========================================================================
+
+.workflow-reviews-stats {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -16px 16px;
+}
+
+.workflow-reviews-stat {
+    flex: 1 0 0%;
+    width: 100%;
+    max-width: 100%;
+    word-wrap: break-word;
+    background: #fff;
+    border-radius: var(--large-border-radius);
+    box-shadow: 0 0 0 1px #cdd8e4, 0 2px 12px rgba(205, 216, 228, 0.5);
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 0 16px;
+    position: relative;
+    flex: 1;
+    text-align: center;
+}
+
+.workflow-reviews-stat-number {
+    font-weight: 700;
+    font-size: 30px;
+}
+
+.workflow-reviews-stat-heading {
+    opacity: 0.7;
+}
+
+.workflow-single-reviews {
+    margin-top: -10px;
+}
+
+.workflow-single-review {
+    display: flex;
+}
+
+.workflow-single-review-indicator {
+    position: relative;
+    width: 60px;
+
+    &::before {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        content: '';
+        display: block;
+        height: 100%;
+        width: 1px;
+        background: #cdd8e4;
+    }
+
+    .workflow-single-review:first-child &::before {
+        height: 50%;
+        top: 50%;
+    }
+
+    .workflow-single-review:last-child &::before {
+        height: 50%;
+    }
+}
+
+.workflow-single-review-indicator-icon {
+    width: 35px;
+    height: 35px;
+    display: block;
+    border-radius: 100%;
+    padding: 5px;
+    color: #fff;
+    border: 4px solid #fff;
+    box-shadow: 0 0 0 1px #cdd8e4, 0 2px 12px rgba(205, 216, 228, 0.5);
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    &.approved {
+        background: #10b981;
+    }
+
+    &.pending {
+        background: #fb923c;
+    }
+
+    &.rejected {
+        background: #ef4444;
+    }
+
+    &.revoked {
+        background: #cbd5e1;
+    }
+
+    svg {
+        fill: currentColor;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.workflow-single-review-content {
+    word-wrap: break-word;
+    background: #fff;
+    border-radius: var(--large-border-radius);
+    box-shadow: 0 0 0 1px #cdd8e4, 0 2px 12px rgba(205, 216, 228, 0.5);
+    box-sizing: border-box;
+    margin: 10px 0 10px 24px;
+    padding: 16px;
+    position: relative;
+    flex: 1;
+}
+
+.workflow-single-review-heading {
+    position: relative;
+    border-bottom: 1px #cdd8e4 solid;
+    padding: 6px 16px;
+    margin: -16px -16px 16px -16px;
+    background: #f6fafd;
+    border-radius: var(--large-border-radius) var(--large-border-radius) 0 0;
+    display: flex;
+    align-items: center;
+
+    .review-count {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0.6;
+        margin-right: 10px;
+    }
+
+    .menubtn {
+        position: absolute;
+        top: 50%;
+        right: 5px;
+        height: 75%;
+        transform: translateY(-50%);
+        // margin-left: auto;
+        // height: auto;
+        padding: 4px 10px;
+        font-size: 12px;
+        background-color: transparent;
+
+        &:focus, &:hover {
+            background-color: rgba(96, 125, 159, .15) !important;
+        }
+
+        &:after {
+            width: 6px;
+            height: 6px;
+        }
+    }
+}
+
+.workflow-single-review-heading .review-status {
+    --status-color: 136, 136, 136;
+
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: default;
+    user-select: none;
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    color: rgba(var(--status-color), 1);
+    background: rgba(var(--status-color), 0.05);
+    border-color: rgba(var(--status-color), 0.25);
+
+    &.approved {
+        --status-color: 23, 163, 74;
+    }
+
+    &.pending {
+        --status-color: 245, 158, 12;
+    }
+
+    &.rejected {
+        --status-color: 237, 67, 67;
+    }
+
+    &.revoked {
+        --status-color: 136, 136, 136;
+    }
+}
+
+
 
 // ==========================================================================
 // Workflow Settings

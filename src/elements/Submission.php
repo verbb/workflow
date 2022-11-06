@@ -153,12 +153,12 @@ class Submission extends Element
 
     public function canView(User $user): bool
     {
-        return false;
+        return true;
     }
 
     public function canSave(User $user): bool
     {
-        return false;
+        return true;
     }
 
     public function canDuplicate(User $user): bool
@@ -178,7 +178,7 @@ class Submission extends Element
 
     public function getCpEditUrl(): ?string
     {
-        return UrlHelper::cpUrl('workflow/' . $this->id);
+        return UrlHelper::cpUrl('workflow/submissions/edit/' . $this->id);
     }
 
     public function setOwner(Entry $owner): void
