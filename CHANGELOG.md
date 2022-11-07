@@ -1,27 +1,30 @@
 # Changelog
 
-## 2.0.0 - Unreleased
+## 2.0.0 - 2022-11-07
 
 ### Added
 - Add detail template for Submissions for stats and more detail on each review.
 - Add entry “diff” functionality to easily see what’s been added/changed/removed (if any) on each submission review.
-
-### Changed
-- Revamped Submissions and Reviews. Now captures information each time an action is performed on an entry for better review tracking. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1) for a more thorough explanation.
-
-## 2.0.0-beta.8 - 2022-11-04
-
-### Added
-- Now store `ownerCanonicalId` to help resolve the submission against the original entry after the draft is deleted.
+- Add “Published Author Notifications” notification.
 - Add emoji support for submission notes.
 - Add “status” column to submissions index.
 - Add GraphQL support for querying submissions.
+- Add missing English Translations.
+- Add resave console command for elements.
+- Add checks for registering events for performance.
+- Add `archiveTableIfExists()` to install migration.
 
 ### Changed
+- Now requires PHP `^8.0.2`.
+- Now requires Craft `^4.0.0`.
+- Revamped Submissions and Reviews. Now captures information each time an action is performed on an entry for better review tracking. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1) for a more thorough explanation.
+- **Breaking Change** Update email templates to handle reviews. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1).
 - **Breaking Change** Move email functions to own service. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1).
 - Revamped submission process for more reliably and simplified handling with Craft 4+ updates.
 - Switch `Entry::class, Entry::EVENT_AFTER_SAVE` to `Elements::EVENT_AFTER_SAVE_ELEMENT` to handle some edge-cases.
 - Changed default title of a submission to `Submission for “{entry.title}” on {date}`.
+- Rename base plugin methods.
+- Now requires Workflow `1.7.0` in order to update from Craft 3.
 
 ### Fixed
 - Fix submissions made on published entry drafts and the “[Deleted Element]” because once applied the drafts are deleted
@@ -31,64 +34,6 @@
 
 ### Removed
 - Removed `SubmissionsController` as no longer needed.
-
-## 2.0.0-beta.7 - 2022-09-25
-
-### Fixed
-- Fix an error running `resave` console commands.
-
-## 2.0.0-beta.6 - 2022-08-27
-
-### Fixed
-- Fix an error when approving a draft.
-- Fix an error when trying to change the status of submissions from the element index actions.
-
-## 2.0.0-beta.5 - 2022-08-09
-
-### Added
-- Add missing English Translations.
-
-### Fixed
-- Fix an error when uninstalling.
-- Fix an error when uninstalling the plugin.
-- Fix being unable to view submissions in the control panel.
-- Fix permission checks.
-- Fix Workflow CSS not rendering for submissions index.
-- Fix an error when trying to publish a submission.
-- Fix element actions for submissions.
-
-## 2.0.0-beta.4 - 2022-07-01
-
-### Fixed
-- Fix an error when uninstalling.
-
-## 2.0.0-beta.3 - 2022-05-23
-
-### Added
-- Add resave console command for elements.
-- Add checks for registering events for performance.
-- Add `archiveTableIfExists()` to install migration.
-
-### Changed
-- Rename base plugin methods.
-
-### Fixed
-- Fix a Twig error in pending submissions pane.
-
-## 2.0.0-beta.2 - 2022-04-13
-
-### Changed
-- Now requires Workflow `1.7.0` in order to update from Craft 3.
-
-### Fixed
-- Fix minor errors and display issues.
-- Fix errors with `$context` changing due to `Entry::EVENT_DEFINE_SIDEBAR_HTML` event.
-
-## 2.0.0-beta.1 - 2022-03-10
-
-### Changed
-- Now requires PHP `^8.0.2`.
-- Now requires Craft `^4.0.0-beta.1`.
 
 ## 1.7.5 - 2022-09-23
 
