@@ -186,18 +186,12 @@ class Emails extends Component
         }
     }
 
-    public function sendEditorReviewNotificationEmail(Submission $submission, Review $review, ElementInterface $entry, string $template = 'workflow_editor_notification'): void
+    public function sendEditorReviewNotificationEmail(Submission $submission, Review $review, ElementInterface $entry): void
     {
-        return $this->sendEditorNotificationEmail($submission, $review, $entry, 'workflow_editor_review_notification');
+        $this->sendEditorNotificationEmail($submission, $review, $entry, true);
     }
 
-    /**
-     * Sends a notification email to the editor.
-     *
-     * @param Submission $submission
-     * @param Review $review
-     */
-    public function sendEditorNotificationEmail(Submission $submission, Review $review, ElementInterface $entry, string $template = 'workflow_editor_notification'): void
+    public function sendEditorNotificationEmail(Submission $submission, Review $review, ElementInterface $entry, bool $fromReviewer = false): void
     {
         Workflow::log('Preparing editor notification.');
 
@@ -237,6 +231,8 @@ class Emails extends Component
         }
 
         try {
+            $template = $fromReviewer ? 'workflow_editor_review_notification' : 'workflow_editor_notification';
+
             $mail = Craft::$app->getMailer()->composeFromKey($template, [
                 'submission' => $submission,
                 'review' => $review,
@@ -248,17 +244,7 @@ class Emails extends Component
                 $settings->editorNotificationsOptions = [];
             }
 
-            if ($review === null) {
-                if ($submission->publisher) {
-                    if (in_array('replyTo', $settings->editorNotificationsOptions)) {
-                        $mail->setReplyTo($submission->publisher->email);
-                    }
-
-                    if (in_array('cc', $settings->editorNotificationsOptions)) {
-                        $mail->setCc($submission->publisher->email);
-                    }
-                }
-            } else {
+            if ($fromReviewer) {
                 $reviewer = $submission->getReviewer();
 
                 if ($reviewer !== null) {
@@ -268,6 +254,16 @@ class Emails extends Component
 
                     if (in_array('ccReviewer', $settings->editorNotificationsOptions)) {
                         $mail->setCc($reviewer->email);
+                    }
+                }
+            } else {
+                if ($submission->publisher) {
+                    if (in_array('replyTo', $settings->editorNotificationsOptions)) {
+                        $mail->setReplyTo($submission->publisher->email);
+                    }
+
+                    if (in_array('cc', $settings->editorNotificationsOptions)) {
+                        $mail->setCc($submission->publisher->email);
                     }
                 }
             }
@@ -288,10 +284,10 @@ class Emails extends Component
 
             $event->mail->send();
 
-            if ($review === null) {
-                Workflow::log('Sent editor notification to ' . $event->user->email);
-            } else {
+            if ($fromReviewer) {
                 Workflow::log('Sent editor review notification to ' . $event->user->email);
+            } else {
+                Workflow::log('Sent editor notification to ' . $event->user->email);
             }
         } catch (Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
@@ -345,11 +341,7 @@ class Emails extends Component
 
             $event->mail->send();
 
-            if ($review === null) {
-                Workflow::log('Sent published author notification to ' . $event->user->email);
-            } else {
-                Workflow::log('Sent published author review notification to ' . $event->user->email);
-            }
+            Workflow::log('Sent published author notification to ' . $event->user->email);
         } catch (Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send published author notification to {value} - “{message}” {file}:{line}', [
                 'value' => $entry->getAuthor()->email,
