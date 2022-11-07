@@ -7,9 +7,9 @@ use verbb\workflow\events\EmailEvent;
 use verbb\workflow\events\PrepareEmailEvent;
 use verbb\workflow\events\ReviewerUserGroupsEvent;
 use verbb\workflow\models\Review;
-use verbb\workflow\records\Review as ReviewRecord;
 
 use Craft;
+use craft\base\ElementInterface;
 use craft\base\Component;
 use craft\db\Table;
 use craft\elements\Entry;
@@ -38,7 +38,7 @@ class Emails extends Component
     // Public Methods
     // =========================================================================
 
-    public function sendReviewerNotificationEmail($submission, $entry = null): void
+    public function sendReviewerNotificationEmail(Submission $submission, Review $review, ElementInterface $entry): void
     {
         Workflow::log('Preparing reviewer notification.');
 
@@ -61,6 +61,7 @@ class Emails extends Component
         $event = new PrepareEmailEvent([
             'reviewers' => $reviewers,
             'submission' => $submission,
+            'review' => $review,
         ]);
         $this->trigger(self::EVENT_PREPARE_REVIEWER_EMAIL, $event);
 
@@ -79,7 +80,7 @@ class Emails extends Component
         foreach ($reviewers as $key => $user) {
             try {
                 $mail = Craft::$app->getMailer()
-                    ->composeFromKey('workflow_publisher_notification', ['submission' => $submission])
+                    ->composeFromKey('workflow_publisher_notification', ['submission' => $submission, 'review' => $review])
                     ->setTo($user);
 
                 // Fire a 'beforeSendReviewerEmail' event
@@ -87,6 +88,7 @@ class Emails extends Component
                     'mail' => $mail,
                     'user' => $user,
                     'submission' => $submission,
+                    'review' => $review,
                 ]);
                 $this->trigger(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL, $event);
 
@@ -109,7 +111,7 @@ class Emails extends Component
         }
     }
 
-    public function sendPublisherNotificationEmail($submission, $entry = null): void
+    public function sendPublisherNotificationEmail(Submission $submission, Review $review, ElementInterface $entry): void
     {
         Workflow::log('Preparing publisher notification.');
 
@@ -134,6 +136,7 @@ class Emails extends Component
         $event = new PrepareEmailEvent([
             'publishers' => $publishers,
             'submission' => $submission,
+            'review' => $review,
         ]);
         $this->trigger(self::EVENT_PREPARE_PUBLISHER_EMAIL, $event);
 
@@ -152,7 +155,7 @@ class Emails extends Component
         foreach ($publishers as $key => $user) {
             try {
                 $mail = Craft::$app->getMailer()
-                    ->composeFromKey('workflow_publisher_notification', ['submission' => $submission])
+                    ->composeFromKey('workflow_publisher_notification', ['submission' => $submission, 'review' => $review])
                     ->setTo($user);
 
                 // Fire a 'beforeSendPublisherEmail' event
@@ -160,6 +163,7 @@ class Emails extends Component
                     'mail' => $mail,
                     'user' => $user,
                     'submission' => $submission,
+                    'review' => $review,
                 ]);
                 $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, $event);
 
@@ -182,17 +186,28 @@ class Emails extends Component
         }
     }
 
+    public function sendEditorReviewNotificationEmail(Submission $submission, Review $review, ElementInterface $entry, string $template = 'workflow_editor_notification'): void
+    {
+        return $this->sendEditorNotificationEmail($submission, $review, $entry, 'workflow_editor_review_notification');
+    }
+
     /**
      * Sends a notification email to the editor.
      *
      * @param Submission $submission
-     * @param Review|null $review
+     * @param Review $review
      */
-    public function sendEditorNotificationEmail(Submission $submission, Review $review = null): void
+    public function sendEditorNotificationEmail(Submission $submission, Review $review, ElementInterface $entry, string $template = 'workflow_editor_notification'): void
     {
         Workflow::log('Preparing editor notification.');
 
         $settings = Workflow::$plugin->getSettings();
+
+        if (!$submission->editorId) {
+            Workflow::error('Unable to find editor for submission.');
+
+            return;
+        }
 
         $editor = User::find()
             ->id($submission->editorId)
@@ -202,6 +217,7 @@ class Emails extends Component
         $event = new PrepareEmailEvent([
             'editor' => $editor,
             'submission' => $submission,
+            'review' => $review,
         ]);
         $this->trigger(self::EVENT_PREPARE_EDITOR_EMAIL, $event);
 
@@ -221,14 +237,10 @@ class Emails extends Component
         }
 
         try {
-            if ($review === null) {
-                $mail = Craft::$app->getMailer()->composeFromKey('workflow_editor_notification', ['submission' => $submission]);
-            } else {
-                $mail = Craft::$app->getMailer()->composeFromKey('workflow_editor_review_notification', [
-                    'submission' => $submission,
-                    'review' => $review,
-                ]);
-            }
+            $mail = Craft::$app->getMailer()->composeFromKey($template, [
+                'submission' => $submission,
+                'review' => $review,
+            ]);
 
             $mail->setTo($editor);
 
@@ -247,7 +259,7 @@ class Emails extends Component
                     }
                 }
             } else {
-                $reviewer = $submission->getLastReviewer();
+                $reviewer = $submission->getReviewer();
 
                 if ($reviewer !== null) {
                     if (in_array('replyToReviewer', $settings->editorNotificationsOptions)) {

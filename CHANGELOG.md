@@ -2,6 +2,10 @@
 
 ## 2.0.0 - Unreleased
 
+### Added
+- Add detail template for Submissions for stats and more detail on each review.
+- Add entry “diff” functionality to easily see what’s been added/changed/removed (if any) on each submission review.
+
 ### Changed
 - Revamped Submissions and Reviews. Now captures information each time an action is performed on an entry for better review tracking. Refer to [upgrade docs](https://verbb.io/craft-plugins/workflow/docs/get-started/upgrading-from-v1) for a more thorough explanation.
 

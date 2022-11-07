@@ -238,8 +238,6 @@ class Service extends Component
     {
         $settings = Workflow::$plugin->getSettings();
 
-        Workflow::log('Try to render ' . $template);
-
         // Make sure workflow is enabled for this section - or all section
         if (!$settings->enabledSections) {
             Workflow::log('New enabled sections.');
@@ -259,8 +257,6 @@ class Service extends Component
 
         // Get existing submissions
         $submissions = $this->_getSubmissionsFromContext($entry);
-
-        Workflow::log('Rendering ' . $template . ' for #' . $entry->id);
 
         // Merge any additional route params
         $routeParams = Craft::$app->getUrlManager()->getRouteParams();

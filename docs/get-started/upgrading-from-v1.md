@@ -8,7 +8,7 @@ In Workflow 1, a new submission was created each time an entry needed to be subm
 
 Now, in Workflow 2, a single [Submission](docs:developers/submission) is created by an editor, and used for the duration of the review process. The only way a submission can be completed (so an editor can start another submission process) is for the Editor to revoke the submission, or a Publisher approving it. Rejections and Reviewer approvals will not complete a submission.
 
-In addition to this, each time an action is performed on an entry, a [Review](docs:developers/review) is created. This helps to keep track of everything that happens during the review process from start to finish. As such, a single submission can have multiple reviews. These are no longer stored on a submission, but on a review. We have added several methods to assist with getting the "latest" status or review.
+In addition to this, each time an action is performed on an entry, a [Review](docs:developers/review) is created. This helps to keep track of everything that happens during the review process from start to finish. As such, a single submission can have multiple reviews. Attributes like `status` are no longer stored on a submission, but on a review. We have added several methods to assist with getting the "latest" status, what type of user role the owner of the review was, and more.
 
 For example, if you'd like to know the status of a submission, that's technically going to be the status of the most recent review on that submission. But you can still use `submission.status` to get this. Likewise, if you wanted to get the Editor, or Publisher from the most recent review, that's the same `submission.editor`, etc.
 
@@ -45,6 +45,23 @@ The [front-end submissions](docs:template-guides/front-end-submission) should us
 Old | What to do instead
 --- | ---
 | `entry-revisions/save-draft` | `entries/save-entry`
+
+
+## Emails
+Email templates have changed slightly to factor in the new `review` variable present in emails. Because an email is essentially triggered on any action performed by a review, it makes sense to update the templates to reflect this information, rather than the overall submission.
+
+You should only need to update your email templates if you're using custom ones, or have modified the default ones in your **System Messages** settings.
+
+Old | What to do instead
+--- | ---
+| `submission.editor` | `review.user`
+| `submission.publisher` | `review.user`
+| `submission.editorNotes` | `review.notes`
+| `submission.publisherNotes` | `review.notes`
+| `review.approved` | `review.status`
+| `submission.status` | `review.status`
+| `submission.dateApproved` | `review.dateCreated`
+| `submission.dateRejected` | `review.dateCreated`
 
 
 ## Submission Queries

@@ -5,7 +5,6 @@ use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 use verbb\workflow\events\ReviewerUserGroupsEvent;
 use verbb\workflow\models\Review;
-use verbb\workflow\records\Review as ReviewRecord;
 
 use Craft;
 use craft\base\Component;
@@ -74,7 +73,7 @@ class Submissions extends Component
     {
         $reviewerUserGroups = $this->getReviewerUserGroups($entry->site, $submission);
 
-        $lastReviewer = $submission->getLastReviewer(true);
+        $lastReviewer = $submission->getReviewer();
 
         if ($lastReviewer === null) {
             return $reviewerUserGroups[0] ?? null;
@@ -91,7 +90,7 @@ class Submissions extends Component
         return $nextUserGroup;
     }
 
-    public function saveSubmission($entry = null): bool
+    public function saveSubmission(ElementInterface $entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
@@ -131,13 +130,11 @@ class Submissions extends Component
             return false;
         }
 
-        if ($isNew) {
-            // Trigger notification to reviewer
-            if ($settings->reviewerNotifications) {
-                Workflow::$plugin->getEmails()->sendReviewerNotificationEmail($submission, $entry);
-            } else if ($settings->publisherNotifications) {
-                Workflow::$plugin->getEmails()->sendPublisherNotificationEmail($submission, $entry);
-            }
+        // Trigger notification to reviewer
+        if ($settings->reviewerNotifications) {
+            Workflow::$plugin->getEmails()->sendReviewerNotificationEmail($submission, $review, $entry);
+        } else if ($settings->publisherNotifications) {
+            Workflow::$plugin->getEmails()->sendPublisherNotificationEmail($submission, $review, $entry);
         }
 
         $session->setNotice(Craft::t('workflow', 'Entry submitted for approval.'));
@@ -145,7 +142,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function revokeSubmission($entry): bool
+    public function revokeSubmission(ElementInterface $entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
@@ -186,7 +183,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveReview($entry): bool
+    public function approveReview(ElementInterface $entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
@@ -211,15 +208,12 @@ class Submissions extends Component
 
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
-            // Modify the notes to be the reviewer notes, but still use the same email template
-            $submission->setEditorNotes((string)$reviewRecord->notes);
-
-            Workflow::$plugin->getEmails()->sendReviewerNotificationEmail($submission, $entry);
+            Workflow::$plugin->getEmails()->sendReviewerNotificationEmail($submission, $review, $entry);
         }
 
         // Trigger notification to editor - if configured to do so
         if ($settings->editorNotifications && $settings->reviewerApprovalNotifications) {
-            Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission, $review);
+            Workflow::$plugin->getEmails()->sendEditorReviewNotificationEmail($submission, $review, $entry);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission approved.'));
@@ -227,7 +221,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function rejectReview($entry): bool
+    public function rejectReview(ElementInterface $entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
@@ -264,7 +258,7 @@ class Submissions extends Component
 
         // Trigger notification to editor
         if ($settings->editorNotifications) {
-            Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission, $review);
+            Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission, $review, $entry);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));
@@ -272,7 +266,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveSubmission($entry, $published = true)
+    public function approveSubmission(ElementInterface $entry, bool $published = true)
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
@@ -310,7 +304,7 @@ class Submissions extends Component
 
         // Trigger notification to editor
         if ($settings->editorNotifications) {
-            Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission);
+            Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission, $review, $entry);
         }
 
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
@@ -318,7 +312,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function rejectSubmission($entry): bool
+    public function rejectSubmission(ElementInterface $entry): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
@@ -355,7 +349,7 @@ class Submissions extends Component
 
         // Trigger notification to editor
         if ($settings->editorNotifications) {
-            Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission);
+            Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission, $review, $entry);
         }
 
         $session->setNotice(Craft::t('workflow', 'Submission rejected.'));

@@ -244,8 +244,11 @@ class Submission extends Element
 
     public function getEditor(): ?User
     {
-        if (($lastReview = $this->getLastReview()) && $lastReview->role === Review::ROLE_EDITOR) {
-            return $lastReview->getUser();
+        // As there will only ever be a single editor in a submission, find it
+        foreach ($this->getReviews() as $review) {
+            if ($review->role === Review::ROLE_EDITOR) {
+                return $review->getUser();
+            }
         }
 
         return null;
