@@ -36,6 +36,8 @@ class SubmissionsController extends Controller
             'title' => $submission->title,
         ];
 
+        $variables['changesCount'] = Workflow::$plugin->getContent()->getContentChangesTotalCount($submission);
+
         return $this->renderTemplate('workflow/submissions/_edit', $variables);
     }
 

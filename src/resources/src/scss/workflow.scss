@@ -313,8 +313,6 @@
         right: 5px;
         height: 75%;
         transform: translateY(-50%);
-        // margin-left: auto;
-        // height: auto;
         padding: 4px 10px;
         font-size: 12px;
         background-color: transparent;
@@ -330,7 +328,7 @@
     }
 }
 
-.workflow-single-review-heading .review-status {
+.review-status-badge {
     --status-color: 136, 136, 136;
 
     font-size: 10px;
@@ -360,6 +358,96 @@
     &.revoked {
         --status-color: 136, 136, 136;
     }
+}
+
+
+
+
+// ==========================================================================
+// Workflow Review Compare
+// ==========================================================================
+
+.workflow-compare-reviews {
+    display: flex;
+    gap: var(--xl);
+}
+
+.workflow-compare-review-content {
+    word-wrap: break-word;
+    background: #fff;
+    border-radius: var(--large-border-radius);
+    box-shadow: 0 0 0 1px #cdd8e4, 0 2px 12px rgba(205, 216, 228, 0.5);
+    box-sizing: border-box;
+    padding: 16px;
+    position: relative;
+    flex: 1;
+}
+
+.workflow-compare-review-heading {
+    position: relative;
+    border-bottom: 1px #cdd8e4 solid;
+    padding: 6px 16px;
+    margin: -16px -16px 16px -16px;
+    background: #f6fafd;
+    border-radius: var(--large-border-radius) var(--large-border-radius) 0 0;
+    display: flex;
+    align-items: center;
+
+    .review-count {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0.6;
+        margin-right: 10px;
+    }
+}
+
+.workflow-compare-review-content .field > .status-badge {
+    &.add {
+        background-color: #17a34a;
+    }
+
+    &.change {
+        background-color: #f59e0c;
+    }
+
+    &.remove {
+        background-color: #ed4343;
+    }
+
+    body.ltr & {
+        left: -16px !important;
+    }
+
+    body.rtl & {
+        right: -16px !important;
+    }
+}
+
+
+
+// ==========================================================================
+// Workflow Review Compare Modal
+// ==========================================================================
+
+.workflow-review-compare-modal .spinner.big {
+    width: 100%;
+    height: 100%;
+}
+
+.workflow-review-compare-modal .body {
+    position: relative;
+    height: 100%;
+    overflow: auto;
+    padding-bottom: 74px;
+}
+
+.workflow-review-compare-modal .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
 }
 
 

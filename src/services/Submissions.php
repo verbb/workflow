@@ -429,32 +429,8 @@ class Submissions extends Component
         $review->draftId = $entry->draftId;
         $review->userId = $currentUser->id;
         $review->setNotes((string)$request->getParam('workflowNotes'));
-        $review->data = $this->_getRevisionData($entry);
+        $review->data = Workflow::$plugin->getContent()->getRevisionData($entry);
 
         return $review;
-    }
-
-    private function _getRevisionData(Entry $revision): array
-    {
-        $revisionData = [
-            'typeId' => $revision->typeId,
-            'authorId' => $revision->authorId,
-            'title' => $revision->title,
-            'slug' => $revision->slug,
-            'postDate' => $revision->postDate ? $revision->postDate->getTimestamp() : null,
-            'expiryDate' => $revision->expiryDate ? $revision->expiryDate->getTimestamp() : null,
-            'enabled' => $revision->enabled,
-            'fields' => [],
-        ];
-
-        $content = $revision->getSerializedFieldValues();
-
-        foreach (Craft::$app->getFields()->getAllFields() as $field) {
-            if (isset($content[$field->handle]) && $content[$field->handle] !== null) {
-                $revisionData['fields'][$field->id] = $content[$field->handle];
-            }
-        }
-
-        return $revisionData;
     }
 }

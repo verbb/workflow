@@ -227,9 +227,10 @@ class Submission extends Element
 
     public function getLastReview(): ?Review
     {
+        // Sorted by latest first be default
         $reviews = $this->getReviews();
 
-        return end($reviews) ?: null;
+        return $reviews[0] ?? null;
     }
 
     public function getLastReviewDate(): ?DateTime

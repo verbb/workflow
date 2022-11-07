@@ -1,0 +1,12 @@
+{% set entry = review.getElementRevision() %}
+{% set fieldLayout = entry.getFieldLayout() %}
+
+{% if fieldLayout %}
+    {% set form = fieldLayout.createForm(entry, true) %}
+
+    <div class="workflow-compare-review-content" data-review-new>
+        {% include 'workflow/reviews/_includes/_review' %}
+    </div>
+{% endif %}
+
+{% include 'workflow/reviews/_includes/_script' %}

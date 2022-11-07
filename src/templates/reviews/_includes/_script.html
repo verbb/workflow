@@ -1,0 +1,35 @@
+{% js %}
+
+var diff = {{ diff | json_encode | raw }};
+var $review = $('[data-review-new]');
+
+$.each(diff, function(key, diffInfo) {
+    if (key === 'fields') {
+        $.each(diffInfo, function(fieldKey, fieldDiffInfo) {
+            var fieldHandle = fieldKey.split(':')[0];
+
+            addStatusIndicator('fields-' + fieldHandle, fieldDiffInfo);
+        });
+    } else {
+        addStatusIndicator(key, diffInfo);
+    }
+});
+
+function addStatusIndicator(selector, diffInfo) {
+    var $field = $review.find('#' + selector + '-field');
+    var text = '';
+
+    if (diffInfo.type === 'add') {
+        text = '{{ 'This content has been added.' | t('workflow') }}';
+    } else if (diffInfo.type === 'change') {
+        text = '{{ 'This content has been changed.' | t('workflow') }}';
+    } else if (diffInfo.type === 'remove') {
+        text = '{{ 'This content has been removed.' | t('workflow') }}';
+    }
+
+    if ($field.length) {
+        $field.prepend('<div id="' + selector + '-status" class="status-badge ' + diffInfo.type + '" title="' + text + '"><span class="visually-hidden">' + text + '</span></div>');
+    }
+}
+
+{% endjs %}

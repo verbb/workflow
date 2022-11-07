@@ -8,7 +8,9 @@ use verbb\workflow\helpers\StringHelper;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Model;
+use craft\elements\Entry;
 use craft\elements\User;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Html;
 use craft\helpers\Template;
 
@@ -123,6 +125,25 @@ class Review extends Model
         return $this->_user;
     }
 
+    public function getElementRevision(): ?ElementInterface
+    {
+        $element = $this->getElement();
+        $attributes = $this->data;
+        $fieldContent = ArrayHelper::remove($attributes, 'fields') ?? [];
+
+        $element->setAttributes($attributes, false);
+
+        if ($fieldLayout = $element->getFieldLayout()) {
+            foreach ($fieldLayout->getCustomFields() as $field) {
+                $fieldValue = $fieldContent[$field->handle . ':' . $field->id] ?? null;
+
+                $element->setFieldValue($field->handle, $fieldValue);
+            }
+        }
+
+        return $element;
+    }
+
     public function getUserUrl(): ?Markup
     {
         $currentUser = Craft::$app->getUser()->getIdentity();
@@ -146,6 +167,17 @@ class Review extends Model
     public function getRoleName(): ?string
     {
         return self::roles()[$this->role] ?? ucfirst($this->role);
+    }
+
+    public function hasChanges(): bool
+    {
+        $oldReview = Workflow::$plugin->getReviews()->getPreviousReviewById($this->id);
+
+        if ($oldReview) {
+            return (bool)Workflow::$plugin->getContent()->getDiff($oldReview->data, $this->data);
+        }
+
+        return false;
     }
 
 }

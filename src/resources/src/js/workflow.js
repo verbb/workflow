@@ -11,31 +11,58 @@ if (typeof Craft.Workflow === typeof undefined) {
 
 (function($) {
 
-// $('[data-workflow-btn]').on('click', function(e) {
-//     e.preventDefault();
+$('[data-workflow-view-changes]').on('click', function(e) {
+    e.preventDefault();
 
-//     // Prevent browser prompt when trying to submit the form - thinking its changed
-//     $(window).off('beforeunload');
+    new Craft.Workflow.ViewChangesModal($(this).data('review-id'));
+});
 
-//     var $form = $(this).parents('form');
-//     var $btn = $(e.currentTarget);
+Craft.Workflow.ViewChangesModal = Garnish.Modal.extend({
+    init: function(reviewId) {
+        this.reviewId = reviewId;
 
-//     if ($btn.attr('data-action')) {
-//         $('<input type="hidden" name="action"/>').val($btn.attr('data-action')).appendTo($form);
-//     }
+        var $container = $('<div class="modal workflow-review-compare-modal"></div>').appendTo(Garnish.$bod),
+            $body = $('<div class="body"><div class="spinner big"></div></div>').appendTo($container),
+            $footer = $('<div class="footer"/>').appendTo($container);
 
-//     if ($btn.attr('data-redirect')) {
-//         $('<input type="hidden" name="redirect"/>').val($btn.attr('data-redirect')).appendTo($form);
-//     }
+        this.base($container, this.settings);
+        
+        this.$buttons = $('<div class="buttons right"/>').appendTo($footer);
+        this.$cancelBtn = $('<div class="btn">' + Craft.t('workflow', 'Close') + '</div>').appendTo(this.$buttons);
+        this.$body = $body;
 
-//     if ($btn.attr('data-param')) {
-//         $('<input type="hidden"/>').attr({ name: $btn.attr('data-param'), value: $btn.attr('data-value') }).appendTo($form);
-//     }
+        this.addListener(this.$cancelBtn, 'activate', 'onFadeOut');
+    },
 
-//     $form.trigger({
-//         type: 'submit',
-//         customTrigger: true,
-//     });
-// });
+    onFadeIn: function() {
+        var data = {
+            reviewId: this.reviewId,
+        };
+
+        Craft.sendActionRequest('POST', 'workflow/reviews/get-compare-modal-body', { data })
+            .then((response) => {
+                this.$body.html(response.data.html);
+
+                Craft.appendHeadHtml(response.data.headHtml);
+                Craft.appendBodyHtml(response.data.footHtml);
+
+                Craft.initUiElements(this.$body);
+            });
+        this.base();
+    },
+
+    onFadeOut: function() {
+        this.hide();
+        this.destroy();
+        this.$shade.remove();
+        this.$container.remove();
+
+        this.removeListener(this.$cancelBtn, 'click');
+    },
+
+    show: function() {
+        this.base();
+    }
+});
 
 })(jQuery);

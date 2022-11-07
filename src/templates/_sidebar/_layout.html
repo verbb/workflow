@@ -17,7 +17,7 @@
         {% block newPane %}{% endblock %}
         
         <div id="history-pane-{{ loop.index }}" {% if submission.isComplete %}class="hidden"{% endif %}>
-            {% for review in submission.getReviews() | reverse %}
+            {% for review in submission.getReviews() %}
                 {# Allow is to include role-specific content for the latest review, if incomplete, and if pending #}
                 {% if loop.first and not submission.isComplete and submission.isPending %}
                     {% block reviewBlock %}{% endblock %}
@@ -41,6 +41,10 @@
 
                             {% if review.notes %}
                                 <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                            {% endif %}
+
+                            {% if review.hasChanges() %}
+                                <a data-workflow-view-changes data-review-id="{{ review.id }}">{{ 'View changes' | t('workflow') }}</a>
                             {% endif %}
                         </div>
                     </div>

@@ -51,6 +51,40 @@ class Reviews extends Component
         return $this->_reviews()->firstWhere('id', $id);
     }
 
+    public function getPreviousReviewById(int $id): ?Review
+    {
+        $currentReview = $this->getReviewById($id);
+
+        if ($currentReview) {
+            $reviews = $this->getReviewsBySubmissionId($currentReview->submissionId);
+
+            foreach ($reviews as $key => $review) {
+                if ($review->id === $id) {
+                    return $reviews[$key + 1] ?? null;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function getNextReviewById(int $id): ?Review
+    {
+        $currentReview = $this->getReviewById($id);
+
+        if ($currentReview) {
+            $reviews = $this->getReviewsBySubmissionId($currentReview->submissionId);
+
+            foreach ($reviews as $key => $review) {
+                if ($review->id === $id) {
+                    return $reviews[$key - 1] ?? null;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function saveReview(Review $review, bool $runValidation = true): bool
     {
         $isNewReview = !$review->id;
@@ -170,7 +204,8 @@ class Reviews extends Component
                 'dateUpdated',
                 'uid',
             ])
-            ->from(['{{%workflow_reviews}}']);
+            ->from(['{{%workflow_reviews}}'])
+            ->orderBy('dateCreated desc');
     }
 
     private function _getReviewRecordById(int $reviewId = null): ?ReviewRecord
