@@ -62,6 +62,7 @@ Old | What to do instead
 | `submission.status` | `review.status`
 | `submission.dateApproved` | `review.dateCreated`
 | `submission.dateRejected` | `review.dateCreated`
+| `submission.cpEditUrl` | `submission.owner.cpEditUrl`
 
 
 ## Submission Queries
