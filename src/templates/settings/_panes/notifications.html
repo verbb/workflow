@@ -84,3 +84,12 @@
         </p>
     </div>
 {% endif %}
+
+{{ forms.lightswitchField({
+    label: 'Published Author Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to the entry author when approved and published by a Publisher.' | t('workflow'),
+    id: 'publishedAuthorNotifications',
+    name: 'publishedAuthorNotifications',
+    on: settings.publishedAuthorNotifications,
+    warning: macros.configWarning('publishedAuthorNotifications', 'workflow'),
+}) }}

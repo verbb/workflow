@@ -22,6 +22,7 @@ return [
         'reviewerNotifications' => true,
         'reviewerApprovalNotifications' => false,
         'publisherNotifications' => true,
+        'publishedAuthorNotifications' => false,
         'selectedPublishers' => '*',
 
         // Permissions
@@ -46,6 +47,7 @@ Notifications
 - `reviewerNotifications` - Whether email notifications should be delivered to reviewers when editors submit an entry for review.
 - `reviewerApprovalNotifications` - Whether email notifications should be delivered to editors when each reviewer approves an entry after review.
 - `publisherNotifications` - Whether email notifications should be delivered to publishers when editors submit an entry for review.
+- `publishedAuthorNotifications` - Whether email notifications should be delivered to the entry author when approved and published by a Publisher.
 - `selectedPublishers` - An array of user IDs of publishers to receive email notifications. Use '\*' for all.
 
 Permissions

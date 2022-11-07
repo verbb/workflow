@@ -29,6 +29,13 @@ return [
         "View your submission by logging into your control panel.\n\n" .
         "{{ submission.cpEditUrl }}",
 
+    'workflow_published_author_notification_heading' => 'When a publisher approves and publishes an entry to notify the entry author:',
+    'workflow_published_author_notification_subject' => 'Your entry "{{ submission.ownerTitle }}" has been published on {{ submission.ownerSite }}.',
+    'workflow_published_author_notification_body' => "Hey {{ user.friendlyName }},\n\n" .
+        "Your entry {{ submission.ownerTitle }} has been published {{ review.dateCreated | date }} on {{ submission.ownerSite }}.\n\n" .
+        "View your entry by logging into your control panel.\n\n" .
+        "{{ submission.owner.cpEditUrl }}",
+
     'Workflow Submission' => 'Workflow Submission',
 	'Approved' => 'Approved',
 	'Pending' => 'Pending',

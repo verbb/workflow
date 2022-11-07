@@ -24,6 +24,7 @@ class Settings extends Model
     public bool $reviewerNotifications = true;
     public bool $reviewerApprovalNotifications = false;
     public bool $publisherNotifications = true;
+    public bool $publishedAuthorNotifications = false;
     public mixed $selectedPublishers = '*';
 
     // Permissions

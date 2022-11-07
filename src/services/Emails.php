@@ -277,6 +277,7 @@ class Emails extends Component
                 'mail' => $mail,
                 'user' => $editor,
                 'submission' => $submission,
+                'review' => $review,
             ]);
             $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, $event);
 
@@ -295,6 +296,63 @@ class Emails extends Component
         } catch (Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
                 'value' => $editor->email,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]));
+        }
+    }
+
+    public function sendPublishedAuthorNotificationEmail(Submission $submission, Review $review, ElementInterface $entry): void
+    {
+        Workflow::log('Preparing published author notification.');
+
+        $settings = Workflow::$plugin->getSettings();
+
+        // Fire a 'prepareEditorEmail' event
+        $event = new PrepareEmailEvent([
+            'submission' => $submission,
+            'review' => $review,
+        ]);
+        $this->trigger(self::EVENT_PREPARE_EDITOR_EMAIL, $event);
+
+        if (!$event->isValid) {
+            Workflow::log('Published Author notification was cancelled by event.');
+            return;
+        }
+
+        try {
+            $mail = Craft::$app->getMailer()->composeFromKey('workflow_author_published_notification', [
+                'submission' => $submission,
+                'review' => $review,
+            ]);
+
+            $mail->setTo($entry->getAuthor());
+
+            // Fire a 'beforeSendEditorEmail' event
+            $event = new EmailEvent([
+                'mail' => $mail,
+                'user' => $entry->getAuthor(),
+                'submission' => $submission,
+                'review' => $review,
+            ]);
+            $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, $event);
+
+            if (!$event->isValid) {
+                Workflow::log('Published Author notification was cancelled by event.');
+                return;
+            }
+
+            $event->mail->send();
+
+            if ($review === null) {
+                Workflow::log('Sent published author notification to ' . $event->user->email);
+            } else {
+                Workflow::log('Sent published author review notification to ' . $event->user->email);
+            }
+        } catch (Throwable $e) {
+            Workflow::error(Craft::t('workflow', 'Failed to send published author notification to {value} - “{message}” {file}:{line}', [
+                'value' => $entry->getAuthor()->email,
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),

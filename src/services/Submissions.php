@@ -307,6 +307,10 @@ class Submissions extends Component
             Workflow::$plugin->getEmails()->sendEditorNotificationEmail($submission, $review, $entry);
         }
 
+        if ($settings->publishedAuthorNotifications && $published) {
+            Workflow::$plugin->getEmails()->sendPublishedAuthorNotificationEmail($submission, $review, $entry);
+        }
+
         $session->setNotice(Craft::t('workflow', 'Entry approved and published.'));
 
         return true;
