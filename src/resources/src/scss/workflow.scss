@@ -238,6 +238,10 @@
     .workflow-single-review:last-child &::before {
         height: 50%;
     }
+
+    .reviews-count-1 &::before {
+        display: none;
+    }
 }
 
 .workflow-single-review-indicator-icon {
