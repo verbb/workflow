@@ -8,6 +8,8 @@ use craft\elements\db\ElementQuery;
 use craft\gql\base\ElementResolver;
 use craft\helpers\Db;
 
+use Illuminate\Support\Collection;
+
 class SubmissionResolver extends ElementResolver
 {
     // Static Methods
@@ -30,7 +32,7 @@ class SubmissionResolver extends ElementResolver
         }
 
         if (!GqlHelper::canQuerySubmissions()) {
-            return [];
+            return Collection::empty();
         }
 
         return $query;
