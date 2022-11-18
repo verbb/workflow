@@ -14,7 +14,9 @@ use craft\base\ElementInterface;
 use craft\elements\actions\Delete;
 use craft\elements\Entry;
 use craft\elements\User;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Cp;
+use craft\helpers\ElementHelper;
 use craft\helpers\Html;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
@@ -41,6 +43,11 @@ class Submission extends Element
     }
 
     public static function hasStatuses(): bool
+    {
+        return true;
+    }
+
+    public static function isLocalized(): bool
     {
         return true;
     }
@@ -179,6 +186,15 @@ class Submission extends Element
     public function getCpEditUrl(): ?string
     {
         return UrlHelper::cpUrl('workflow/submissions/edit/' . $this->id);
+    }
+
+    public function getSupportedSites(): array
+    {
+        if ($owner = $this->getOwner()) {
+            return $owner->getSupportedSites();
+        }
+
+        return Craft::$app->getSites()->getAllSites();
     }
 
     public function setOwner(Entry $owner): void

@@ -24,7 +24,7 @@ class SubmissionsController extends Controller
         $this->requireCpRequest();
 
         if ($submission === null) {
-            $submission = Submission::find()->id($submissionId)->one();
+            $submission = Submission::find()->id($submissionId)->siteId('*')->one();
 
             if (!$submission) {
                 throw new NotFoundHttpException('Submission not found');

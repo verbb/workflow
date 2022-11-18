@@ -279,6 +279,7 @@ class Service extends Component
         // Always refer to the canonical entry (the entry itself if non-draft, or the draft's parent)
         $submissions = Submission::find()
             ->ownerId($ownerId)
+            ->siteId($siteId)
             ->ownerSiteId($siteId)
             ->ownerDraftId($draftId)
             ->all();

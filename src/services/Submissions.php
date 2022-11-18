@@ -37,10 +37,10 @@ class Submissions extends Component
     // Public Methods
     // =========================================================================
 
-    public function getSubmissionById(int $id): ?Submission
+    public function getSubmissionById(int $id, ?int $siteId = null): ?Submission
     {
         /* @noinspection PhpIncompatibleReturnTypeInspection */
-        return Craft::$app->getElements()->getElementById($id, Submission::class);
+        return Craft::$app->getElements()->getElementById($id, Submission::class, $siteId);
     }
 
     /**
@@ -402,9 +402,18 @@ class Submissions extends Component
 
         $request = Craft::$app->getRequest();
         $submissionId = $request->getParam('submissionId');
+        $siteHandle = $request->getParam('site');
+
+        if ($siteHandle) {
+            $site = Craft::$app->getSites()->getSiteByHandle($siteHandle);
+        }
+
+        if (!$site) {
+            $site = Craft::$app->getSites()->getCurrentSite();
+        }
 
         if ($submissionId) {
-            $submission = $this->getSubmissionById($submissionId);
+            $submission = $this->getSubmissionById($submissionId, $site->id);
 
             if (!$submission) {
                 throw new Exception(Craft::t('workflow', 'No submission with the ID “{id}”', ['id' => $submissionId]));
