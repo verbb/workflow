@@ -48,7 +48,7 @@ class Emails extends Component
         if ($reviewerUserGroup === null) {
             Workflow::log('No reviewer user groups. Send publisher email.');
 
-            Workflow::$plugin->getEmails()->sendPublisherNotificationEmail($submission, $entry);
+            Workflow::$plugin->getEmails()->sendPublisherNotificationEmail($submission, $review, $entry);
 
             return;
         }
