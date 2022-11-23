@@ -100,29 +100,41 @@ class Review extends Model
 
     public function getSubmission(): ?Submission
     {
-        if (!isset($this->_submission)) {
-            $this->_submission = Workflow::$plugin->getSubmissions()->getSubmissionById($this->submissionId);
+        if ($this->_submission !== null) {
+            return $this->_submission;
         }
 
-        return $this->_submission;
+        if ($this->submissionId !== null) {
+            return $this->_submission = Workflow::$plugin->getSubmissions()->getSubmissionById($this->submissionId);
+        }
+
+        return null;
     }
 
     public function getElement(): ?ElementInterface
     {
-        if (!isset($this->_element)) {
-            $this->_element = Craft::$app->getElements()->getElementById($this->elementId);
+        if ($this->_element !== null) {
+            return $this->_element;
         }
 
-        return $this->_element;
+        if ($this->elementId !== null) {
+            return $this->_element = Craft::$app->getElements()->getElementById($this->elementId);
+        }
+
+        return null;
     }
 
     public function getUser(): ?User
     {
-        if (!isset($this->_user)) {
-            $this->_user = Craft::$app->getUsers()->getUserById($this->userId);
+        if ($this->_user !== null) {
+            return $this->_user;
         }
 
-        return $this->_user;
+        if ($this->userId !== null) {
+            return $this->_user = Craft::$app->getUsers()->getUserById($this->userId);
+        }
+
+        return null;
     }
 
     public function getElementRevision(): ?ElementInterface
