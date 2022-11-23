@@ -11,7 +11,7 @@ return [
         "{{ review.user }} has submitted the entry \"{{ submission.ownerTitle }}\" for approval on {{ submission.ownerSite }}.\n\n" .
         "{% if review.notes %}{{ review.roleName }} Notes: \"{{ review.notes }}\"\n\n{% endif %}" .
         "To review it please log into your control panel.\n\n" .
-        "{{ submission.owner.cpEditUrl }}",
+        "{{ submission.ownerCpUrl }}",
 
     'workflow_editor_review_notification_heading' => 'When a reviewer approves or rejects an editor submission:',
     'workflow_editor_review_notification_subject' => 'Your submission for "{{ submission.ownerTitle }}" has been {{ review.status }} on {{ submission.ownerSite }}.',
@@ -19,7 +19,7 @@ return [
         "Your submission for {{ submission.ownerTitle }} has been {{ review.status }} {{ review.dateCreated | date }} on {{ submission.ownerSite }}.\n\n" .
         "{% if review.notes %}{{ review.roleName }} Notes: \"{{ review.notes }}\"\n\n{% endif %}" .
         "View your submission by logging into your control panel.\n\n" .
-        "{{ submission.owner.cpEditUrl }}",
+        "{{ submission.ownerCpUrl }}",
 
     'workflow_editor_notification_heading' => 'When a publisher approves or rejects an editor submission:',
     'workflow_editor_notification_subject' => 'Your submission for "{{ submission.ownerTitle }}" has been {{ review.status }} on {{ submission.ownerSite }}.',
@@ -27,14 +27,14 @@ return [
         "Your submission for {{ submission.ownerTitle }} has been {{ review.status }} {{ review.dateCreated | date }} on {{ submission.ownerSite }}.\n\n" .
         "{% if review.notes %}{{ review.roleName }} Notes: \"{{ review.notes }}\"\n\n{% endif %}" .
         "View your submission by logging into your control panel.\n\n" .
-        "{{ submission.owner.cpEditUrl }}",
+        "{{ submission.ownerCpUrl }}",
 
     'workflow_published_author_notification_heading' => 'When a publisher approves and publishes an entry to notify the entry author:',
     'workflow_published_author_notification_subject' => 'Your entry "{{ submission.ownerTitle }}" has been published on {{ submission.ownerSite }}.',
     'workflow_published_author_notification_body' => "Hey {{ user.friendlyName }},\n\n" .
         "Your entry {{ submission.ownerTitle }} has been published {{ review.dateCreated | date }} on {{ submission.ownerSite }}.\n\n" .
         "View your entry by logging into your control panel.\n\n" .
-        "{{ submission.owner.cpEditUrl }}",
+        "{{ submission.ownerCpUrl }}",
 
     'Close' => 'Close',
     'Approved' => 'Approved',

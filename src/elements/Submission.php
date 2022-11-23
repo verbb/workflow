@@ -243,6 +243,19 @@ class Submission extends Element
         return null;
     }
 
+    public function getOwnerCpUrl(bool $includeDraft = true): ?string
+    {
+        if ($includeDraft && $draft = $this->getDraft()) {
+            return $draft->cpEditUrl;
+        }
+
+        if ($entry = $this->getOwner()) {
+            return $entry->cpEditUrl;
+        }
+
+        return null;
+    }
+
     public function getReviews(): array
     {
         if (!isset($this->_reviews)) {
