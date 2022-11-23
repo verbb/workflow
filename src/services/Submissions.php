@@ -403,6 +403,7 @@ class Submissions extends Component
         $request = Craft::$app->getRequest();
         $submissionId = $request->getParam('submissionId');
         $siteHandle = $request->getParam('site');
+        $site = null;
 
         if ($siteHandle) {
             $site = Craft::$app->getSites()->getSiteByHandle($siteHandle);
