@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.1 - 2022-11-23
+
+### Fixed
+- Fix submissions not being correctly multi-site aware in some instances.
+- Fix an error when sending reviewer notifications.
+- Fix PHP errors that could occur when executing GraphQL queries..
+
 ## 2.0.0 - 2022-11-07
 
 ### Added
