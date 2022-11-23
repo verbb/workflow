@@ -449,7 +449,8 @@ class Submission extends Element
 
                 return '';
             case 'ownerId':
-                if ($element = $this->getOwner()) {
+                // Get the draft for the last review
+                if ($element = $this->getDraft()) {
                     return Cp::elementHtml($element);
                 }
 
