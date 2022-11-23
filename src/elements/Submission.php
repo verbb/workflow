@@ -141,6 +141,7 @@ class Submission extends Element
 
     private ?array $_reviews = null;
     private ?ElementInterface $_owner = null;
+    private ?ElementInterface $_draft = null;
 
 
     // Public Methods
@@ -225,6 +226,21 @@ class Submission extends Element
     public function getOwnerSite(): Site
     {
         return $this->getOwner()->getSite() ?? Craft::$app->getSites()->getPrimarySite();
+    }
+
+    public function getDraft(): ?Entry
+    {
+        if ($this->_draft !== null) {
+            return $this->_draft;
+        }
+
+        if ($lastReview = $this->getLastReview()) {
+            if ($element = $lastReview->getElement()) {
+                return $this->_draft = $element;
+            }
+        }
+
+        return null;
     }
 
     public function getReviews(): array
