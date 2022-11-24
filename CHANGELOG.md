@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.2 - 2022-11-24
+
+### Added
+- Add `Submission::getOwnerCpUrl()` to easily refer to the owner entry or draft’s `cpEditUrl` in emails.
+- Add some error-handling checks to `Review::getSubmission()`,  `Review::getElement()`,  `Review::getUser()`.
+- Add `Submission::getDraft()`.
+
+### Changed
+- References to the owner entry for a submission now refer to the draft (if it still exists).
+
+### Fixed
+- Fix an issue where status couldn’t be updated when editing a submission in the control panel.
+
 ## 2.0.1 - 2022-11-23
 
 ### Fixed
