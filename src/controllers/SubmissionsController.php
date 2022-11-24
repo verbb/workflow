@@ -3,6 +3,7 @@ namespace verbb\workflow\controllers;
 
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
+use verbb\workflow\models\Review;
 
 use Craft;
 use craft\db\Table;
@@ -48,9 +49,34 @@ class SubmissionsController extends Controller
 
         $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
+        $currentUser = Craft::$app->getUser()->getIdentity();
 
         $submissionId = $request->getParam('submissionId');
         $submission = Craft::$app->getElements()->getElementById($submissionId);
+        $status = $request->getParam('status');
+
+        if (!$submission) {
+            $session->setError(Craft::t('workflow', 'Unable to find submission.'));
+
+            return null;
+        }
+
+        // Skip if there's nothing to change
+        if ($submission->status !== $status) {
+            // If trying to approve their own submission, fail
+            if ($status === Review::STATUS_APPROVED && $submission->editorId === $currentUser->id) {
+                $session->setError(Craft::t('workflow', 'You cannot approve your own submission.'));
+
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'submission' => $submission,
+                    'errors' => $submission->getErrors(),
+                ]);
+
+                return null;
+            } else {
+                Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission);
+            }
+        }
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
             $session->setError(Craft::t('workflow', 'Unable to save submission.'));
@@ -63,7 +89,7 @@ class SubmissionsController extends Controller
             return null;
         }
 
-        $session->setNotice(Craft::t('workflow', 'Comment saved successfully.'));
+        $session->setNotice(Craft::t('workflow', 'Submission saved successfully.'));
 
         return $this->redirectToPostedUrl($submission);
     }

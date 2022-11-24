@@ -220,7 +220,7 @@ new Garnish.MenuBtn($statusSelect, {
     onOptionSelect: function(data) {
         var value = $(data).data('value');
         var label = $(data).data('label');
-        $('#statusId').val(value);
+        $('[name="status"]').val(value);
 
         var html = '<span class="status ' + value + '"></span>' + label;
         $statusSelect.html(html);

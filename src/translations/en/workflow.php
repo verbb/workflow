@@ -139,7 +139,7 @@ return [
     'This content has been changed.' => 'This content has been changed.',
     'This content has been removed.' => 'This content has been removed.',
     'Unable to save submission.' => 'Unable to save submission.',
-    'Comment saved successfully.' => 'Comment saved successfully.',
+    'Submission saved successfully.' => 'Submission saved successfully.',
     'Unable to delete submission.' => 'Unable to delete submission.',
     'Submission deleted.' => 'Submission deleted.',
     'Unable to delete review.' => 'Unable to delete review.',
