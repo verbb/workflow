@@ -4,13 +4,7 @@
     {% if submissions %}
         {% for submission in submissions %}
             <div class="workflow-block">
-                {% set owner = submission.getOwner() %}
-
-                {% if owner %}
-                    {% include '_elements/element' with { element: owner } %}
-                {% else %}
-                    {{ '[Deleted element]' | t('workflow') }}
-                {% endif %}
+                {% include '_elements/element' with { element: submission } %}
 
                 <small>{{ submission.dateCreated | timestamp('short') }}</small>
             </div>

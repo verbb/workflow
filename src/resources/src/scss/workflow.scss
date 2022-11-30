@@ -140,6 +140,8 @@
     small {
         color: #9399a0;
         font-size: 85%;
+        display: block;
+        margin: -5px 0 0 16px;
     }
 
     .draft-label {
@@ -155,6 +157,7 @@
     body.ltr & .element.small.hasstatus .status,
     body.ltr & .element.large:not(.hasthumb).hasstatus .icon:not(.delete),
     body.ltr & .element.small.hasstatus .icon:not(.delete) {
+        top: 12px;
         left: 0;
     }
 
@@ -167,6 +170,7 @@
     body.rtl & .element.small.hasstatus .status,
     body.rtl & .element.large:not(.hasthumb).hasstatus .icon:not(.delete),
     body.rtl & .element.small.hasstatus .icon:not(.delete) {
+        top: 12px;
         right: 0;
     }
 }
