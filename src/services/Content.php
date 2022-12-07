@@ -36,7 +36,7 @@ class Content extends Component
             $nextReview = $reviews[$key + 1] ?? [];
 
             if ($nextReview) {
-                $diff = $differ->doDiff($nextReview->data, $review->data);
+                $diff = $differ->doDiff(($nextReview->data ?? []), $review->data);
 
                 $content[] = $this->_convertDiffToCount($diff);
             }
