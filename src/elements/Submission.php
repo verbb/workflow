@@ -467,6 +467,10 @@ class Submission extends Element
                     return Cp::elementHtml($element);
                 }
 
+                if ($element = $this->getOwner()) {
+                    return Cp::elementHtml($element);
+                }
+
                 return '-';
             case 'status':
                 $status = $this->getStatus();
