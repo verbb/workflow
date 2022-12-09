@@ -143,13 +143,15 @@ class Review extends Model
         $attributes = $this->data;
         $fieldContent = ArrayHelper::remove($attributes, 'fields') ?? [];
 
-        $element->setAttributes($attributes, false);
+        if ($element) {
+            $element->setAttributes($attributes, false);
 
-        if ($fieldLayout = $element->getFieldLayout()) {
-            foreach ($fieldLayout->getCustomFields() as $field) {
-                $fieldValue = $fieldContent[$field->handle . ':' . $field->id] ?? null;
+            if ($fieldLayout = $element->getFieldLayout()) {
+                foreach ($fieldLayout->getCustomFields() as $field) {
+                    $fieldValue = $fieldContent[$field->handle . ':' . $field->id] ?? null;
 
-                $element->setFieldValue($field->handle, $fieldValue);
+                    $element->setFieldValue($field->handle, $fieldValue);
+                }
             }
         }
 
