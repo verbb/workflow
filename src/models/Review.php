@@ -143,6 +143,13 @@ class Review extends Model
         $attributes = $this->data;
         $fieldContent = ArrayHelper::remove($attributes, 'fields') ?? [];
 
+        // The element/draft on the review might've been deleted (applied)
+        if (!$element) {
+            if ($submission = $this->getSubmission()) {
+                $element = $submission->getOwner();
+            }
+        }
+
         if ($element) {
             $element->setAttributes($attributes, false);
 
