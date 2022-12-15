@@ -38,6 +38,7 @@ Create another User Group called "Publisher" with the following settings:
     - ☐ Perform Craft CMS and plugin updates
     - ☑ Access Workflow
 
+**Section - Pages**
 - ☑ View entries
     - ☑ Create entries
     - ☑ Save entries
@@ -48,6 +49,10 @@ Create another User Group called "Publisher" with the following settings:
     - ☑ View other users’ drafts
         - ☑ Save other users’ drafts
         - ☐ Delete other users’ drafts
+
+**Workflow**
+- ☑ Overview
+- ☐ Settings
 
 You can name either of these groups whatever you like, but we'll refer to them as Editor/Publisher throughout the guide.
 
