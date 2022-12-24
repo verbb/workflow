@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.3 - 2022-12-25
+
+### Added
+- Add fallback for `getDraft()` to `getOwner()`.
+
+### Fixed
+- Fix an error when comparing a review on a completed and approved submission.
+- Fix an error when comparing reviews for a deleted element.
+- Fix an error when comparing content changes for some drafts.
+- Fix dashboard widget not linking to submission element detail pages.
+
 ## 2.0.2 - 2022-11-24
 
 ### Added
