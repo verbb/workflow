@@ -14,7 +14,7 @@ Workflow submissions can also be triggered for entries created through the front
     <input type="hidden" name="workflow-action" value="save-submission">
 
     {# Optionally, include some notes #}
-    <input type="hidden" name="editorNotes" value="This is an amazing post">
+    <input type="hidden" name="workflowNotes" value="This is an amazing post">
 
     {# Enter your entry fields as normal... #}
     <input type="text" name="title" value="Some Title">
