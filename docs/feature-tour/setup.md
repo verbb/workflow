@@ -14,6 +14,10 @@ Start by making a User Group called "Editor" with the following settings for the
     - ☐ Perform Craft CMS and plugin updates
     - ☐ Access Workflow
 
+:::tip
+This permission isn't required for [front-end submissions](docs:template-guides/front-end-submission).
+:::
+
 **Section - Pages**
 - ☑ View entries
     - ☑ Create entries
