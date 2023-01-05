@@ -183,7 +183,6 @@ class Workflow extends Plugin
                 'heading' => Craft::t('workflow', 'Workflow'),
                 'permissions' => [
                     'workflow-overview' => ['label' => Craft::t('workflow', 'Overview')],
-                    'workflow-settings' => ['label' => Craft::t('workflow', 'Settings')],
                 ],
             ];
         });

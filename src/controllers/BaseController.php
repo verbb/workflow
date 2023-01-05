@@ -58,12 +58,6 @@ class BaseController extends Controller
 
     public function actionSavePluginSettings(): ?Response
     {
-        $currentUser = Craft::$app->getUser()->getIdentity();
-
-        if (!$currentUser->can('workflow-settings')) {
-            throw new ForbiddenHttpException('User is not permitted to perform this action.');
-        }
-
         $this->requirePostRequest();
 
         $pluginHandle = Craft::$app->getRequest()->getRequiredBodyParam('pluginHandle');
