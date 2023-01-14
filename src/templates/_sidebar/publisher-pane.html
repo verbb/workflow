@@ -38,15 +38,9 @@
 
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
-            {# Submissions made from the front-end won't be drafts, which is the only instance this occurs #}
-            {# All other times, we're always dealing with drafts. Maybe look at refactoring front-end submissions #}
-            {# to keep the process consistent across the board #}
-            {% set publishAction = entry.getIsDraft() ? 'elements/apply-draft' : 'elements/save' %}
-            {% set approveAction = entry.getIsDraft() ? 'elements/save-draft' : 'elements/save' %}
-
             <div class="workflow-submission-footer">
                 <div id="save-btn-container" class="btngroup submit">
-                    <a class="btn formsubmit submit" data-action="{{ publishAction }}" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ 'Approve and publish' | t('workflow') }}</a>
+                    <a class="btn formsubmit submit" data-action="elements/apply-draft" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ 'Approve and publish' | t('workflow') }}</a>
 
                     <div class="btn submit menubtn"></div>
 
@@ -61,7 +55,7 @@
                                     data: {
                                         param: 'workflow-action',
                                         value: 'approve-only-submission',
-                                        action: entry.getIsUnpublishedDraft() ? approveAction : null,
+                                        action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
                                         redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
                                     },
                                 }) }}
@@ -78,7 +72,7 @@
                     data: {
                         param: 'workflow-action',
                         value: 'reject-submission',
-                        action: entry.getIsUnpublishedDraft() ? approveAction : null,
+                        action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
                         redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
                     },
                 }) }}

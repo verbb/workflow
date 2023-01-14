@@ -36,11 +36,6 @@
 
                 <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
-                {# Submissions made from the front-end won't be drafts, which is the only instance this occurs #}
-                {# All other times, we're always dealing with drafts. Maybe look at refactoring front-end submissions #}
-                {# to keep the process consistent across the board #}
-                {% set approveAction = entry.getIsDraft() ? 'elements/save-draft' : 'elements/save' %}
-
                 <div class="workflow-submission-footer">
                     <div id="save-btn-container" class="submit">
                         {# For an un-applied draft, there seems to be some JS in Craft that prevents the page from reloading #}
@@ -51,7 +46,7 @@
                             data: {
                                 param: 'workflow-action',
                                 value: 'approve-review',
-                                action: entry.getIsUnpublishedDraft() ? approveAction : null,
+                                action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
                                 redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
                             },
                         }) }}
@@ -65,7 +60,7 @@
                         data: {
                             param: 'workflow-action',
                             value: 'reject-review',
-                            action: entry.getIsUnpublishedDraft() ? approveAction : null,
+                            action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
                             redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
                         },
                     }) }}

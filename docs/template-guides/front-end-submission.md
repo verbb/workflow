@@ -1,9 +1,9 @@
 # Front-end Submission
-Workflow submissions can also be triggered for entries created through the front-end. You'll need to adjust your templates to include a special tag that tells Workflow to check the incoming entry and send it as a submission to be approved.
+Workflow submissions can also be triggered for entries created through the front-end. You'll need to adjust your templates to include a special tag that tells Workflow to check the incoming entry and send it as a submission to be approved. You'll also need to direct it to the `workflow/elements/save-entry` action.
 
 ```twig
 <form method="post" accept-charset="UTF-8">
-    <input type="hidden" name="action" value="entries/save-entry">
+    <input type="hidden" name="action" value="workflow/elements/save-entry">
     <input type="hidden" name="sectionId" value="1">
     <input type="hidden" name="typeId" value="2">
     <input type="hidden" name="enabled" value="0">
@@ -52,7 +52,7 @@ For example, we can set up forms to revoke a submission, by first fetching any p
     {% set entry = submission.getOwner() %}
 
     <form method="post" accept-charset="UTF-8">
-        <input type="hidden" name="action" value="entries/save-entry">
+        <input type="hidden" name="action" value="workflow/elements/save-entry">
         <input type="hidden" name="entryId" value="{{ entry.id }}">
         <input type="hidden" name="submissionId" value="{{ submission.id }}">
         {{ redirectInput('viewentry/{slug}') }}
