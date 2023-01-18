@@ -80,6 +80,12 @@ class Service extends Component
         }
 
         if ($action === 'save-submission') {
+            // If this is a front-end request, and if this is a draft, don't trigger live mode yet.
+            // This is because we need to create the draft first, then save that
+            if (Craft::$app->getRequest()->getIsSiteRequest() && $event->sender->getIsDraft() && !$event->sender->id) {
+                return;
+            }
+
             // Content validation won't trigger unless its set to 'live' - but that won't happen because an editor
             // can't publish. We quickly switch it on to make sure the entry validates correctly.
             $event->sender->setScenario(Element::SCENARIO_LIVE);
@@ -136,6 +142,12 @@ class Service extends Component
 
         // Check if we're submitting a new submission
         if ($action == 'save-submission') {
+            // If this is a front-end request, and if this is a draft, don't trigger live mode yet.
+            // This is because we need to create the draft first, then save that
+            if (Craft::$app->getRequest()->getIsSiteRequest() && Element::SCENARIO_ESSENTIALS) {
+                return;
+            }
+
             Workflow::$plugin->getSubmissions()->saveSubmission($event->element);
         }
 

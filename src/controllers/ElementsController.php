@@ -19,6 +19,7 @@ class ElementsController extends Controller
     public function actionSaveEntry(): Response
     {
         // Create a draft entry for the section
+        $siteId = $this->request->getParam('siteId', Craft::$app->getSites()->getPrimarySite()->id);
         $sectionId = $this->request->getRequiredParam('sectionId');
         $section = Craft::$app->getSections()->getSectionById($sectionId);
 
@@ -26,11 +27,11 @@ class ElementsController extends Controller
             throw new BadRequestHttpException('Section invalid.');
         }
 
-        Craft::$app->runAction('entries/create', ['section' => $section->handle]);
+        $response = Craft::$app->runAction('entries/create', ['section' => $section->handle, 'siteId' => $siteId]);
 
-        // Get the new entry draft from the route params and populate it
-        $params = Craft::$app->getUrlManager()->getRouteParams();
-        $entry = $params['entry'] ?? null;
+        // We have to get the saved draft from the redirect url - gross
+        $redirectUrl = $response->getHeaders()['location'] ?? null;
+        $entry = $this->_getEntryFromRedirect($redirectUrl, $siteId);
 
         if (!$entry) {
             throw new BadRequestHttpException('Unable to create draft entry.');
@@ -99,5 +100,31 @@ class ElementsController extends Controller
 
         // Revision notes
         $entry->setRevisionNotes($this->request->getBodyParam('notes'));
+    }
+
+    private function _getEntryFromRedirect($redirectUrl, $siteId)
+    {
+        if ($redirectUrl) {
+            $urlParams = parse_url($redirectUrl);
+            $pathParts = explode('/', $urlParams['path']);
+            $elementId = end($pathParts);
+            $queryParams = [];
+
+            foreach (explode('&', $urlParams['query']) as $urlParam) {
+                $urlParamParts = explode('=', $urlParam);
+                $queryParams[$urlParamParts[0]] = $urlParamParts[1];
+            }
+
+            $draftId = $queryParams['draftId'] ?? null;
+
+            return Entry::find()
+                ->id($elementId)
+                ->siteId($siteId)
+                ->draftId($draftId)
+                ->status(null)
+                ->one();
+        }
+
+        return null;
     }
 }
