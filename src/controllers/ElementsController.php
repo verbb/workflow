@@ -30,8 +30,7 @@ class ElementsController extends Controller
         $response = Craft::$app->runAction('entries/create', ['section' => $section->handle, 'siteId' => $siteId]);
 
         // We have to get the saved draft from the redirect url - gross
-        $redirectUrl = $response->getHeaders()['location'] ?? null;
-        $entry = $this->_getEntryFromRedirect($redirectUrl, $siteId);
+        $entry = $this->_getEntryFromResponse($response, $siteId);
 
         if (!$entry) {
             throw new BadRequestHttpException('Unable to create draft entry.');
@@ -102,8 +101,23 @@ class ElementsController extends Controller
         $entry->setRevisionNotes($this->request->getBodyParam('notes'));
     }
 
-    private function _getEntryFromRedirect($redirectUrl, $siteId)
+    private function _getEntryFromResponse($response, $siteId)
     {
+        if ($this->request->getAcceptsJson()) {
+            $elementId = $response->data['entry']['id'] ?? null;
+            $draftId = $response->data['entry']['draftId'] ?? null;
+            $siteId = $response->data['entry']['siteId'] ?? null;
+
+            return Entry::find()
+                ->id($elementId)
+                ->siteId($siteId)
+                ->draftId($draftId)
+                ->status(null)
+                ->one();
+        }
+
+        $redirectUrl = $response->getHeaders()['location'] ?? null;
+
         if ($redirectUrl) {
             $urlParams = parse_url($redirectUrl);
             $pathParts = explode('/', $urlParams['path']);
