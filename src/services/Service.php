@@ -144,7 +144,10 @@ class Service extends Component
         if ($action == 'save-submission') {
             // If this is a front-end request, and if this is a draft, don't trigger live mode yet.
             // This is because we need to create the draft first, then save that
-            if (Craft::$app->getRequest()->getIsSiteRequest() && Element::SCENARIO_ESSENTIALS) {
+            if (Craft::$app->getRequest()->getIsSiteRequest() && $event->element->scenario === Element::SCENARIO_ESSENTIALS) {
+                // This is when the draft entry is saved, we want to process this again next time
+                $this->afterSaveRun = false;
+
                 return;
             }
 
