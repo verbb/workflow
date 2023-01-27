@@ -36,9 +36,6 @@ use craft\web\twig\variables\CraftVariable;
 
 use yii\base\Event;
 
-/**
- * @method Settings getSettings()
- */
 class Workflow extends Plugin
 {
     // Properties
@@ -96,7 +93,7 @@ class Workflow extends Plugin
     // Protected Methods
     // =========================================================================
 
-    protected function createSettingsModel(): ?Model
+    protected function createSettingsModel(): Settings
     {
         return new Settings();
     }
