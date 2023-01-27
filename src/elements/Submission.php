@@ -19,6 +19,7 @@ use craft\helpers\Cp;
 use craft\helpers\ElementHelper;
 use craft\helpers\Html;
 use craft\helpers\Json;
+use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\i18n\Locale;
 use craft\models\Site;
@@ -443,6 +444,8 @@ class Submission extends Element
             case 'editor':
                 $user = $this->getEditor();
                 return $user ? Cp::elementHtml($user) : '-';
+            case 'notes':
+                return Template::raw($this->getNotes());
             case 'reviewer':
                 $user = $this->getReviewer();
                 return $user ? Cp::elementHtml($user) : '-';
