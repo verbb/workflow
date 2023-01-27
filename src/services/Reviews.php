@@ -3,6 +3,7 @@ namespace verbb\workflow\services;
 
 use verbb\workflow\elements\Submission;
 use verbb\workflow\events\ReviewEvent;
+use verbb\workflow\helpers\StringHelper;
 use verbb\workflow\models\Review;
 use verbb\workflow\records\Review as ReviewRecord;
 
@@ -110,7 +111,7 @@ class Reviews extends Component
         $reviewRecord->userId = $review->userId;
         $reviewRecord->role = $review->role;
         $reviewRecord->status = $review->status;
-        $reviewRecord->notes = $review->getNotes(false);
+        $reviewRecord->notes = StringHelper::sanitizeNotes($review->getNotes(false));
         $reviewRecord->data = $review->data;
 
         $reviewRecord->save(false);

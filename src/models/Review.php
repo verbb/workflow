@@ -90,7 +90,7 @@ class Review extends Model
 
     public function setNotes($value): void
     {
-        $this->_notes = StringHelper::sanitizeNotes($value);
+        $this->_notes = $value;
     }
 
     public function getNotes(bool $sanitize = true): ?string

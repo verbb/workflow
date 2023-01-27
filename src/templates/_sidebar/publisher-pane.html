@@ -16,7 +16,7 @@
                     <p>{{ review.userUrl }} {{ 'submitted this entry for review on {date}. Please review this entry before approving' | t('workflow', { date: review.dateCreated | datetime('medium') }) }}</p>
 
                     {% if review.notes %}
-                        <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                        <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) | raw }}</p>
                     {% endif %}
                 </div>
             </div>

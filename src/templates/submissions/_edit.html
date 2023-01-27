@@ -121,7 +121,7 @@
                         <p>{{ review.userUrl }} {{ '{status} this submission on {date}.' | t('workflow', { status: statusText, date: review.dateCreated | datetime('medium') }) }}</p>
 
                         {% if review.notes %}
-                            <p>{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                            <p>{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) | raw }}</p>
                         {% endif %}
                     </div>
                 </div>

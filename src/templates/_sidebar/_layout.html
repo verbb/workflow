@@ -40,7 +40,7 @@
                             <p>{{ review.userUrl }} {{ '{status} this submission on {date}.' | t('workflow', { status: statusText, date: review.dateCreated | datetime('medium') }) }}</p>
 
                             {% if review.notes %}
-                                <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) }}</p>
+                                <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) | raw }}</p>
                             {% endif %}
 
                             {% if review.hasChanges() %}
