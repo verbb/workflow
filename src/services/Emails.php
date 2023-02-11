@@ -318,7 +318,7 @@ class Emails extends Component
         }
 
         try {
-            $mail = Craft::$app->getMailer()->composeFromKey('workflow_author_published_notification', [
+            $mail = Craft::$app->getMailer()->composeFromKey('workflow_published_author_notification', [
                 'submission' => $submission,
                 'review' => $review,
             ]);

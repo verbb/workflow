@@ -116,24 +116,33 @@ class Workflow extends Plugin
     private function _registerEmailMessages(): void
     {
         Event::on(SystemMessages::class, SystemMessages::EVENT_REGISTER_MESSAGES, function(RegisterEmailMessagesEvent $event): void {
-            $event->messages = array_merge($event->messages, [
-                [
-                    'key' => 'workflow_publisher_notification',
-                    'heading' => Craft::t('workflow', 'workflow_publisher_notification_heading'),
-                    'subject' => Craft::t('workflow', 'workflow_publisher_notification_subject'),
-                    'body' => Craft::t('workflow', 'workflow_publisher_notification_body'),
-                ], [
-                    'key' => 'workflow_editor_review_notification',
-                    'heading' => Craft::t('workflow', 'workflow_editor_review_notification_heading'),
-                    'subject' => Craft::t('workflow', 'workflow_editor_review_notification_subject'),
-                    'body' => Craft::t('workflow', 'workflow_editor_review_notification_body'),
-                ], [
-                    'key' => 'workflow_editor_notification',
-                    'heading' => Craft::t('workflow', 'workflow_editor_notification_heading'),
-                    'subject' => Craft::t('workflow', 'workflow_editor_notification_subject'),
-                    'body' => Craft::t('workflow', 'workflow_editor_notification_body'),
-                ],
-            ]);
+            $event->messages[] = [
+                'key' => 'workflow_publisher_notification',
+                'heading' => Craft::t('workflow', 'workflow_publisher_notification_heading'),
+                'subject' => Craft::t('workflow', 'workflow_publisher_notification_subject'),
+                'body' => Craft::t('workflow', 'workflow_publisher_notification_body'),
+            ];
+
+            $event->messages[] = [
+                'key' => 'workflow_editor_review_notification',
+                'heading' => Craft::t('workflow', 'workflow_editor_review_notification_heading'),
+                'subject' => Craft::t('workflow', 'workflow_editor_review_notification_subject'),
+                'body' => Craft::t('workflow', 'workflow_editor_review_notification_body'),
+            ];
+
+            $event->messages[] = [
+                'key' => 'workflow_editor_notification',
+                'heading' => Craft::t('workflow', 'workflow_editor_notification_heading'),
+                'subject' => Craft::t('workflow', 'workflow_editor_notification_subject'),
+                'body' => Craft::t('workflow', 'workflow_editor_notification_body'),
+            ];
+
+            $event->messages[] = [
+                'key' => 'workflow_published_author_notification',
+                'heading' => Craft::t('workflow', 'workflow_published_author_notification_heading'),
+                'subject' => Craft::t('workflow', 'workflow_published_author_notification_subject'),
+                'body' => Craft::t('workflow', 'workflow_published_author_notification_body'),
+            ];
         });
     }
 
