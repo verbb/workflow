@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.0.4 - 2023-02-11
+
+### Changed
+- Update front-end controller to use `workflow/elements/save-entry`.
+- Only admins are now allowed to access Workflow settings.
+
+### Fixed
+- Fix an error with sending published author notification emails.
+- Fix special characters in submission notes not working correctly.
+- Fix front-end submissions not working for Ajax.
+- Fix site-based submission email notification.
+- Fix an error when trying to approve/publish submissions made from the front-end.
+
+### Removed
+- Removed `Settings` Workflow user permission.
+
 ## 2.0.3 - 2022-12-25
 
 ### Added
