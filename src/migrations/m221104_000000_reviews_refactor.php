@@ -4,6 +4,8 @@ namespace verbb\workflow\migrations;
 use craft\db\Migration;
 use craft\db\Query;
 
+use Throwable;
+
 class m221104_000000_reviews_refactor extends Migration
 {
     /**
@@ -66,40 +68,44 @@ class m221104_000000_reviews_refactor extends Migration
             ->all();
 
         foreach ($submissions as $submission) {
-            $review = [
-                'submissionId' => $submission['id'],
-                'elementId' => $submission['ownerId'],
-                'draftId' => $submission['ownerDraftId'],
-                'status' => $submission['status'],
-                'data' => $submission['data'],
-                'dateUpdated' => $submission['dateUpdated'],
-            ];
+            try {
+                $review = [
+                    'submissionId' => $submission['id'],
+                    'elementId' => $submission['ownerId'],
+                    'draftId' => $submission['ownerDraftId'],
+                    'status' => $submission['status'],
+                    'data' => $submission['data'],
+                    'dateUpdated' => $submission['dateUpdated'],
+                ];
 
-            if ($submission['editorId']) {
-                $review['role'] = 'editor';
-                $review['userId'] = $submission['editorId'];
-                $review['notes'] = $submission['editorNotes'];
+                if ($submission['editorId']) {
+                    $review['role'] = 'editor';
+                    $review['userId'] = $submission['editorId'];
+                    $review['notes'] = $submission['editorNotes'];
+                }
+
+                if ($submission['publisherId']) {
+                    $review['role'] = 'publisher';
+                    $review['userId'] = $submission['publisherId'];
+                    $review['notes'] = $submission['publisherNotes'];
+                }
+
+                if ($submission['dateApproved']) {
+                    $review['dateCreated'] = $submission['dateApproved'];
+                }
+
+                if ($submission['dateRejected']) {
+                    $review['dateCreated'] = $submission['dateRejected'];
+                }
+
+                if ($submission['dateRevoked']) {
+                    $review['dateCreated'] = $submission['dateRevoked'];
+                }
+
+                $this->insert('{{%workflow_reviews}}', $review);
+            } catch (Throwable $e) {
+                // Just in case things like old drafts sticking around cause an issue
             }
-
-            if ($submission['publisherId']) {
-                $review['role'] = 'publisher';
-                $review['userId'] = $submission['publisherId'];
-                $review['notes'] = $submission['publisherNotes'];
-            }
-
-            if ($submission['dateApproved']) {
-                $review['dateCreated'] = $submission['dateApproved'];
-            }
-
-            if ($submission['dateRejected']) {
-                $review['dateCreated'] = $submission['dateRejected'];
-            }
-
-            if ($submission['dateRevoked']) {
-                $review['dateCreated'] = $submission['dateRevoked'];
-            }
-
-            $this->insert('{{%workflow_reviews}}', $review);
         }
 
         // Add the new column to track completion status
