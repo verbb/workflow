@@ -13,8 +13,8 @@ class StringHelper extends CraftStringHelper
     public static function sanitizeNotes($value): ?string
     {
         // Support Emojis and sanitize HTML
-        $value = LitEmoji::unicodeToShortcode($value);
-        $value = StringHelper::htmlEncode($value);
+        $value = LitEmoji::unicodeToShortcode((string)$value);
+        $value = StringHelper::htmlEncode((string)$value);
 
         return $value;
     }
@@ -22,7 +22,7 @@ class StringHelper extends CraftStringHelper
     public static function unSanitizeNotes($value): ?string
     {
         // Support Emojis and sanitize HTML
-        $value = LitEmoji::shortcodeToUnicode($value);
+        $value = LitEmoji::shortcodeToUnicode((string)$value);
 
         return $value;
     }
