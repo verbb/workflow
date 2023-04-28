@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.5 - 2023-04-28
+
+### Added
+- Add type checks for sanitize/unsanitize notes.
+- Add handling for migrating to Reviews on invalid review data (coming from old installs and submission data).
+
+### Fixed
+- Fix Emoji support for notes in Craft 4.4+.
+
 ## 2.0.4 - 2023-02-11
 
 ### Changed
