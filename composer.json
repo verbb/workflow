@@ -1,6 +1,6 @@
 {
     "name": "verbb/workflow",
-    "description": "Create a workflow for publishing entries.",
+    "description": "Enforce multi-step review processes for creating entries.",
     "type": "craft-plugin",
     "version": "2.0.5",
     "keywords": [
