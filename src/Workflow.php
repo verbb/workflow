@@ -200,8 +200,8 @@ class Workflow extends Plugin
             return;
         }
 
-        Event::on(ResaveController::class, ConsoleController::EVENT_DEFINE_ACTIONS, function(DefineConsoleActionsEvent $e) {
-            $e->actions['workflow-submissions'] = [
+        Event::on(ResaveController::class, ConsoleController::EVENT_DEFINE_ACTIONS, function(DefineConsoleActionsEvent $event) {
+            $event->actions['workflow-submissions'] = [
                 'action' => function(): int {
                     $controller = Craft::$app->controller;
 
