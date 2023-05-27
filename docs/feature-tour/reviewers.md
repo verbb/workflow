@@ -14,11 +14,7 @@ Workflow also allows for multiple reviewers - so if you need more than one middl
 
 To add Reviewers, use the Workflow settings to add user groups as reviewer levels. This will be similar to how you would have nominated user groups for Publishers and Editors.
 
-The overall review process will be top-down. So for example, you might have the following:
-
-![](/docs/screenshots/review-pane5.png)
-
-Where there are two Reviewer groups - Reviewers 1 and Reviewers 2. Submissions will be placed by users in the Editors' user group, and submitted to the Reviewers 1 users group. After successful review and approval, this will be submitted to the Reviewers 2 user group. After successful review and approval, this will then be submitted to the Publishers' user group for final review.
+The overall review process will be top-down. So for example, you might have two Reviewer groups - Reviewers 1 and Reviewers 2. Submissions will be placed by users in the Editors' user group, and submitted to the Reviewers 1 users group. After successful review and approval, this will be submitted to the Reviewers 2 user group. After successful review and approval, this will then be submitted to the Publishers' user group for final review.
 
 Visually, this process would look similar to:
 
