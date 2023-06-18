@@ -29,13 +29,15 @@
             <div class="workflow-submission-body">
                 {% set placeholderText = settings.getEditorNotesRequired(context.site) ? 'Notes about your submission (required)' : 'Notes about your submission' %}
 
+                    {{editorNotes ?? ''}}
+
                 {{ forms.textareaField({
                     placeholder: placeholderText | t('workflow'),
                     id: 'editorNotes',
                     name: 'editorNotes',
                     class: 'field-notes',
                     rows: 2,
-                    value: editorNotes ?? '',
+                    value: (editorNotes ?? '') | raw,
                     required: settings.getEditorNotesRequired(context.site),
                     errors: editorNotesErrors is defined ? editorNotesErrors,
                 }) }}
@@ -67,15 +69,15 @@
                     <p style="color: #da5a47;">{{ "This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved." | t('workflow', { date: submission.dateCreated | datetime('medium') }) }}</p>
 
                     {% if submission.editorNotes %}
-                        <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                        <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes | raw }}"</p>
                     {% endif %}
 
                     {% for review in submission.getReviews() %}
-                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                     {% endfor %}
 
                     {% if submission.publisherNotes %}
-                        <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
+                        <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes | raw }}"</p>
                     {% endif %}
                 </div>
             </div>
@@ -105,15 +107,15 @@
                             <p>{{ submission.publisherUrl | raw }} {{ "approved this entry on {date}." | t('workflow', { date: submission.dateApproved | datetime('medium') }) }}</p>
 
                             {% if submission.editorNotes %}
-                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes | raw }}"</p>
                             {% endif %}
 
                             {% for review in submission.getReviews() %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
-                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
+                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes | raw }}"</p>
                             {% endif %}
                         </div>
                     </div>
@@ -132,15 +134,15 @@
                             <p>{{ url | raw }} {{ "rejected this entry on {date}." | t('workflow', { date: submission.dateRejected | datetime('medium') }) }}</p>
 
                             {% if submission.editorNotes %}
-                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes | raw }}"</p>
                             {% endif %}
 
                             {% for review in submission.getReviews() %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
-                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
+                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes | raw }}"</p>
                             {% endif %}
                         </div>
                     </div>
@@ -158,15 +160,15 @@
                             <p>{{ submission.editorUrl | raw }} {{ "revoked this entry on {date}." | t('workflow', { date: submission.dateRevoked | datetime('medium') }) }}</p>
 
                             {% if submission.editorNotes %}
-                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes }}"</p>
+                                <p class="code">{{ 'Editor Notes' | t('workflow') }}: "{{ submission.editorNotes | raw }}"</p>
                             {% endif %}
 
                             {% for review in submission.getReviews() %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
-                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes }}"</p>
+                                <p class="code">{{ 'Publisher Notes' | t('workflow') }}: "{{ submission.publisherNotes | raw }}"</p>
                             {% endif %}
                         </div>
                     </div>

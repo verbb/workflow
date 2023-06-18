@@ -35,7 +35,7 @@
                     {% endif %}
 
                     {% for review in submission.getReviews() %}
-                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                        <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                     {% endfor %}
 
                     {% if submission.publisherNotes %}
@@ -112,7 +112,7 @@
                             {% endif %}
 
                             {% for review in submission.getReviews() %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
@@ -139,7 +139,7 @@
                             {% endif %}
 
                             {% for review in submission.getReviews() %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}
@@ -165,7 +165,7 @@
                             {% endif %}
 
                             {% for review in submission.getReviews() %}
-                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes }}"</p>
+                                <p class="code">{{ 'Reviewer Notes' | t('workflow') }}: "{{ review.notes | raw }}"</p>
                             {% endfor %}
 
                             {% if submission.publisherNotes %}

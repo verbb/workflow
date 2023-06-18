@@ -1,8 +1,7 @@
 <?php
 namespace verbb\workflow\elements;
 
-use craft\elements\User;
-use craft\i18n\Locale;
+use verbb\workflow\Workflow;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
 use verbb\workflow\models\Review;
@@ -13,9 +12,10 @@ use Craft;
 use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
+use craft\elements\User;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
-use verbb\workflow\Workflow;
+use craft\i18n\Locale;
 
 class Submission extends Element
 {
