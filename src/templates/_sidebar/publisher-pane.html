@@ -32,7 +32,7 @@
                     rows: 2,
                     value: workflowNotes ?? '',
                     required: settings.getPublisherNotesRequired(entry.site),
-                    errors: publisherNotesErrors is defined ? publisherNotesErrors,
+                    errors: workflowNotesErrors is defined ? workflowNotesErrors,
                 }) }}
             </div>
 

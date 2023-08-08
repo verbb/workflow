@@ -44,6 +44,8 @@ class Service extends Component
             return;
         }
 
+        $currentSite = Craft::$app->getSites()->getCurrentSite();
+
         // Sanitize notes first
         $workflowNotes = StringHelper::sanitizeNotes((string)$request->getBodyParam('workflowNotes'));
 
@@ -90,17 +92,26 @@ class Service extends Component
             // can't publish. We quickly switch it on to make sure the entry validates correctly.
             $event->sender->setScenario(Element::SCENARIO_LIVE);
             $event->sender->validate();
+
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->getEditorNotesRequired($currentSite) && !$workflowNotes) {
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'workflowNotesErrors' => [Craft::t('workflow', 'Notes are required')],
+                ]);
+
+                $event->isValid = false;
+            }
         }
 
         if ($action === 'approve-submission') {
             // For multi-sites, we only want to act on the current site's entry. Returning early will respect the
             // section defaults for enabling the entry per-site.
             if (Craft::$app->getIsMultiSite()) {
-                $currentSiteId = Craft::$app->getSites()->getCurrentSite()->id;
+                $currentSiteId = $currentSite->id;
 
                 if ($siteHandle = $request->getParam('site')) {
-                    if ($currentSite = Craft::$app->getSites()->getSiteByHandle($siteHandle)) {
-                        $currentSiteId = $currentSite->id;
+                    if ($site = Craft::$app->getSites()->getSiteByHandle($siteHandle)) {
+                        $currentSiteId = $site->id;
                     }
                 }
 
@@ -116,6 +127,15 @@ class Service extends Component
 
             if (($postDate = $request->getBodyParam('postDate')) !== null) {
                 $event->sender->postDate = DateTimeHelper::toDateTime($postDate) ?: new DateTime();
+            }
+
+            // We also need to validate notes fields, if required before we save the entry
+            if ($settings->getPublisherNotesRequired($currentSite) && !$workflowNotes) {
+                Craft::$app->getUrlManager()->setRouteParams([
+                    'workflowNotesErrors' => [Craft::t('workflow', 'Notes are required')],
+                ]);
+
+                $event->isValid = false;
             }
         }
     }
