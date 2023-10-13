@@ -1,5 +1,5 @@
 # Upgrading from v1
-While the [changelog](https://github.com/verbb/workflow/blob/craft-4/CHANGELOG.md) is the most comprehensive list of changes, this guide provides high-level overview and organizes changes by category.
+While the [changelog](https://github.com/verbb/workflow/blob/craft-5/CHANGELOG.md) is the most comprehensive list of changes, this guide provides high-level overview and organizes changes by category.
 
 ## Concept
 In Workflow 2, there's now a concept of [Reviews](docs:developers/review) in additionl to [Submissions](docs:developers/submission), to better represent the approval workflow.

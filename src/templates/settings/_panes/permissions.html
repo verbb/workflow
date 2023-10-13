@@ -2,7 +2,7 @@
 {% import 'verbb-base/_macros' as macros %}
 
 {% set sections = [] %}
-{% for section in craft.app.sections.getAllSections() %}
+{% for section in craft.app.entries.getAllSections() %}
     {% set sections = [{ value: section.uid, label: section.name | e }] | merge(sections) %}
 {% endfor %}
 

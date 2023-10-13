@@ -40,13 +40,13 @@ class Emails extends Component
 
     public function sendReviewerNotificationEmail(Submission $submission, Review $review, ElementInterface $entry): void
     {
-        Workflow::log('Preparing reviewer notification.');
+        Workflow::info('Preparing reviewer notification.');
 
         $reviewerUserGroup = Workflow::$plugin->getSubmissions()->getNextReviewerUserGroup($submission, $entry);
 
         // If there is no next reviewer user group then send publisher notification email
         if ($reviewerUserGroup === null) {
-            Workflow::log('No reviewer user groups. Send publisher email.');
+            Workflow::info('No reviewer user groups. Send publisher email.');
 
             Workflow::$plugin->getEmails()->sendPublisherNotificationEmail($submission, $review, $entry);
 
@@ -66,7 +66,7 @@ class Emails extends Component
         $this->trigger(self::EVENT_PREPARE_REVIEWER_EMAIL, $event);
 
         if (!$event->isValid) {
-            Workflow::log('Reviewer notification was cancelled by event.');
+            Workflow::info('Reviewer notification was cancelled by event.');
             return;
         }
 
@@ -74,7 +74,7 @@ class Emails extends Component
         $reviewers = $event->reviewers;
 
         if (!$reviewers) {
-            Workflow::log('No reviewers found to send notifications to.');
+            Workflow::info('No reviewers found to send notifications to.');
         }
 
         foreach ($reviewers as $key => $user) {
@@ -93,13 +93,13 @@ class Emails extends Component
                 $this->trigger(self::EVENT_BEFORE_SEND_REVIEWER_EMAIL, $event);
 
                 if (!$event->isValid) {
-                    Workflow::log('Reviewer notification was cancelled by event.');
+                    Workflow::info('Reviewer notification was cancelled by event.');
                     continue;
                 }
 
                 $event->mail->send();
 
-                Workflow::log('Sent reviewer notification to ' . $event->user->email);
+                Workflow::info('Sent reviewer notification to ' . $event->user->email);
             } catch (Throwable $e) {
                 Workflow::error(Craft::t('workflow', 'Failed to send reviewer notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
@@ -113,14 +113,14 @@ class Emails extends Component
 
     public function sendPublisherNotificationEmail(Submission $submission, Review $review, ElementInterface $entry): void
     {
-        Workflow::log('Preparing publisher notification.');
+        Workflow::info('Preparing publisher notification.');
 
         $settings = Workflow::$plugin->getSettings();
 
         $publisherGroup = $settings->getPublisherUserGroup($entry->site);
 
         if (!$publisherGroup) {
-            Workflow::log('No publisher group found to send notifications to.');
+            Workflow::info('No publisher group found to send notifications to.');
         }
 
         $query = User::find()->groupId($publisherGroup->id);
@@ -141,7 +141,7 @@ class Emails extends Component
         $this->trigger(self::EVENT_PREPARE_PUBLISHER_EMAIL, $event);
 
         if (!$event->isValid) {
-            Workflow::log('Publisher notification was cancelled by event.');
+            Workflow::info('Publisher notification was cancelled by event.');
             return;
         }
 
@@ -149,7 +149,7 @@ class Emails extends Component
         $publishers = $event->publishers;
 
         if (!$publishers) {
-            Workflow::log('No publishers found to send notifications to.');
+            Workflow::info('No publishers found to send notifications to.');
         }
 
         foreach ($publishers as $key => $user) {
@@ -168,13 +168,13 @@ class Emails extends Component
                 $this->trigger(self::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, $event);
 
                 if (!$event->isValid) {
-                    Workflow::log('Publisher notification was cancelled by event.');
+                    Workflow::info('Publisher notification was cancelled by event.');
                     continue;
                 }
 
                 $event->mail->send();
 
-                Workflow::log('Sent publisher notification to ' . $event->user->email);
+                Workflow::info('Sent publisher notification to ' . $event->user->email);
             } catch (Throwable $e) {
                 Workflow::error(Craft::t('workflow', 'Failed to send publisher notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
@@ -193,7 +193,7 @@ class Emails extends Component
 
     public function sendEditorNotificationEmail(Submission $submission, Review $review, ElementInterface $entry, bool $fromReviewer = false): void
     {
-        Workflow::log('Preparing editor notification.');
+        Workflow::info('Preparing editor notification.');
 
         $settings = Workflow::$plugin->getSettings();
 
@@ -216,7 +216,7 @@ class Emails extends Component
         $this->trigger(self::EVENT_PREPARE_EDITOR_EMAIL, $event);
 
         if (!$event->isValid) {
-            Workflow::log('Editor notification was cancelled by event.');
+            Workflow::info('Editor notification was cancelled by event.');
             return;
         }
 
@@ -278,16 +278,16 @@ class Emails extends Component
             $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, $event);
 
             if (!$event->isValid) {
-                Workflow::log('Editor notification was cancelled by event.');
+                Workflow::info('Editor notification was cancelled by event.');
                 return;
             }
 
             $event->mail->send();
 
             if ($fromReviewer) {
-                Workflow::log('Sent editor review notification to ' . $event->user->email);
+                Workflow::info('Sent editor review notification to ' . $event->user->email);
             } else {
-                Workflow::log('Sent editor notification to ' . $event->user->email);
+                Workflow::info('Sent editor notification to ' . $event->user->email);
             }
         } catch (Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
@@ -301,7 +301,7 @@ class Emails extends Component
 
     public function sendPublishedAuthorNotificationEmail(Submission $submission, Review $review, ElementInterface $entry): void
     {
-        Workflow::log('Preparing published author notification.');
+        Workflow::info('Preparing published author notification.');
 
         $settings = Workflow::$plugin->getSettings();
 
@@ -313,7 +313,7 @@ class Emails extends Component
         $this->trigger(self::EVENT_PREPARE_EDITOR_EMAIL, $event);
 
         if (!$event->isValid) {
-            Workflow::log('Published Author notification was cancelled by event.');
+            Workflow::info('Published Author notification was cancelled by event.');
             return;
         }
 
@@ -335,13 +335,13 @@ class Emails extends Component
             $this->trigger(self::EVENT_BEFORE_SEND_EDITOR_EMAIL, $event);
 
             if (!$event->isValid) {
-                Workflow::log('Published Author notification was cancelled by event.');
+                Workflow::info('Published Author notification was cancelled by event.');
                 return;
             }
 
             $event->mail->send();
 
-            Workflow::log('Sent published author notification to ' . $event->user->email);
+            Workflow::info('Sent published author notification to ' . $event->user->email);
         } catch (Throwable $e) {
             Workflow::error(Craft::t('workflow', 'Failed to send published author notification to {value} - “{message}” {file}:{line}', [
                 'value' => $entry->getAuthor()->email,

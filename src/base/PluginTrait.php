@@ -7,35 +7,40 @@ use verbb\workflow\services\Emails;
 use verbb\workflow\services\Reviews;
 use verbb\workflow\services\Service;
 use verbb\workflow\services\Submissions;
-use verbb\base\BaseHelper;
 
-use Craft;
-
-use yii\log\Logger;
+use verbb\base\LogTrait;
+use verbb\base\helpers\Plugin;
 
 trait PluginTrait
 {
     // Properties
     // =========================================================================
 
-    public static Workflow $plugin;
+    public static ?Workflow $plugin = null;
+
+
+    // Traits
+    // =========================================================================
+
+    use LogTrait;
 
 
     // Static Methods
     // =========================================================================
 
-    public static function log(string $message, array $params = []): void
+    public static function config(): array
     {
-        $message = Craft::t('workflow', $message, $params);
+        Plugin::bootstrapPlugin('workflow');
 
-        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'workflow');
-    }
-
-    public static function error(string $message, array $params = []): void
-    {
-        $message = Craft::t('workflow', $message, $params);
-
-        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'workflow');
+        return [
+            'components' => [
+                'content' => Content::class,
+                'emails' => Emails::class,
+                'reviews' => Reviews::class,
+                'service' => Service::class,
+                'submissions' => Submissions::class,
+            ],
+        ];
     }
 
 
@@ -65,28 +70,6 @@ trait PluginTrait
     public function getSubmissions(): Submissions
     {
         return $this->get('submissions');
-    }
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _registerComponents(): void
-    {
-        $this->setComponents([
-            'content' => Content::class,
-            'emails' => Emails::class,
-            'reviews' => Reviews::class,
-            'service' => Service::class,
-            'submissions' => Submissions::class,
-        ]);
-
-        BaseHelper::registerModule();
-    }
-
-    private function _registerLogTarget(): void
-    {
-        BaseHelper::setFileLogging('workflow');
     }
 
 }

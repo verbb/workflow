@@ -97,9 +97,6 @@ class SetStatus extends BaseSetStatus
     // Protected Methods
     // =========================================================================
 
-    /**
-     * @inheritdoc
-     */
     protected function defineRules(): array
     {
         // Overwrite the parent rules

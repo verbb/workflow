@@ -171,7 +171,7 @@ class Review extends Model
 
         if ($user = $this->getUser()) {
             if ($currentUser->can('editUsers')) {
-                return Template::raw(Html::a($user, $user->cpEditUrl));
+                return Template::raw(Html::a($user, $user->getCpEditUrl()));
             }
 
             return Template::raw($user);

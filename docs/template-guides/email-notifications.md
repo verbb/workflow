@@ -29,7 +29,7 @@ Hey {{ user.friendlyName }},
 
 {% endif %}To review it please log into your control panel.
 
-{{ submission.cpEditUrl }}
+{{ submission.getCpEditUrl() }}
 ```
 
 ## When a reviewer approves or rejects an editor submission
@@ -57,7 +57,7 @@ Your submission for {{ submission.owner.title }} has been {{ review.approved ? '
 
 {% endif %}View your submission by logging into your control panel.
 
-{{ submission.cpEditUrl }}
+{{ submission.getCpEditUrl() }}
 ```
 
 ## When a publisher approves or rejects an editor submission
@@ -84,5 +84,5 @@ Your submission for {{ submission.owner.title }} has been {{ submission.status }
 
 {% endif %}View your submission by logging into your control panel.
 
-{{ submission.cpEditUrl }}
+{{ submission.getCpEditUrl() }}
 ```

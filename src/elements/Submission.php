@@ -4,21 +4,16 @@ namespace verbb\workflow\elements;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\actions\SetStatus;
 use verbb\workflow\elements\db\SubmissionQuery;
-use verbb\workflow\helpers\StringHelper;
 use verbb\workflow\models\Review;
 use verbb\workflow\records\Submission as SubmissionRecord;
 
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
-use craft\elements\actions\Delete;
 use craft\elements\Entry;
 use craft\elements\User;
-use craft\helpers\ArrayHelper;
 use craft\helpers\Cp;
-use craft\helpers\ElementHelper;
 use craft\helpers\Html;
-use craft\helpers\Json;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\i18n\Locale;
@@ -185,11 +180,6 @@ class Submission extends Element
         return false;
     }
 
-    public function getCpEditUrl(): ?string
-    {
-        return UrlHelper::cpUrl('workflow/submissions/edit/' . $this->id);
-    }
-
     public function getSupportedSites(): array
     {
         if ($owner = $this->getOwner()) {
@@ -247,11 +237,11 @@ class Submission extends Element
     public function getOwnerCpUrl(bool $includeDraft = true): ?string
     {
         if ($includeDraft && $draft = $this->getDraft()) {
-            return $draft->cpEditUrl;
+            return $draft->getCpEditUrl();
         }
 
         if ($entry = $this->getOwner()) {
-            return $entry->cpEditUrl;
+            return $entry->getCpEditUrl();
         }
 
         return null;
@@ -395,7 +385,7 @@ class Submission extends Element
 
         $canReview = false;
 
-        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($site, $this) as $key => $userGroup) {
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($site, $this) as $userGroup) {
             if ($lastReviewer->isInGroup($userGroup)) {
                 $canReview = false;
             } else if ($user->isInGroup($userGroup)) {
@@ -435,55 +425,59 @@ class Submission extends Element
     // Protected Methods
     // =========================================================================
 
-    protected function tableAttributeHtml(string $attribute): string
+    protected function attributeHtml(string $attribute): string
     {
-        switch ($attribute) {
-            case 'publisher':
-                $user = $this->getPublisher();
-                return $user ? Cp::elementHtml($user) : '-';
-            case 'editor':
-                $user = $this->getEditor();
-                return $user ? Cp::elementHtml($user) : '-';
-            case 'notes':
-                return Template::raw($this->getNotes());
-            case 'reviewer':
-                $user = $this->getReviewer();
-                return $user ? Cp::elementHtml($user) : '-';
-            case 'lastReviewDate':
-                if ($lastReview = $this->getLastReview()) {
-                    $formatter = Craft::$app->getFormatter();
-                    return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
-                        'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT),
-                    ]);
-                }
+        if ($attribute == 'publisher') {
+            $user = $this->getPublisher();
+            return $user ? Cp::elementChipHtml($user) : '-';
+        } else if ($attribute == 'editor') {
+            $user = $this->getEditor();
+            return $user ? Cp::elementChipHtml($user) : '-';
+        } else if ($attribute == 'notes') {
+            return Template::raw($this->getNotes());
+        } else if ($attribute == 'reviewer') {
+            $user = $this->getReviewer();
+            return $user ? Cp::elementChipHtml($user) : '-';
+        } else if ($attribute == 'lastReviewDate') {
+            if ($lastReview = $this->getLastReview()) {
+                $formatter = Craft::$app->getFormatter();
+                return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
+                    'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT),
+                ]);
+            }
 
-                return '-';
-            case 'siteId':
-                if ($this->ownerSiteId && $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
-                    return $site->name;
-                }
+            return '-';
+        } else if ($attribute == 'siteId') {
+            if ($this->ownerSiteId && $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
+                return $site->name;
+            }
 
-                return '';
-            case 'ownerId':
-                // Get the draft for the last review
-                if ($element = $this->getDraft()) {
-                    return Cp::elementHtml($element);
-                }
+            return '';
+        } else if ($attribute == 'ownerId') {
+            // Get the draft for the last review
+            if ($element = $this->getDraft()) {
+                return Cp::elementChipHtml($element);
+            }
 
-                if ($element = $this->getOwner()) {
-                    return Cp::elementHtml($element);
-                }
+            if ($element = $this->getOwner()) {
+                return Cp::elementChipHtml($element);
+            }
 
-                return '-';
-            case 'status':
-                $status = $this->getStatus();
-                $statusDef = self::statuses()[$status] ?? null;
-                $icon = Html::tag('span', '', ['class' => ['status', $statusDef['color'] ?? $status]]);
-                $label = $statusDef['label'] ?? $statusDef ?? ucfirst($status);
-                
-                return $icon . Html::tag('span', $label);
-            default:
-                return parent::tableAttributeHtml($attribute);
+            return '-';
+        } else if ($attribute == 'status') {
+            $status = $this->getStatus();
+            $statusDef = self::statuses()[$status] ?? null;
+            $icon = Html::tag('span', '', ['class' => ['status', $statusDef['color'] ?? $status]]);
+            $label = $statusDef['label'] ?? $statusDef ?? ucfirst($status);
+
+            return $icon . Html::tag('span', $label);
+        } else {
+            return parent::attributeHtml($attribute);
         }
+    }
+
+    protected function cpEditUrl(): ?string
+    {
+        return UrlHelper::cpUrl('workflow/submissions/edit/' . $this->id);
     }
 }

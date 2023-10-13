@@ -8,7 +8,7 @@
 
 {% set crumbs = [
     { label: 'Workflow' | t('workflow'), url: url('workflow') },
-    { label: submission.title, url: submission.cpEditUrl },
+    { label: submission.title, url: submission.getCpEditUrl() },
 ] %}
 
 {% block main %}

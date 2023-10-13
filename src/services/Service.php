@@ -212,13 +212,13 @@ class Service extends Component
         $publisherGroup = $settings->getPublisherUserGroup($entry->site);
 
         if (!$editorGroup || !$publisherGroup) {
-            Workflow::log('Editor and Publisher groups not set in settings.');
+            Workflow::info('Editor and Publisher groups not set in settings.');
 
             return;
         }
 
         if (!$currentUser) {
-            Workflow::log('No current user.');
+            Workflow::info('No current user.');
 
             return;
         }
@@ -275,7 +275,7 @@ class Service extends Component
 
         // Make sure workflow is enabled for this section - or all section
         if (!$settings->enabledSections) {
-            Workflow::log('New enabled sections.');
+            Workflow::info('New enabled sections.');
 
             return null;
         }
@@ -284,7 +284,7 @@ class Service extends Component
             $enabledSectionIds = Db::idsByUids(Table::SECTIONS, $settings->enabledSections);
 
             if (!in_array($entry->sectionId, $enabledSectionIds)) {
-                Workflow::log('Entry not in allowed section.');
+                Workflow::info('Entry not in allowed section.');
 
                 return null;
             }

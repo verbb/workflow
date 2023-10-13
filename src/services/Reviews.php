@@ -1,6 +1,7 @@
 <?php
 namespace verbb\workflow\services;
 
+use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 use verbb\workflow\events\ReviewEvent;
 use verbb\workflow\helpers\StringHelper;
@@ -99,7 +100,7 @@ class Reviews extends Component
         }
 
         if ($runValidation && !$review->validate()) {
-            Craft::info('Review not saved due to validation error.', __METHOD__);
+            Workflow::info('Review not saved due to validation error.');
             return false;
         }
 

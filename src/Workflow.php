@@ -62,11 +62,9 @@ class Workflow extends Plugin
 
         self::$plugin = $this;
 
-        $this->_registerComponents();
-        $this->_registerLogTarget();
         $this->_registerEmailMessages();
         $this->_registerVariables();
-        $this->_registerCraftEventListeners();
+        $this->_registerEventHandlers();
         $this->_registerElementTypes();
         $this->_registerGraphQl();
 
@@ -84,9 +82,30 @@ class Workflow extends Plugin
         }
     }
 
+    public function getPluginName(): string
+    {
+        return Craft::t('workflow', $this->getSettings()->pluginName);
+    }
+
     public function getSettingsResponse(): mixed
     {
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('workflow/settings'));
+    }
+
+    public function getCpNavItem(): ?array
+    {
+        $nav = parent::getCpNavItem();
+
+        $nav['label'] = $this->getPluginName();
+
+        if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $nav['subnav']['settings'] = [
+                'label' => Craft::t('workflow', 'Settings'),
+                'url' => 'workflow/settings',
+            ];
+        }
+
+        return $nav;
     }
 
 
@@ -167,7 +186,7 @@ class Workflow extends Plugin
         });
     }
 
-    private function _registerCraftEventListeners(): void
+    private function _registerEventHandlers(): void
     {
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;

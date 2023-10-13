@@ -11,6 +11,7 @@ class Settings extends Model
     // =========================================================================
 
     // General
+    public string $pluginName = 'Workflow';
     public array $editorUserGroup = [];
     public array $reviewerUserGroups = [];
     public array $publisherUserGroup = [];

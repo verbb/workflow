@@ -21,7 +21,7 @@ class ElementsController extends Controller
         // Create a draft entry for the section
         $siteId = $this->request->getParam('siteId', Craft::$app->getSites()->getPrimarySite()->id);
         $sectionId = $this->request->getRequiredParam('sectionId');
-        $section = Craft::$app->getSections()->getSectionById($sectionId);
+        $section = Craft::$app->getEntries()->getSectionById($sectionId);
 
         if (!$section) {
             throw new BadRequestHttpException('Section invalid.');
