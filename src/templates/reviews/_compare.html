@@ -8,8 +8,11 @@
 
 {% set crumbs = [
     { label: 'Workflow' | t('workflow'), url: url('workflow') },
-    { label: submission.title, url: submission.cpEditUrl },
 ] %}
+
+{% if submission %}
+    {% set crumbs = crumbs | merge([{ label: submission.title, url: submission.cpEditUrl }]) %}
+{% endif %}
 
 {% block main %}
 
