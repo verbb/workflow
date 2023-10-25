@@ -96,10 +96,10 @@
 
                 <div class="workflow-single-review-content">
                     {# Swap out 'pending' for 'created' to keep with past-tense action #}
-                    {% set statusText = (review.status == 'pending') ? 'created' | t('workflow') : review.status %}
+                    {% set statusText = (review.status == 'pending') ? 'created' | t('workflow') : review.status | t('workflow') %}
 
                     <div class="workflow-single-review-heading">
-                        <label class="review-count">{{ 'Action #{num}' | t('workflow', { num: ((reviews | length) - loop.index0) }) }} - {{ review.role }}</label>
+                        <label class="review-count">{{ 'Action #{num}' | t('workflow', { num: ((reviews | length) - loop.index0) }) }} - {{ review.role | t('workflow') }}</label>
                         <label class="review-status-badge {{ review.status }}">{{ statusText }}</label>
 
                         <button type="button" class="btn menubtn" data-icon="settings" aria-label="{{ 'Actions' | t('app') }}"></button>
@@ -158,7 +158,7 @@
     {% set statusField %}
         <div>
             <a id="status-menu-btn" class="btn menubtn" href="javascript:;">
-                <span class="status {{ submission.status }}"></span>{{ submission.status | title }}
+                <span class="status {{ submission.status }}"></span>{{ submission.status | title | t('workflow') }}
             </a>
 
             <div class="menu" id="status-menu-select">

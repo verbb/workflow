@@ -27,7 +27,7 @@
         </div>
 
         <div class="workflow-submission-body">
-            {% set placeholderText = settings.getEditorNotesRequired(entry.site) ? 'Notes about your submission (required)' : 'Notes about your submission' %}
+            {% set placeholderText = settings.getEditorNotesRequired(entry.site) ? 'Notes about your submission (required)' | t('workflow') : 'Notes about your submission' | t('workflow') %}
 
             {{ forms.textareaField({
                 placeholder: placeholderText | t('workflow'),
