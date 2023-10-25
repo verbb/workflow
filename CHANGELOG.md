@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.6 - 2022-10-25
+
+### Fixed
+- Fix special characters in submission notes not working correctly.
+
 ## 1.7.5 - 2022-09-23
 
 ### Changed
