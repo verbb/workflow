@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.6 - 2023-10-25
+
+### Added
+- Add support for editor + reviewer dual role.
+
+### Fixed
+- Fix an error when comparing reviews.
+- Fix required notes not being enforced.
+- Fix special characters in submission notes not working correctly.
+
 ## 2.0.5 - 2023-04-28
 
 ### Added

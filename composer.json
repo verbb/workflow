@@ -2,7 +2,7 @@
     "name": "verbb/workflow",
     "description": "Enforce multi-step review processes for creating entries.",
     "type": "craft-plugin",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "keywords": [
         "craft",
         "cms",
