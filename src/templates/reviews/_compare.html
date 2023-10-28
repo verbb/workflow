@@ -18,19 +18,23 @@
 
 <div class="workflow-compare-reviews">
     {% for review in [oldReview, newReview] %}
-        {% set entry = review.getElementRevision() %}
-            
-        {% if entry %}
-            {% set fieldLayout = entry.getFieldLayout() %}
+        <div class="workflow-compare-review-content" {% if loop.last %}data-review-new{% endif %}>
+            {% set entry = review.getElementRevision() %}
+                
+            {% if entry %}
+                {% set fieldLayout = entry.getFieldLayout() %}
 
-            {% if fieldLayout %}
-                {% set form = fieldLayout.createForm(entry, true) %}
+                {% if fieldLayout %}
+                    {% set form = fieldLayout.createForm(entry, true) %}
 
-                <div class="workflow-compare-review-content" {% if loop.last %}data-review-new{% endif %}>
                     {% include 'workflow/reviews/_includes/_review' %}
-                </div>
+                {% else %}
+                    {{ 'Unable to determine field layout for entry.' | t('formie') }}
+                {% endif %}
+            {% else %}
+                {{ 'Unable to find owner entry "{id}".' | t('formie', { id: review.elementId ?? 'null' }) }}
             {% endif %}
-        {% endif %}
+        </div>
     {% endfor %}
 </div>
 
