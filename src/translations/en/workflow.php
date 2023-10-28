@@ -158,4 +158,11 @@ return [
     'No submission with the ID “{id}”' => 'No submission with the ID “{id}”',
     'No review exists with the ID “{id}”.' => 'No review exists with the ID “{id}”.',
     'Workflow Submissions' => 'Workflow Submissions',
+
+    'revoked' => 'revoked',
+    'Save' => 'Save',
+    'editor' => 'editor',
+    'Notes about your submission' => 'Notes about your submission',
+    'Notes about your submission (required)' => 'Notes about your submission (required)',
+    'Submission for “{title}” on {date}' => 'Submission for “{title}” on {date}',
 ];

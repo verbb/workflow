@@ -26,12 +26,12 @@
                 {% set anchorKey = 'history-info-' ~ loop.parent.loop.index ~ '-' ~ loop.index %}
 
                 {# Swap out 'pending' for 'created' to keep with past-tense action #}
-                {% set statusText = (review.status == 'pending') ? 'created' | t('workflow') : review.status %}
+                {% set statusText = (review.status == 'pending') ? 'created' | t('workflow') : review.status | t('workflow') %}
 
                 <div class="workflow-history">
                     <div class="workflow-history-heading">
                         <span class="status {{ review.status }}"></span>
-                        <label>{{ '{status} submission' | t('workflow', { status: statusText | title }) }}</label>
+                        <label>{{ '{status} submission' | t('workflow', { status: statusText | title | t('workflow') }) }}</label>
                         <a class="fieldtoggle" data-target="{{ anchorKey }}"></a>
                     </div>
 
