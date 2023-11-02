@@ -29,10 +29,10 @@
 
                     {% include 'workflow/reviews/_includes/_review' %}
                 {% else %}
-                    {{ 'Unable to determine field layout for entry.' | t('formie') }}
+                    {{ 'Unable to determine field layout for entry.' | t('workflow') }}
                 {% endif %}
             {% else %}
-                {{ 'Unable to find owner entry "{id}".' | t('formie', { id: review.elementId ?? 'null' }) }}
+                {{ 'Unable to find owner entry "{id}".' | t('workflow', { id: review.elementId ?? 'null' }) }}
             {% endif %}
         </div>
     {% endfor %}
