@@ -107,6 +107,7 @@ class Reviews extends Component
         $reviewRecord->id = $review->id;
         $reviewRecord->submissionId = $review->submissionId;
         $reviewRecord->elementId = $review->elementId;
+        $reviewRecord->elementSiteId = $review->elementSiteId;
         $reviewRecord->draftId = $review->draftId;
         $reviewRecord->userId = $review->userId;
         $reviewRecord->role = $review->role;
@@ -195,6 +196,7 @@ class Reviews extends Component
                 'id',
                 'submissionId',
                 'elementId',
+                'elementSiteId',
                 'draftId',
                 'userId',
                 'role',
