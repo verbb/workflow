@@ -24,6 +24,9 @@ class SubmissionsController extends Controller
     {
         $this->requireCpRequest();
 
+        $settings = Workflow::$plugin->getSettings();
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
         if ($submission === null) {
             $submission = Submission::find()->id($submissionId)->siteId('*')->one();
 
@@ -32,9 +35,18 @@ class SubmissionsController extends Controller
             }
         }
 
+        $canEdit = true;
+        $editorGroup = $settings->getEditorUserGroup($submission->site);
+
+        if ($editorGroup && $currentUser && $currentUser->isInGroup($editorGroup)) {
+            $canEdit = false;
+        }
+
         $variables = [
             'submission' => $submission,
             'title' => $submission->title,
+            'settings' => $settings,
+            'canEdit' => $canEdit,
         ];
 
         $variables['changesCount'] = Workflow::$plugin->getContent()->getContentChangesTotalCount($submission);

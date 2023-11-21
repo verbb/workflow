@@ -9,7 +9,7 @@
 ] %}
 
 {% set isNew = submission.id ? false : true %}
-{% set fullPageForm = true %}
+{% set fullPageForm = canEdit %}
 {% set saveShortcutRedirect = '{cpEditUrl}' %}
 
 {% set numberReviews = 0 %}
@@ -28,30 +28,32 @@
 
 {% block actionButton %}
 
-<div class="buttons">
-    <div class="btngroup submit">
-        <input type="submit" class="btn submit" value="{{ 'Save' | t('workflow') }}">
+{% if canEdit %}
+    <div class="buttons">
+        <div class="btngroup submit">
+            <input type="submit" class="btn submit" value="{{ 'Save' | t('workflow') }}">
 
-        <div class="btn submit menubtn"></div>
-        <div class="menu">
-            <ul>
-                <li>
-                    <a class="formsubmit" data-redirect="{{ saveShortcutRedirect | hash }}">
-                        {{ 'Save and continue editing' | t('app') }}
-                        <span class="shortcut">⌘S</span>
-                    </a>
-                </li>
-            </ul>
-
-            {% if not isNew %}
-                <hr>
+            <div class="btn submit menubtn"></div>
+            <div class="menu">
                 <ul>
-                    <li><a class="formsubmit error" data-action="workflow/submissions/delete-submission" data-confirm="{{ 'Are you sure you want to delete this submission?' | t('workflow') }}" data-redirect="{{ 'workflow/submissions' | hash }}">{{ 'Delete' | t('app') }}</a></li>
+                    <li>
+                        <a class="formsubmit" data-redirect="{{ saveShortcutRedirect | hash }}">
+                            {{ 'Save and continue editing' | t('app') }}
+                            <span class="shortcut">⌘S</span>
+                        </a>
+                    </li>
                 </ul>
-            {% endif %}
+
+                {% if not isNew %}
+                    <hr>
+                    <ul>
+                        <li><a class="formsubmit error" data-action="workflow/submissions/delete-submission" data-confirm="{{ 'Are you sure you want to delete this submission?' | t('workflow') }}" data-redirect="{{ 'workflow/submissions' | hash }}">{{ 'Delete' | t('app') }}</a></li>
+                    </ul>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
+{% endif %}
 
 {% endblock %}
 
@@ -112,7 +114,9 @@
                                     <li><a href="{{ cpUrl('workflow/reviews/compare/' ~ review.id ~ ':' ~ previousReview.id) }}">{{ 'Compare' | t('app') }}</a></li>
                                 {% endif %}
 
-                                <li><a class="formsubmit error" data-action="workflow/reviews/delete-review" data-param="reviewId" data-value="{{ review.id }}" data-confirm="{{ 'Are you sure you want to delete this review?' | t('workflow') }}" data-redirect="{{ craft.app.request.url | hash }}">{{ 'Delete' | t('app') }}</a></li>
+                                {% if canEdit %}
+                                    <li><a class="formsubmit error" data-action="workflow/reviews/delete-review" data-param="reviewId" data-value="{{ review.id }}" data-confirm="{{ 'Are you sure you want to delete this review?' | t('workflow') }}" data-redirect="{{ craft.app.request.url | hash }}">{{ 'Delete' | t('app') }}</a></li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
