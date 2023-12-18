@@ -57,7 +57,7 @@
 {% endfor %}
 
 {% block emptyPane %}
-    {% if canSubmitForReview and isNewSubmission %}
+    {% if canSubmitForReview and isNewSubmission and entry.isDraft %}
         <div class="pane workflow-pane">
             {{ newSubmissionHtml }}
         </div>
