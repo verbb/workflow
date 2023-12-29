@@ -434,6 +434,7 @@ class Submissions extends Component
         $review = new Review();
         $review->submissionId = $submission->id;
         $review->elementId = $entry->id;
+        $review->elementSiteId = $entry->siteId;
         $review->draftId = $entry->draftId;
         $review->userId = $currentUser->id;
         $review->setNotes((string)$request->getParam('workflowNotes'));

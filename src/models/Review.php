@@ -62,6 +62,7 @@ class Review extends Model
     public ?int $id = null;
     public ?int $submissionId = null;
     public ?int $elementId = null;
+    public ?int $elementSiteId = null;
     public ?int $draftId = null;
     public ?int $userId = null;
     public ?string $role = null;
@@ -105,7 +106,7 @@ class Review extends Model
         }
 
         if ($this->submissionId !== null) {
-            return $this->_submission = Workflow::$plugin->getSubmissions()->getSubmissionById($this->submissionId);
+            return $this->_submission = Workflow::$plugin->getSubmissions()->getSubmissionById($this->submissionId, $this->elementSiteId);
         }
 
         return null;
@@ -118,7 +119,7 @@ class Review extends Model
         }
 
         if ($this->elementId !== null) {
-            return $this->_element = Craft::$app->getElements()->getElementById($this->elementId);
+            return $this->_element = Craft::$app->getElements()->getElementById($this->elementId, null, $this->elementSiteId);
         }
 
         return null;

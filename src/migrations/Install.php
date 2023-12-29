@@ -46,6 +46,7 @@ class Install extends Migration
             'id' => $this->primaryKey(),
             'submissionId' => $this->integer(),
             'elementId' => $this->integer(),
+            'elementSiteId' => $this->integer(),
             'draftId' => $this->integer(),
             'userId' => $this->integer(),
             'role' => $this->enum('role', ['editor', 'reviewer', 'publisher']),
@@ -65,6 +66,7 @@ class Install extends Migration
         $this->createIndex(null, '{{%workflow_submissions}}', 'ownerSiteId', false);
 
         $this->createIndex(null, '{{%workflow_reviews}}', 'elementId', false);
+        $this->createIndex(null, '{{%workflow_reviews}}', 'elementSiteId', false);
         $this->createIndex(null, '{{%workflow_reviews}}', 'draftId', false);
         $this->createIndex(null, '{{%workflow_reviews}}', 'userId', false);
     }
@@ -77,6 +79,7 @@ class Install extends Migration
 
         $this->addForeignKey(null, '{{%workflow_reviews}}', 'submissionId', '{{%workflow_submissions}}', 'id', 'CASCADE', null);
         $this->addForeignKey(null, '{{%workflow_reviews}}', 'elementId', '{{%elements}}', 'id', 'SET NULL', null);
+        $this->addForeignKey(null, '{{%workflow_reviews}}', 'elementSiteId', '{{%sites}}', 'id', 'CASCADE', null);
         $this->addForeignKey(null, '{{%workflow_reviews}}', 'draftId', '{{%drafts}}', 'id', 'SET NULL', null);
         $this->addForeignKey(null, '{{%workflow_reviews}}', 'userId', '{{%users}}', 'id', 'CASCADE', null);
     }

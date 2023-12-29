@@ -241,6 +241,36 @@ class Service extends Component
             return;
         }
 
+        // If the user is in _both_ editor and reviewer groups, work it out.
+        if ($currentUser->isInGroup($editorGroup)) {
+            $inReviewerGroup = false;
+
+            // As there are multiple reviewer groups, check the next one.
+            $submissions = $this->_getSubmissionsFromContext($entry);
+            $lastSubmission = empty($submissions) ? null : end($submissions);
+
+            foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($entry->site, $lastSubmission) as $userGroup) {
+                if ($currentUser->isInGroup($userGroup)) {
+                    $inReviewerGroup = true;
+                }
+            }
+
+            if ($inReviewerGroup) {
+                $pendingSubmissions = ArrayHelper::where($submissions, function($submission) use ($currentUser) {
+                    // Lack of same-user check, to allow editor+reviewers to review their own work.
+                    return $submission->status === 'pending';
+                }, true, true, false);
+
+                if ($pendingSubmissions) {
+                    $event->html .= $this->_renderEntrySidebarPanel($entry, 'reviewer-pane');
+                    return;
+                }
+
+                $event->html .= $this->_renderEntrySidebarPanel($entry, 'editor-pane');
+                return;
+            }
+        }
+
         // Show the sidebar submission button for editors
         if ($currentUser->isInGroup($editorGroup)) {
             $event->html .= $this->_renderEntrySidebarPanel($entry, 'editor-pane');

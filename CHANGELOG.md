@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.0.7 - 2023-12-08
+
+### Added
+- Add read-only state for submission detail pages for editors to view submission detail.
+- Add output for reviews when comparing and their owner or submission can’t be found.
+- Add several translations. (thanks @watarutmnh).
+
+### Changed
+- The Workflow control panel menu item now will only show if the user has “Overview” permission.
+
+### Fixed
+- Fix comparing reviews not working on specific multi-site setups.
+- Fix an error when trying to determine whether a review’s element is a draft.
+
+## 2.0.6 - 2023-10-25
+
+### Added
+- Add support for editor + reviewer dual role.
+
+### Fixed
+- Fix an error when comparing reviews.
+- Fix required notes not being enforced.
+- Fix special characters in submission notes not working correctly.
+
 ## 2.0.5 - 2023-04-28
 
 ### Added
@@ -90,6 +114,11 @@
 
 ### Removed
 - Removed `SubmissionsController` as no longer needed.
+
+## 1.7.6 - 2022-10-25
+
+### Fixed
+- Fix special characters in submission notes not working correctly.
 
 ## 1.7.5 - 2022-09-23
 

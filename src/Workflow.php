@@ -41,9 +41,8 @@ class Workflow extends Plugin
     // Properties
     // =========================================================================
 
-    public bool $hasCpSection = true;
     public bool $hasCpSettings = true;
-    public string $schemaVersion = '2.4.0';
+    public string $schemaVersion = '2.5.0';
     public string $minVersionRequired = '1.7.0';
 
 
@@ -71,6 +70,13 @@ class Workflow extends Plugin
         if (Craft::$app->getRequest()->getIsCpRequest()) {
             $this->_registerCpRoutes();
             $this->_registerWidgets();
+
+            // Only show the menu item if user has permission to overview
+            if ($currentUser = Craft::$app->getUser()->getIdentity()) {
+                if ($currentUser->can('workflow-overview')) {
+                    $this->hasCpSection = true;
+                }
+            }
         }
 
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {

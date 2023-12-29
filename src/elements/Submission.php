@@ -227,7 +227,9 @@ class Submission extends Element
 
         if ($lastReview = $this->getLastReview()) {
             if ($element = $lastReview->getElement()) {
-                return $this->_draft = $element;
+                if (ElementHelper::isDraftOrRevision($element)) {
+                    return $this->_draft = $element;
+                }
             }
         }
 
