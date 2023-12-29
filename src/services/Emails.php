@@ -101,12 +101,12 @@ class Emails extends Component
 
                 Workflow::info('Sent reviewer notification to ' . $event->user->email);
             } catch (Throwable $e) {
-                Workflow::error(Craft::t('workflow', 'Failed to send reviewer notification to {value} - “{message}” {file}:{line}', [
+                Workflow::error('Failed to send reviewer notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
                     'message' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
-                ]));
+                ]);
             }
         }
     }
@@ -176,12 +176,12 @@ class Emails extends Component
 
                 Workflow::info('Sent publisher notification to ' . $event->user->email);
             } catch (Throwable $e) {
-                Workflow::error(Craft::t('workflow', 'Failed to send publisher notification to {value} - “{message}” {file}:{line}', [
+                Workflow::error('Failed to send publisher notification to {value} - “{message}” {file}:{line}', [
                     'value' => $user->email,
                     'message' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
-                ]));
+                ]);
             }
         }
     }
@@ -290,12 +290,12 @@ class Emails extends Component
                 Workflow::info('Sent editor notification to ' . $event->user->email);
             }
         } catch (Throwable $e) {
-            Workflow::error(Craft::t('workflow', 'Failed to send editor notification to {value} - “{message}” {file}:{line}', [
+            Workflow::error('Failed to send editor notification to {value} - “{message}” {file}:{line}', [
                 'value' => $editor->email,
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-            ]));
+            ]);
         }
     }
 
@@ -343,12 +343,12 @@ class Emails extends Component
 
             Workflow::info('Sent published author notification to ' . $event->user->email);
         } catch (Throwable $e) {
-            Workflow::error(Craft::t('workflow', 'Failed to send published author notification to {value} - “{message}” {file}:{line}', [
+            Workflow::error('Failed to send published author notification to {value} - “{message}” {file}:{line}', [
                 'value' => $entry->getAuthor()->email,
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-            ]));
+            ]);
         }
     }
 }
