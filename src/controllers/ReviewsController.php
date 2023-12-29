@@ -47,10 +47,9 @@ class ReviewsController extends Controller
         $this->requireCpRequest();
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
-        $reviewId = $request->getParam('reviewId');
+        $reviewId = $this->request->getParam('reviewId');
 
         if (!Workflow::$plugin->getReviews()->deleteReviewById($reviewId)) {
             $session->setError(Craft::t('workflow', 'Unable to delete review.'));
@@ -68,11 +67,10 @@ class ReviewsController extends Controller
         $this->requirePostRequest();
         $this->requireAcceptsJson();
 
-        $request = Craft::$app->getRequest();
         $view = $this->getView();
         $reviewsService = Workflow::$plugin->getReviews();
 
-        $reviewId = $request->getParam('reviewId');
+        $reviewId = $this->request->getParam('reviewId');
         $newReview = $reviewsService->getReviewById($reviewId);
 
         // Get the previous review

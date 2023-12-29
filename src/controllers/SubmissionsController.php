@@ -47,13 +47,12 @@ class SubmissionsController extends Controller
         $this->requireCpRequest();
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        $submissionId = $request->getParam('submissionId');
+        $submissionId = $this->request->getParam('submissionId');
         $submission = Craft::$app->getElements()->getElementById($submissionId);
-        $status = $request->getParam('status');
+        $status = $this->request->getParam('status');
 
         if (!$submission) {
             $session->setError(Craft::t('workflow', 'Unable to find submission.'));
@@ -99,10 +98,9 @@ class SubmissionsController extends Controller
         $this->requireCpRequest();
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
         $session = Craft::$app->getSession();
 
-        $submissionId = $request->getParam('submissionId');
+        $submissionId = $this->request->getParam('submissionId');
 
         if (!Craft::$app->getElements()->deleteElementById($submissionId)) {
             $session->setError(Craft::t('workflow', 'Unable to delete submission.'));
