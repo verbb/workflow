@@ -11,7 +11,6 @@ class StringHelper extends CraftStringHelper
     public static function sanitizeNotes(?string $value): ?string
     {
         // Support Emojis and sanitize HTML
-        $value = self::emojiToShortcodes((string)$value);
         $value = StringHelper::htmlEncode((string)$value);
 
         return $value;
@@ -19,9 +18,6 @@ class StringHelper extends CraftStringHelper
 
     public static function unSanitizeNotes(?string $value): ?string
     {
-        // Support Emojis and sanitize HTML
-        $value = self::shortcodesToEmoji((string)$value);
-
         return $value;
     }
 }
