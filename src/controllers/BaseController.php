@@ -27,18 +27,6 @@ class BaseController extends Controller
         if ($settings->publisherUserGroup) {
             $publisherUserGroup = $settings->publisherUserGroup;
 
-            // Backward-compatibility support for config files, which won't be migrated
-            if (!is_array($publisherUserGroup)) {
-                Craft::$app->getDeprecator()->log('publisherUserGroup', 'The `publisherUserGroup` setting has been updated, and will cause a fatal error in Craft 4. Please review our [docs](https://verbb.io/craft-plugins/workflow/docs/get-started/configuration).');
-
-                $publisherUserGroupUid = $publisherUserGroup;
-                $publisherUserGroup = [];
-
-                foreach (Craft::$app->getSites()->getAllSites() as $site) {
-                    $publisherUserGroup[$site->uid] = $publisherUserGroupUid;
-                }
-            }
-
             foreach ($publisherUserGroup as $siteUid => $publisherUserGroupUid) {
                 $publisherUserGroupId = Db::idByUid(Table::USERGROUPS, $publisherUserGroupUid);
 
