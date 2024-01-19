@@ -442,14 +442,19 @@ class Submission extends Element
         switch ($attribute) {
             case 'publisher':
                 $user = $this->getPublisher();
+
                 return $user ? Cp::elementHtml($user) : '-';
             case 'editor':
                 $user = $this->getEditor();
+
                 return $user ? Cp::elementHtml($user) : '-';
             case 'notes':
-                return Template::raw($this->getNotes());
+                $notes = $this->getNotes() ?? '';
+
+                return Template::raw($notes);
             case 'reviewer':
                 $user = $this->getReviewer();
+
                 return $user ? Cp::elementHtml($user) : '-';
             case 'lastReviewDate':
                 if ($lastReview = $this->getLastReview()) {
