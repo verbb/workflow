@@ -276,7 +276,7 @@ class Submission extends Element
     public function getLastReview(): ?Review
     {
         // Sorted by latest first be default
-        $reviews = $this->getReviews();
+        $reviews = array_values($this->getReviews());
 
         return $reviews[0] ?? null;
     }
