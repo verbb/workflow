@@ -267,7 +267,7 @@ class Submission extends Element
     public function getLastReview(): ?Review
     {
         // Sorted by latest first be default
-        $reviews = $this->getReviews();
+        $reviews = array_values($this->getReviews());
 
         return $reviews[0] ?? null;
     }
@@ -432,9 +432,11 @@ class Submission extends Element
     {
         if ($attribute == 'publisher') {
             $user = $this->getPublisher();
+
             return $user ? Cp::elementChipHtml($user) : '-';
         } else if ($attribute == 'editor') {
             $user = $this->getEditor();
+
             return $user ? Cp::elementChipHtml($user) : '-';
         } else if ($attribute == 'notes') {
             return Template::raw($this->getNotes());

@@ -31,6 +31,7 @@ use craft\services\Elements;
 use craft\services\Gql;
 use craft\services\SystemMessages;
 use craft\services\UserPermissions;
+use craft\web\Application;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -72,11 +73,13 @@ class Workflow extends Plugin
             $this->_registerWidgets();
 
             // Only show the menu item if user has permission to overview
-            if ($currentUser = Craft::$app->getUser()->getIdentity()) {
-                if ($currentUser->can('workflow-overview')) {
-                    $this->hasCpSection = true;
+            Craft::$app->on(Application::EVENT_INIT, function() {
+                if ($currentUser = Craft::$app->getUser()->getIdentity()) {
+                    if ($currentUser->can('workflow-overview')) {
+                        $this->hasCpSection = true;
+                    }
                 }
-            }
+            });
         }
 
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
