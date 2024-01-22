@@ -13,6 +13,7 @@ use craft\base\ElementInterface;
 use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\Cp;
+use craft\helpers\ElementHelper;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
