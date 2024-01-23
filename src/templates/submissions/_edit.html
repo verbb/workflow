@@ -60,6 +60,7 @@
 {% block main %}
 
 <input type="hidden" name="action" value="workflow/submissions/save-submission">
+<input type="hidden" name="siteId" value="{{ submission.siteId }}">
 {{ redirectInput('workflow') }}
 {{ csrfInput() }}
 

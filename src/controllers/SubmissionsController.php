@@ -63,8 +63,9 @@ class SubmissionsController extends Controller
         $session = Craft::$app->getSession();
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        $submissionId = $request->getParam('submissionId');
-        $submission = Craft::$app->getElements()->getElementById($submissionId);
+        $submissionId = (int)$request->getParam('submissionId');
+        $siteId = (int)$request->getParam('siteId');
+        $submission = Workflow::$plugin->getSubmissions()->getSubmissionById($submissionId, $siteId);
         $status = $request->getParam('status');
 
         if (!$submission) {
