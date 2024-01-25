@@ -439,9 +439,12 @@ class Submission extends Element
 
             return $user ? Cp::elementChipHtml($user) : '-';
         } else if ($attribute == 'notes') {
-            return Template::raw($this->getNotes());
+            $notes = $this->getNotes();
+
+            return $notes ? Template::raw($notes) : '';
         } else if ($attribute == 'reviewer') {
             $user = $this->getReviewer();
+
             return $user ? Cp::elementChipHtml($user) : '-';
         } else if ($attribute == 'lastReviewDate') {
             if ($lastReview = $this->getLastReview()) {

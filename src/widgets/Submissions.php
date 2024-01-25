@@ -16,7 +16,7 @@ class Submissions extends Widget
         return Craft::t('workflow', 'Workflow Submissions');
     }
 
-    public static function iconPath(): string
+    public static function icon(): string
     {
         return Craft::getAlias('@verbb/workflow/icon-mask.svg');
     }
