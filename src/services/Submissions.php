@@ -130,6 +130,9 @@ class Submissions extends Component
             return false;
         }
 
+        // Refresh reviews cache to get the updated copies for emails
+        $submission->clearReviews();
+
         // Trigger notification to reviewer
         if ($settings->reviewerNotifications) {
             Workflow::$plugin->getEmails()->sendReviewerNotificationEmail($submission, $review, $entry);
