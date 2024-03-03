@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.9 - 2024-03-04
+
+### Fixed
+- Fix an incorrect URL for draft submissions in email notifications.
+- Fix performance issues with review memoization due to performance issues for large installs.
+- Fix settings dropdown showing for reviews when editing a submission.
+
 ## 2.0.8 - 2024-01-30
 
 ### Fixed
