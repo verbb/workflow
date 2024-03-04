@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.9 - 2024-03-04
+
+### Fixed
+- Fix an incorrect URL for draft submissions in email notifications.
+- Fix performance issues with review memoization due to performance issues for large installs.
+- Fix settings dropdown showing for reviews when editing a submission.
+
+## 2.0.8 - 2024-01-30
+
+### Fixed
+- Fix dashboard widget icon.
+- Fix an error when saving submissions in the control panel for multi-sites.
+- Fix an error when showing submission notes in the element index.
+- Fix an error when determining the last review for a submission.
+- Fix "Element query executed before Craft is fully initialized" warning.
+- Fix submissions pane showing for non-draft, published entries when it should only show for drafts.
+
 ## 2.0.7 - 2023-12-08
 
 ### Added

@@ -16,13 +16,15 @@ To add Reviewers, use the Workflow settings to add user groups as reviewer level
 
 The overall review process will be top-down. So for example, you might have two Reviewer groups - Reviewers 1 and Reviewers 2. Submissions will be placed by users in the Editors' user group, and submitted to the Reviewers 1 users group. After successful review and approval, this will be submitted to the Reviewers 2 user group. After successful review and approval, this will then be submitted to the Publishers' user group for final review.
 
+If, however a review is rejected at any stage, the submission will be "cancelled" and the original editor will be notified.
+
 Visually, this process would look similar to:
 
 - "Editor" creates and submits entry
 - "Reviewers 1" receives & reviews submission
   - If rejected, back to "Editor"
 - "Reviewers 2" receives & reviews submission
-  - If rejected, back to "Reviewers 1"
+  - If rejected, back to "Editor"
 - "Publisher" receives & reviews submission
-  - If rejected, back to "Reviewers 2"
+  - If rejected, back to "Editor"
   - If approved, publishes entry

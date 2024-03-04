@@ -29,28 +29,40 @@ class Reviews extends Component
     public const EVENT_AFTER_DELETE_REVIEW = 'afterDeleteReview';
 
 
-    // Properties
-    // =========================================================================
-
-    private ?MemoizableArray $_reviews = null;
-
-
     // Public Methods
     // =========================================================================
 
     public function getAllReviews(): array
     {
-        return $this->_reviews()->all();
+        $results = $this->_createReviewQuery()->all();
+
+        foreach ($results as $key => $result) {
+            $results[$key] = new Review($result);
+        }
+
+        return $results;
     }
 
     public function getReviewsBySubmissionId(int $submissionId): array
     {
-        return $this->_reviews()->where('submissionId', $submissionId)->all();
+        $results = $this->_createReviewQuery()
+            ->where(['submissionId' => $submissionId])
+            ->all();
+
+        foreach ($results as $key => $result) {
+            $results[$key] = new Review($result);
+        }
+
+        return $results;
     }
 
     public function getReviewById(int $id): ?Review
     {
-        return $this->_reviews()->firstWhere('id', $id);
+        $result = $this->_createReviewQuery()
+            ->where(['id' => $id])
+            ->one();
+
+        return $result ? new Review($result) : null;
     }
 
     public function getPreviousReviewById(int $id): ?Review
@@ -130,9 +142,6 @@ class Reviews extends Component
             ]));
         }
 
-        // Clear cache
-        $this->_reviews = null;
-
         return true;
     }
 
@@ -165,30 +174,12 @@ class Reviews extends Component
             ]));
         }
 
-        // Clear cache
-        $this->_reviews = null;
-
         return true;
     }
 
 
     // Private Methods
     // =========================================================================
-
-    private function _reviews(): MemoizableArray
-    {
-        if (!isset($this->_reviews)) {
-            $reviews = [];
-
-            foreach ($this->_createReviewQuery()->all() as $result) {
-                $reviews[] = new Review($result);
-            }
-
-            $this->_reviews = new MemoizableArray($reviews);
-        }
-
-        return $this->_reviews;
-    }
 
     private function _createReviewQuery(): Query
     {
