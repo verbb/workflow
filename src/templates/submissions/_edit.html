@@ -152,7 +152,7 @@
         </div>
 
         <div class="input ltr">
-            {% include '_elements/element' with { element: submission.getDraft() ?? submission.getOwner() } %}
+            {{ elementChip(submission.getDraft() ?? submission.getOwner()) }}
         </div>
     </div>
 
