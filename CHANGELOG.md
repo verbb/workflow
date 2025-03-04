@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.15 - 2025-03-04
+
+### Fixed
+- Fix an error when trying to resolve the owner element of a review when it’s a draft.
+- Fix an error when using the “Publisher Notifications User Group” setting.
+
 ## 2.0.14 - 2025-02-02
 
 ### Added
