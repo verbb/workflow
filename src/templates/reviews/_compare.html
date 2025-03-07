@@ -26,7 +26,9 @@
                 {% set fieldLayout = entry.getFieldLayout() %}
 
                 {% if fieldLayout %}
-                    {% set form = fieldLayout.createForm(entry, true) %}
+                    {% set form = fieldLayout.createForm(entry, true, {
+                        namespace: 'worklow-compare-' ~ loop.index,
+                    }) %}
 
                     {% include 'workflow/reviews/_includes/_review' %}
                 {% else %}

@@ -16,7 +16,7 @@ $.each(diff, function(key, diffInfo) {
 });
 
 function addStatusIndicator(selector, diffInfo) {
-    var $field = $review.find('#' + selector + '-field');
+    var $field = $review.find('#worklow-compare-2-' + selector + '-field');
     var text = '';
 
     if (diffInfo.type === 'add') {
