@@ -71,9 +71,12 @@ class Content extends Component
 
         $content = $revision->getSerializedFieldValues();
 
-        foreach (Craft::$app->getFields()->getAllFields() as $field) {
-            if (isset($content[$field->handle]) && $content[$field->handle] !== null) {
-                $revisionData['fields'][$field->handle . ':' . $field->id] = $content[$field->handle];
+        // We need to check against field instances, not just the individual fields
+        if ($fieldLayout = $revision->getFieldLayout()) {
+            foreach ($fieldLayout->getCustomFields() as $field) {
+                if (isset($content[$field->handle]) && $content[$field->handle] !== null) {
+                    $revisionData['fields'][$field->handle . ':' . $field->id] = $content[$field->handle];
+                }
             }
         }
 
