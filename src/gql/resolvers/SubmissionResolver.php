@@ -5,10 +5,9 @@ use verbb\workflow\elements\Submission;
 use verbb\workflow\helpers\Gql as GqlHelper;
 
 use craft\elements\db\ElementQuery;
+use craft\elements\ElementCollection;
 use craft\gql\base\ElementResolver;
 use craft\helpers\Db;
-
-use Illuminate\Support\Collection;
 
 class SubmissionResolver extends ElementResolver
 {
@@ -32,7 +31,7 @@ class SubmissionResolver extends ElementResolver
         }
 
         if (!GqlHelper::canQuerySubmissions()) {
-            return Collection::empty();
+            return ElementCollection::empty();
         }
 
         return $query;
