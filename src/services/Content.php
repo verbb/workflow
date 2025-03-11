@@ -52,7 +52,21 @@ class Content extends Component
         $differ = new MapDiffer(true);
         $diff = $differ->doDiff($oldArray, $newArray);
 
-        return $this->_convertDiffToArray($diff);
+        // Simply complex fields like Table, Element, Matrix, etc to just show the top-level change
+        $diff = $this->_convertDiffToArray($diff);
+        $fields = $diff['fields'] ?? [];
+
+        foreach ($fields as $fieldKey => $field) {
+            if (isset($field[0])) {
+                // Swap the diff to just be a change (retain the diff data though)
+                $diffChange = $field[0];
+                $diffChange['type'] = 'change';
+
+                $diff['fields'][$fieldKey] = $diffChange;
+            }
+        }
+
+        return $diff;
     }
 
     public function getRevisionData(Entry $revision): array
