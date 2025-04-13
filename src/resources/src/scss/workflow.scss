@@ -178,6 +178,12 @@
 // Workflow Single
 // ==========================================================================
 
+.workflow-submission-edit .content-pane {
+    --pane-bg: transparent;
+    --pane-shadow: none;
+    --padding: 0;
+}
+
 .workflow-reviews-stats {
     display: flex;
     flex-wrap: wrap;
