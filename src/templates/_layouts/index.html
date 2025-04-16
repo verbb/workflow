@@ -1,45 +1,11 @@
-{% extends parentLayout ?? '_layouts/cp' %}
+{% extends 'verbb-base/_layouts' %}
 
 {% do view.registerAssetBundle('verbb\\workflow\\assetbundles\\WorkflowAsset') %}
 
-{% set tabs = {} %}
-
-{% if currentUser.can('workflow-overview') %}
-    {% set tabs = tabs | merge({ workflow: { label: 'Submissions' | t('workflow'), url: url('workflow') } }) %}
+{% if title is not defined %}
+    {% set title = craft.workflow.getPluginName() %}
 {% endif %}
 
-{% if currentUser.can('workflow-settings') and craft.app.config.general.allowAdminChanges %}
-    {% set tabs = tabs | merge({ settings: { label: 'Settings' | t('workflow'), url: url('workflow/settings') } }) %}
-{% endif %}
-
-{% set title = 'Workflow ' ~ tabs[selectedTab].label ?? '' %}
-
-{% block content %}
-    {% block blockContent %}
-
-    {% endblock %}
-
-    <hr>
-    
-    <div id="plugin-footer">
-        <div class="footer-left">
-            {% block footerButton %}
-
-            {% endblock %}
-        </div>
-
-        <div class="footer-right">
-            <a class="plugin-credit" href="https://verbb.io" target="_blank">
-                <span class="credit-love">Made with <span style="color: #e25555;">&#9829;</span> by</span>
-
-                <div class="credit-pill">
-                    <div class="credit-mask">
-                        <div class="credit-wrap">
-                            {% include 'verbb-base/_svg/verbb-logo.svg' %}
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-{% endblock %}
+{% set crumbs = [
+    { label: craft.workflow.getPluginName() | t('workflow'), url: url('workflow') },
+] | merge(crumbs ?? []) %}

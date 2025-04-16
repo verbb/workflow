@@ -142,11 +142,13 @@ class Workflow extends Plugin
     private function _registerCpRoutes(): void
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event): void {
-            $event->rules = array_merge($event->rules, [
-                'workflow/submissions/edit/<submissionId:\d+>' => 'workflow/submissions/edit',
-                'workflow/reviews/compare/<newReviewId:\d+>:<oldReviewId:\d+>' => 'workflow/reviews/compare',
-                'workflow/settings' => 'workflow/base/settings',
-            ]);
+            $event->rules['workflow/submissions/edit/<submissionId:\d+>'] = 'workflow/submissions/edit';
+            $event->rules['workflow/reviews/compare/<newReviewId:\d+>:<oldReviewId:\d+>'] = 'workflow/reviews/compare';
+
+            $event->rules['workflow/settings'] = 'workflow/settings/index';
+            $event->rules['workflow/settings/general'] = 'workflow/settings/index';
+            $event->rules['workflow/settings/notifications'] = 'workflow/settings/notifications';
+            $event->rules['workflow/settings/permissions'] = 'workflow/settings/permissions';
         });
     }
 

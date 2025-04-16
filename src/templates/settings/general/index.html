@@ -1,0 +1,124 @@
+{% extends 'workflow/_layouts/settings' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set fullPageForm = true %}
+{% set pageTitle = 'General Settings' | t('workflow') %}
+{% set pageAction = 'workflow/settings/save-settings' %}
+{% set pageUrl = 'workflow/settings/general' %}
+
+{% set crumbs = [
+    { label: pageTitle, url: url(pageUrl) }
+] %}
+
+{% block settingsContent %}
+
+{{ forms.textField({
+    first: true,
+    label: 'Plugin Name' | t('workflow'),
+    instructions: 'Plugin name for the end user.' | t('workflow'),
+    id: 'pluginName',
+    name: 'pluginName',
+    value: settings.pluginName,
+    autofocus: true,
+    warning: macros.configWarning('pluginName', 'workflow'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Lock Draft Submissions' | t('workflow'),
+    instructions: 'Whether an entry should be locked for editing after it‘s been submitted for review.' | t('workflow'),
+    id: 'lockDraftSubmissions',
+    name: 'lockDraftSubmissions',
+    on: settings.lockDraftSubmissions,
+    warning: macros.configWarning('lockDraftSubmissions', 'workflow'),
+}) }}
+
+<div class="workflow-settings-panes">
+    {% for site in craft.app.sites.getAllSites() %}
+        <div class="workflow-settings-pane">
+            <div class="pane-toolbar">
+                <a class="pane-toolbar-title fieldtoggle {% if loop.first %}expanded{% endif %}" data-target="pane-{{ loop.index }}">{{ site.name }}</a>
+            </div>
+
+            <div id="pane-{{ loop.index }}" class="settings-content-pane {% if not loop.first %}hidden{% endif %}">
+                {% set groups = [] %}
+                {% for group in craft.app.userGroups.getAllGroups() %}
+                    {% set groups = groups | merge([{ label: group.name, value: group.uid }]) %}
+                {% endfor %}
+
+                {% set groupsWithNone = [{ label: 'None' | t('workflow'), value: '' }] | merge(groups) %}
+
+                {{ forms.selectField({
+                    label: 'Editor User Group' | t('workflow'),
+                    instructions: 'Select the user group that your editors belong to. Editors are users that can edit content, but not publish live.' | t('workflow'),
+                    id: "editorUserGroup-#{loop.index}",
+                    name: "editorUserGroup[#{site.uid}]",
+                    value: settings.getEditorUserGroupUid(site),
+                    errors: settings.getErrors('editorUserGroup'),
+                    options: groupsWithNone,
+                    warning: macros.configWarning('editorUserGroup', 'workflow'),
+                }) }}
+
+                {{ forms.lightswitchField({
+                    label: 'Editor Submission Notes Required' | t('workflow'),
+                    instructions: 'Whether editors are required to enter a note in their submissions.' | t('workflow'),
+                    id: "editorNotesRequired-#{loop.index}",
+                    name: "editorNotesRequired[#{site.uid}]",
+                    on: settings.getEditorNotesRequired(site),
+                    warning: macros.configWarning('editorNotesRequired', 'workflow'),
+                }) }}
+
+                <hr>
+
+                {% set cols = [
+                    {
+                        type: 'select',
+                        heading: 'User Group' | t('workflow'),
+                        options: groups,
+                    },
+                ] %}
+
+                {{ forms.editableTableField({
+                    label: 'Reviewer User Groups' | t('workflow'),
+                    instructions: 'Select the user groups that your reviewers belong to. Reviewers are users that can review and edit submissions and pass them along for approval, but not publish live. The review process flows from the first to the last user group in the table.' | t('workflow'),
+                    name: "reviewerUserGroups[#{site.uid}]",
+                    id: "reviewerUserGroups-#{loop.index}",
+                    cols: cols,
+                    rows: settings.getReviewerUserGroupsUids(site),
+                    addRowLabel: 'Add a user group' | t('workflow'),
+                    errors: settings.getErrors('reviewerUserGroups'),
+                    warning: macros.configWarning('reviewerUserGroups', 'workflow') ?: 'Changing this may result in submissions being lost in the review process.' | t('workflow'),
+                    allowAdd: true,
+                    allowDelete: true,
+                    allowReorder: true,
+                })|spaceless }}
+
+                <hr>
+
+                {{ forms.selectField({
+                    label: 'Publisher User Group' | t('workflow'),
+                    instructions: 'Select the user group that your publishers belong to. Publishers are users who are notified when an editor submits content for review, and can approve content to be published live.' | t('workflow'),
+                    id: "publisherUserGroup-#{loop.index}",
+                    name: "publisherUserGroup[#{site.uid}]",
+                    value: settings.getPublisherUserGroupUid(site),
+                    errors: settings.getErrors('publisherUserGroup'),
+                    required: true,
+                    options: groups,
+                    warning: macros.configWarning('publisherUserGroup', 'workflow'),
+                }) }}
+
+                {{ forms.lightswitchField({
+                    label: 'Publisher Submission Notes Required' | t('workflow'),
+                    instructions: 'Whether publishers are required to enter a note in their submissions.' | t('workflow'),
+                    id: "publisherNotesRequired-#{loop.index}",
+                    name: "publisherNotesRequired[#{site.uid}]",
+                    on: settings.getPublisherNotesRequired(site),
+                    warning: macros.configWarning('publisherNotesRequired', 'workflow'),
+                }) }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

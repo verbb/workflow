@@ -1,0 +1,91 @@
+{% extends 'workflow/_layouts/settings' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set fullPageForm = true %}
+{% set pageTitle = 'Notifications' | t('workflow') %}
+{% set pageAction = 'workflow/settings/save-settings' %}
+{% set pageUrl = 'workflow/settings/notifications' %}
+
+{% set crumbs = [
+    { label: pageTitle, url: url(pageUrl) }
+] %}
+
+{% block settingsContent %}
+
+{{ forms.lightswitchField({
+    label: 'Editor Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to individual editors when approved or rejected.' | t('workflow'),
+    id: 'editorNotifications',
+    name: 'editorNotifications',
+    on: settings.editorNotifications,
+    warning: macros.configWarning('editorNotifications', 'workflow'),
+}) }}
+
+{{ forms.checkboxGroupField({
+    label: 'Editor Notifications - Additional Options' | t('workflow'),
+    instructions: 'Whether editor notifications should include the reviewer‘s or publisher‘s email whose triggered the action.' | t('workflow'),
+    id: 'editorNotificationsOptions',
+    name: 'editorNotificationsOptions',
+    values: settings.editorNotificationsOptions,
+    options: {
+        replyToReviewer: 'Reply-To Reviewer Email' | t('workflow'),
+        ccReviewer: 'CC Reviewer Email' | t('workflow'),
+        replyTo: 'Reply-To Publisher Email' | t('workflow'),
+        cc: 'CC Publisher Email' | t('workflow'),
+    },
+    warning: macros.configWarning('editorNotificationsOptions', 'workflow'),
+}) }}
+
+<hr>
+
+{{ forms.lightswitchField({
+    label: 'Reviewer Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to reviewers when editors submit an entry for review.' | t('workflow'),
+    id: 'reviewerNotifications',
+    name: 'reviewerNotifications',
+    on: settings.reviewerNotifications,
+    warning: macros.configWarning('reviewerNotifications', 'workflow'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Reviewer Approval Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to editors when each reviewer approves an entry after review.' | t('workflow'),
+    id: 'reviewerApprovalNotifications',
+    name: 'reviewerApprovalNotifications',
+    on: settings.reviewerApprovalNotifications,
+    warning: macros.configWarning('reviewerApprovalNotifications', 'workflow'),
+}) }}
+
+<hr>
+
+{{ forms.lightswitchField({
+    label: 'Publisher Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to publishers when editors submit an entry for review.' | t('workflow'),
+    id: 'publisherNotifications',
+    name: 'publisherNotifications',
+    on: settings.publisherNotifications,
+    warning: macros.configWarning('publisherNotifications', 'workflow'),
+}) }}
+
+{{ forms.selectField({
+    label: 'Publisher Notifications User Group' | t('workflow'),
+    instructions: 'By default, all users in the "Publisher User Group" will receive email notifications. Set a specific group to receive email notifications.' | t('workflow'),
+    id: 'publisherNotificationsUserGroup',
+    name: 'publisherNotificationsUserGroup',
+    value: settings.publisherNotificationsUserGroup,
+    options: userGroups,
+    warning: macros.configWarning('publisherNotificationsUserGroup', 'workflow'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Published Author Notifications' | t('workflow'),
+    instructions: 'Whether email notifications should be delivered to the entry author when approved and published by a Publisher.' | t('workflow'),
+    id: 'publishedAuthorNotifications',
+    name: 'publishedAuthorNotifications',
+    on: settings.publishedAuthorNotifications,
+    warning: macros.configWarning('publishedAuthorNotifications', 'workflow'),
+}) }}
+
+{% endblock %}
