@@ -109,14 +109,15 @@ class Workflow extends Plugin
 
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        if ($currentUser->can('workflow-overview') && $currentUser->can('accessPlugin-workflow')) {
-            $nav['subnav']['overview'] = [
-                'label' => Craft::t('workflow', 'Submissions'),
-                'url' => 'workflow',
-            ];
-        }
-
         if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            // Only show the Submissions page if the settings are also shown, otherwise just show the top-level menu item
+            if ($currentUser->can('workflow-overview') && $currentUser->can('accessPlugin-workflow')) {
+                $nav['subnav']['overview'] = [
+                    'label' => Craft::t('workflow', 'Submissions'),
+                    'url' => 'workflow',
+                ];
+            }
+
             $nav['subnav']['settings'] = [
                 'label' => Craft::t('workflow', 'Settings'),
                 'url' => 'workflow/settings',
