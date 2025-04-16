@@ -39,41 +39,17 @@
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
 
             <div class="workflow-submission-footer">
-                <div id="save-btn-container" class="btngroup submit">
-                    <a class="btn formsubmit submit" data-action="elements/apply-draft" data-param="workflow-action" data-value="approve-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ 'Approve and publish' | t('workflow') }}</a>
+                {% set actionMenuItems = craft.workflow.getPlugin().getActions().getPublisherActionsMenuItems(entry, submission, review) %}
 
-                    <div class="btn submit menubtn"></div>
-
-                    <div class="menu" data-align="right">
-                        <ul>
-                            <li>
-                                {# For an un-applied draft, there seems to be some JS in Craft that prevents the page from reloading #}
-                                {# when the `data-action` and `data-redirect` params are set, so check to remove them #}
-                                {{ tag('a', {
-                                    class: 'formsubmit',
-                                    text: 'Approve only' | t('workflow'),
-                                    data: {
-                                        param: 'workflow-action',
-                                        value: 'approve-only-submission',
-                                        action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
-                                        redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
-                                    },
-                                }) }}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                {# For an un-applied draft, there seems to be some JS in Craft that prevents the page from reloading #}
-                {# when the `data-action` and `data-redirect` params are set, so check to remove them #}
-                {{ tag('a', {
-                    class: 'btn formsubmit',
-                    text: 'Reject' | t('workflow'),
-                    data: {
-                        param: 'workflow-action',
-                        value: 'reject-submission',
-                        action: entry.getIsUnpublishedDraft() ? 'elements/save-draft' : null,
-                        redirect: entry.getIsUnpublishedDraft() ? '{cpEditUrl}' | hash : null,
+                {{ disclosureMenu(actionMenuItems, {
+                    buttonLabel: 'Actions' | t('workflow'),
+                    withButton: true,
+                    buttonAttributes: {
+                        title: 'Actions' | t('workflow'),
+                        class: 'btn submit menubtn',
+                        data: {
+                            'disclosure-trigger': true,
+                        },
                     },
                 }) }}
             </div>
