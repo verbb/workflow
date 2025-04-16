@@ -32,6 +32,7 @@ Value | Description
 --- | ---
 `revoke-submission` | For an editor to revoke their submission, only once submitted.
 `approve-submission` | For a publisher to approve and publish a submission.
+`approve-apply-submission` | For a publisher to approve and apply a submission.
 `approve-only-submission` | For a publisher to approve a submission.
 `reject-submission` | For a publisher to reject a submission.
 

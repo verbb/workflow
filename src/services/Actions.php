@@ -67,7 +67,7 @@ class Actions extends Component
     {
         $actions = [
             actiontypes\ApproveSubmission::class,
-            actiontypes\ApproveOnlySubmission::class,
+            actiontypes\ApproveApplySubmission::class,
             actiontypes\RejectSubmission::class,
         ];
 
