@@ -2,6 +2,7 @@
 namespace verbb\workflow\base;
 
 use verbb\workflow\Workflow;
+use verbb\workflow\services\Actions;
 use verbb\workflow\services\Content;
 use verbb\workflow\services\Emails;
 use verbb\workflow\services\Reviews;
@@ -34,6 +35,7 @@ trait PluginTrait
 
         return [
             'components' => [
+                'actions' => Actions::class,
                 'content' => Content::class,
                 'emails' => Emails::class,
                 'reviews' => Reviews::class,
@@ -46,6 +48,11 @@ trait PluginTrait
 
     // Public Methods
     // =========================================================================
+
+    public function getActions(): Actions
+    {
+        return $this->get('actions');
+    }
 
     public function getContent(): Content
     {

@@ -108,40 +108,9 @@ class Service extends Component
             }
         }
 
-        if ($action === 'approve-submission') {
-            // For multi-sites, we only want to act on the current site's entry. Returning early will respect the
-            // section defaults for enabling the entry per-site.
-            if (Craft::$app->getIsMultiSite()) {
-                $currentSiteId = $currentSite->id;
-
-                if ($siteHandle = $request->getParam('site')) {
-                    if ($site = Craft::$app->getSites()->getSiteByHandle($siteHandle)) {
-                        $currentSiteId = $site->id;
-                    }
-                }
-
-                if ($event->sender->siteId != $currentSiteId) {
-                    return;
-                }
-            }
-
-            // Automatically set the entry "live", saving users from having to enable and set a post date manually.
-            $event->sender->enabled = true;
-            $event->sender->enabledForSite = true;
-            $event->sender->setScenario(Element::SCENARIO_LIVE);
-
-            if (($postDate = $request->getBodyParam('postDate')) !== null) {
-                $event->sender->postDate = DateTimeHelper::toDateTime($postDate) ?: new DateTime();
-            }
-
-            // We also need to validate notes fields, if required before we save the entry
-            if ($settings->getPublisherNotesRequired($currentSite) && !$workflowNotes) {
-                Craft::$app->getUrlManager()->setRouteParams([
-                    'workflowNotesErrors' => [Craft::t('workflow', 'Notes are required')],
-                ]);
-
-                $event->isValid = false;
-            }
+        // Check for any actions registered for this actionId
+        if ($action && $customAction = Workflow::$plugin->getActions()->getActionById($action)) {
+            $customAction->onBeforeSaveEntry($event);
         }
     }
 
@@ -184,30 +153,9 @@ class Service extends Component
             Workflow::$plugin->getSubmissions()->saveSubmission($event->element);
         }
 
-        if ($action == 'approve-review') {
-            Workflow::$plugin->getSubmissions()->approveReview($event->element);
-        }
-
-        if ($action == 'reject-review') {
-            Workflow::$plugin->getSubmissions()->rejectReview($event->element);
-        }
-
-        if ($action == 'revoke-submission') {
-            Workflow::$plugin->getSubmissions()->revokeSubmission($event->element);
-        }
-
-        if ($action == 'reject-submission') {
-            Workflow::$plugin->getSubmissions()->rejectSubmission($event->element);
-        }
-
-        // For the cases where it's been submitted from the front-end, it's not a draft!
-        if ($action === 'approve-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->element);
-        }
-
-        // We're approving-only, so basically the draft is just saved, but the submission lifecycle completed
-        if ($action == 'approve-only-submission') {
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->element, false);
+        // Check for any actions registered for this actionId
+        if ($action && $customAction = Workflow::$plugin->getActions()->getActionById($action)) {
+            $customAction->onAfterSaveElement($event);
         }
     }
 

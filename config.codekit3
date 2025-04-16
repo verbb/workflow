@@ -400,6 +400,30 @@
       "rFN" : 0,
       "uCM" : 0
     },
+    "\/src\/actions\/Approve.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/actions\/Approve.php",
+      "oF" : 0
+    },
+    "\/src\/actions\/ApprovePublish.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/actions\/ApprovePublish.php",
+      "oF" : 0
+    },
+    "\/src\/actions\/Reject.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/actions\/Reject.php",
+      "oF" : 0
+    },
     "\/src\/assetbundles" : {
       "ft" : 65536,
       "oA" : 1,
@@ -438,6 +462,14 @@
       "hM" : 0,
       "oA" : 2,
       "oAP" : "\/src\/events\/PrepareEmailEvent.php",
+      "oF" : 0
+    },
+    "\/src\/events\/RegisterPublisherActionsEvent.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/events\/RegisterPublisherActionsEvent.php",
       "oF" : 0
     },
     "\/src\/events\/ReviewerUserGroupsEvent.php" : {
