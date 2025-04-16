@@ -28,7 +28,7 @@
         "php": "^8.2",
         "craftcms/cms": "^5.0.0",
         "diff/diff": "^3.3",
-        "verbb/base": "^3.0.0"
+        "verbb/base": "^3.0.8"
     },
     "autoload": {
         "psr-4": {
