@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.0.8 - 2025-05-01
+
+### Added
+- Add the ability to register your own editor/reviewer/publisher actions to handle submissions.
+
+### Changed
+- The “Submissions” sub-nav item in the control panel menu now only appears when the “Settings” menu item also does.
+- Replaced “Approve” action witth “Approve and Apply”.
+- Refactor editor/reviewer/publisher actions into specific classes to control behaviour.
+- Refactor settings screens to fit `verbb-base` for consistency.
+- Update GraphQL resolvers to use `ElementCollection` correctly.
+
+### Fixed
+- Fix review owner element not including disabled or non-live status items.
+- Fix UI for submissions edit and the collapsable sidebar.
+- Fix compare screen not showing change indicator for complex fields.
+- Fix compare view not working correctly with field instances.
+- Fix an error with the compare interface for some fields.
+
 ## 3.0.7 - 2025-03-04
 
 ### Fixed
