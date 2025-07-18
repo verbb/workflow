@@ -89,6 +89,11 @@
 - Now requires PHP `8.2.0+`.
 - Now requires Craft `5.0.0+`.
 
+## 2.0.16 - 2025-07-18
+
+### Changed
+- Update English translations.
+
 ## 2.0.15 - 2025-03-04
 
 ### Fixed
