@@ -3,6 +3,7 @@ namespace verbb\workflow\elements;
 
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\actions\SetStatus;
+use verbb\workflow\elements\conditions\SubmissionCondition;
 use verbb\workflow\elements\db\SubmissionQuery;
 use verbb\workflow\models\Review;
 use verbb\workflow\records\Submission as SubmissionRecord;
@@ -12,6 +13,7 @@ use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\elements\Entry;
 use craft\elements\User;
+use craft\elements\conditions\ElementConditionInterface;
 use craft\helpers\Cp;
 use craft\helpers\ElementHelper;
 use craft\helpers\Html;
@@ -68,6 +70,11 @@ class Submission extends Element
                 'defaultSort' => ['lastReviewDate', 'desc'],
             ],
         ];
+    }
+
+    public static function createCondition(): ElementConditionInterface
+    {
+        return Craft::createObject(SubmissionCondition::class, [static::class]);
     }
 
     protected static function defineActions(string $source = null): array
