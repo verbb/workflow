@@ -400,28 +400,60 @@
       "rFN" : 0,
       "uCM" : 0
     },
-    "\/src\/actions\/Approve.php" : {
+    "\/src\/actions\/ApproveApplySubmission.php" : {
       "cB" : 0,
       "ft" : 8192,
       "hM" : 0,
       "oA" : 2,
-      "oAP" : "\/src\/actions\/Approve.php",
+      "oAP" : "\/src\/actions\/ApproveApplySubmission.php",
       "oF" : 0
     },
-    "\/src\/actions\/ApprovePublish.php" : {
+    "\/src\/actions\/ApproveOnlySubmission.php" : {
       "cB" : 0,
       "ft" : 8192,
       "hM" : 0,
       "oA" : 2,
-      "oAP" : "\/src\/actions\/ApprovePublish.php",
+      "oAP" : "\/src\/actions\/ApproveOnlySubmission.php",
       "oF" : 0
     },
-    "\/src\/actions\/Reject.php" : {
+    "\/src\/actions\/ApproveReview.php" : {
       "cB" : 0,
       "ft" : 8192,
       "hM" : 0,
       "oA" : 2,
-      "oAP" : "\/src\/actions\/Reject.php",
+      "oAP" : "\/src\/actions\/ApproveReview.php",
+      "oF" : 0
+    },
+    "\/src\/actions\/ApproveSubmission.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/actions\/ApproveSubmission.php",
+      "oF" : 0
+    },
+    "\/src\/actions\/RejectReview.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/actions\/RejectReview.php",
+      "oF" : 0
+    },
+    "\/src\/actions\/RejectSubmission.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/actions\/RejectSubmission.php",
+      "oF" : 0
+    },
+    "\/src\/actions\/RevokeSubmission.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/actions\/RevokeSubmission.php",
       "oF" : 0
     },
     "\/src\/assetbundles" : {
@@ -464,12 +496,12 @@
       "oAP" : "\/src\/events\/PrepareEmailEvent.php",
       "oF" : 0
     },
-    "\/src\/events\/RegisterPublisherActionsEvent.php" : {
+    "\/src\/events\/RegisterActionsEvent.php" : {
       "cB" : 0,
       "ft" : 8192,
       "hM" : 0,
       "oA" : 2,
-      "oAP" : "\/src\/events\/RegisterPublisherActionsEvent.php",
+      "oAP" : "\/src\/events\/RegisterActionsEvent.php",
       "oF" : 0
     },
     "\/src\/events\/ReviewerUserGroupsEvent.php" : {

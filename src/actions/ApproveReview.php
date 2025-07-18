@@ -42,8 +42,8 @@ class ApproveReview extends Action
     protected function defineMenuItem(ElementInterface $element, Submission $submission, Review $review): array
     {
         return [
-            'action' => $element->getIsUnpublishedDraft() ? 'elements/save-draft' : null,
-            'redirect' => $element->getIsUnpublishedDraft() ? '{cpEditUrl}' : null,
+            'action' => 'elements/save-draft',
+            'redirect' => '{cpEditUrl}',
         ];
     }
 }

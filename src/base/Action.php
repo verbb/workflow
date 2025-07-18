@@ -31,6 +31,9 @@ abstract class Action extends Component implements ActionInterface
 
             // `disclosuremenu` assumes you don't want to submit the main form
             $menuItem['attributes']['data']['form'] = 'main-form';
+
+            // Prevent autosave behaviour in favour of full reload
+            $menuItem['attributes']['data']['event-data'] = ['autosave' => false];
         }
 
         return $menuItem;
