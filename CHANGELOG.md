@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.9 - 2025-07-18
+
+### Added
+- Add Submission conditions for Role and Entry.
+
+### Changed
+- Update English translations.
+
+### Fixed
+- Fix submission behaviour to work with Craft 5.8+.
+
 ## 3.0.8 - 2025-05-01
 
 ### Added
