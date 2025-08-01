@@ -10,6 +10,7 @@ use craft\base\Component;
 use craft\base\Element;
 use craft\db\Table;
 use craft\elements\Entry;
+use craft\events\CreateFieldLayoutFormEvent;
 use craft\events\DefineHtmlEvent;
 use craft\events\DraftEvent;
 use craft\events\ElementEvent;
@@ -189,6 +190,42 @@ class Service extends Component
             if ($submission->canUserPublish($currentUser, $event->draft->site)) {
                 Workflow::$plugin->getSubmissions()->approveSubmission($event->draft);
             }
+        }
+    }
+
+    public function onCreateFieldLayoutForm(CreateFieldLayoutFormEvent $event)
+    {
+        $settings = Workflow::$plugin->getSettings();
+        
+        if (!($event->element instanceof Entry)) {
+            return;
+        }
+
+        if (!$settings->lockDraftSubmissions) {
+            return;
+        }
+
+        // Check to see if there's a matching pending (submitted) Workflow submission
+        $submission = Submission::find()
+            ->ownerId($event->element->getCanonicalId())
+            ->ownerSiteId($event->element->siteId)
+            ->ownerDraftId($event->element->draftId)
+            ->limit(1)
+            ->isComplete(false)
+            ->isPending(true)
+            ->one();
+
+        if (!$submission) {
+            return;
+        }
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        // Ensure current user is allowed to review the submission
+        // If the current user is the author, they can't edit their own submission
+        /** @var Submission $submission */
+        if ((!$submission->canUserReview($currentUser, $event->element->site) || $submission->editorId == $currentUser->id)) {
+            $event->static = true;
         }
     }
 

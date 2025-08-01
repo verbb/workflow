@@ -25,6 +25,7 @@ use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
+use craft\models\FieldLayout;
 use craft\services\Dashboard;
 use craft\services\Drafts;
 use craft\services\Elements;
@@ -225,6 +226,8 @@ class Workflow extends Plugin
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getService(), 'onAfterSaveElement']);
 
         Event::on(Entry::class, Entry::EVENT_DEFINE_SIDEBAR_HTML, [$this->getService(), 'renderEntrySidebar']);
+
+        Event::on(FieldLayout::class, FieldLayout::EVENT_CREATE_FORM, [$this->getService(), 'onCreateFieldLayoutForm']);
     }
 
     private function _registerPermissions(): void
