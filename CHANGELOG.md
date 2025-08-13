@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.10 - 2025-08-13
+
+### Changed
+- When locking an entry for a pending submission for editors, the entry field layout is now rendered statically.
+
 ## 3.0.9 - 2025-07-18
 
 ### Added
