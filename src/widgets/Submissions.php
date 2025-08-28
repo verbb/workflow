@@ -46,8 +46,17 @@ class Submissions extends Widget
 
         $submissions = $query->all();
 
+        // Return only submissions that are viewable for the current user
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        foreach ($submissions as $key => $submission) {
+            if (!$submission->canView($currentUser)) {
+                unset($submissions[$key]);
+            }
+        }
+
         return Craft::$app->getView()->renderTemplate('workflow/_widget/body', [
-            'submissions' => $submissions,
+            'submissions' => array_values($submissions),
         ]);
     }
 
