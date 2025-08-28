@@ -164,26 +164,46 @@ class Submission extends Element
 
     public function canView(User $user): bool
     {
+        if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
+            return false;
+        }
+
         return true;
     }
 
     public function canSave(User $user): bool
     {
+        if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
+            return false;
+        }
+
         return true;
     }
 
     public function canDuplicate(User $user): bool
     {
+        if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
+            return false;
+        }
+
         return false;
     }
 
     public function canDelete(User $user): bool
     {
+        if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
+            return false;
+        }
+
         return true;
     }
 
     public function canCreateDrafts(User $user): bool
     {
+        if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
+            return false;
+        }
+        
         return false;
     }
 
