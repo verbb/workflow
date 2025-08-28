@@ -137,41 +137,34 @@
 // ==========================================================================
 
 .workflow-widget .workflow-block {
+    display: flex;
+    margin-bottom: 10px;
+
+    .status {
+        margin-top: 4px;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
     small {
-        color: #9399a0;
+        color: #aaa;
         font-size: 85%;
         display: block;
-        margin: -5px 0 0 16px;
     }
 
-    .draft-label {
-        font-size: 12px;
+    &:hover {
+        text-decoration: none;
     }
 
-    body.ltr & .element.large:not(.hasthumb).hasstatus,
-    body.ltr & .element.small.hasstatus {
-        padding-left: 16px;
+    &:hover small {
+        color: #666;
+        text-decoration: none;
     }
 
-    body.ltr &.element.large:not(.hasthumb).hasstatus .status,
-    body.ltr & .element.small.hasstatus .status,
-    body.ltr & .element.large:not(.hasthumb).hasstatus .icon:not(.delete),
-    body.ltr & .element.small.hasstatus .icon:not(.delete) {
-        top: 12px;
-        left: 0;
-    }
-
-    body.rtl & .element.large:not(.hasthumb).hasstatus,
-    body.rtl & .element.small.hasstatus {
-        padding-right: 16px;
-    }
-
-    body.rtl & .element.large:not(.hasthumb).hasstatus .status,
-    body.rtl & .element.small.hasstatus .status,
-    body.rtl & .element.large:not(.hasthumb).hasstatus .icon:not(.delete),
-    body.rtl & .element.small.hasstatus .icon:not(.delete) {
-        top: 12px;
-        right: 0;
+    &:hover span {
+        text-decoration: underline;
     }
 }
 

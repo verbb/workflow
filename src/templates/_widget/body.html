@@ -4,9 +4,12 @@
     {% if submissions %}
         {% for submission in submissions %}
             <div class="workflow-block">
-                {% include '_elements/element' with { element: submission } %}
+                <span class="status {{ submission.status }}"></span>
 
-                <small>{{ submission.dateCreated | timestamp('short') }}: {{ submission.getEditor() }}</small>
+                <a href="{{ submission.getCpEditUrl() }}">
+                    <span class="username">{{ submission.uiLabel() }}</span>
+                    <small>{{ submission.dateCreated | timestamp('short') }}: {{ submission.getEditor() }}</small>
+                </a>
             </div>
         {% endfor %}
     {% else %}
