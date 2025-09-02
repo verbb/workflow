@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.11 - 2025-09-02
+
+### Changed
+- Change the Submissions dashboard widget to only show submissions the current user has permission on.
+
+### Fixed
+- Fix visual display of Submissions dashboard widget.
+- Fix permissions checks for Submission element.
+
 ## 3.0.10 - 2025-08-13
 
 ### Changed
