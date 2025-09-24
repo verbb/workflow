@@ -2,7 +2,7 @@
     "name": "verbb/workflow",
     "description": "Enforce multi-step review processes for creating entries.",
     "type": "craft-plugin",
-    "version": "3.0.11",
+    "version": "4.0.0-alpha.1",
     "keywords": [
         "craft",
         "cms",
@@ -25,10 +25,10 @@
         }
     ],
     "require": {
-        "php": "^8.2",
-        "craftcms/cms": "^5.0.0",
+        "php": "^8.4",
+        "craftcms/cms": "6.x-dev",
         "diff/diff": "^3.3",
-        "verbb/base": "^3.0.8"
+        "verbb/base": "dev-craft-6"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +38,9 @@
     "extra": {
         "name": "Workflow",
         "handle": "workflow",
-        "changelogUrl": "https://raw.githubusercontent.com/verbb/workflow/craft-5/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/workflow/craft-6/CHANGELOG.md",
         "class": "verbb\\workflow\\Workflow"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
