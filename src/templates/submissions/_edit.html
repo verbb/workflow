@@ -170,7 +170,7 @@
 
             <div class="menu" id="status-menu-select">
                 <ul class="padded">
-                    {% for statusValue, statusLabel in submission.statuses() %}
+                    {% for statusValue, statusLabel in submission.getUserStatuses(currentUser, submission.site) %}
                         <li>
                             <a data-value="{{ statusValue }}" data-label="{{ statusLabel }}" {% if submission.status == statusValue %}class="sel"{% endif %} href="javascript:;">
                                 <span class="status {{ statusValue }}"></span>{{ statusLabel }}
