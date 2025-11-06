@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.18 - 2025-11-06
+
+### Fixed
+- Fix user permissions for editors and status, if they have access to editing submissions.
+
 ## 2.0.17 - 2025-09-02
 
 ### Changed
