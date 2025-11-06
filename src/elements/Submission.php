@@ -195,6 +195,15 @@ class Submission extends Element
             return false;
         }
 
+        // Editors can't delete submissions
+        $settings = Workflow::$plugin->getSettings();
+        $currentSite = Craft::$app->getSites()->getCurrentSite();
+        $editorGroup = $settings->getEditorUserGroup($currentSite);
+
+        if ($editorGroup && $user->isInGroup($editorGroup)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -392,6 +401,13 @@ class Submission extends Element
         }
 
         return null;
+    }
+
+    public function getUserStatuses(User $user, $site): array
+    {
+        $settings = Workflow::$plugin->getSettings();
+
+        return $settings->getUserStatuses($user, $site);
     }
 
     /**

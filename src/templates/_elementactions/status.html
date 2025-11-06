@@ -1,20 +1,12 @@
 <div class="btn menubtn">{{ 'Set status' | t('workflow') }}</div>
 <div class="menu">
     <ul>
-        <li>
-            <a class="formsubmit" data-param="status" data-value="approved">
-                <span class="status green"></span> {{ 'Approved' | t('workflow') }}
-            </a>
-        </li>
-        <li>
-            <a class="formsubmit" data-param="status" data-value="revoked">
-                <span class="status"></span> {{ 'Revoked' | t('workflow') }}
-            </a>
-        </li>
-        <li>
-            <a class="formsubmit" data-param="status" data-value="rejected">
-                <span class="status red"></span> {{ 'Rejected' | t('workflow') }}
-            </a>
-        </li>
+        {% for statusValue, statusLabel in statuses %}
+            <li>
+                <a class="formsubmit" data-param="status" data-value="{{ statusValue }}" data-label="{{ statusLabel }}">
+                    <span class="status {{ statusValue }}"></span> {{ statusLabel }}
+                </a>
+            </li>
+        {% endfor %}
     </ul>
 </div>

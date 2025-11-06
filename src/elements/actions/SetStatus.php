@@ -36,7 +36,13 @@ class SetStatus extends BaseSetStatus
 
     public function getTriggerHtml(): ?string
     {
-        return Craft::$app->getView()->renderTemplate('workflow/_elementactions/status');
+        $settings = Workflow::$plugin->getSettings();
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $currentSite = Craft::$app->getSites()->getCurrentSite();
+
+        return Craft::$app->getView()->renderTemplate('workflow/_elementactions/status', [
+            'statuses' => $settings->getUserStatuses($currentUser, $currentSite),
+        ]);
     }
 
     public function performAction(ElementQueryInterface $query): bool

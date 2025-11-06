@@ -135,4 +135,29 @@ class Settings extends Model
 
         return User::find()->groupId($publisherGroup->id)->all();
     }
+
+    public function getUserStatuses(User $user, $site): array
+    {
+        $statuses = Review::statuses();
+
+        $publisherGroup = $this->getPublisherUserGroup($site);
+
+        if ($user->isInGroup($publisherGroup)) {
+            return $statuses;
+        }
+
+        foreach ($this->getReviewerUserGroups($site) as $userGroup) {
+            if ($user->isInGroup($userGroup)) {
+                return $statuses;
+            }
+        }
+
+        if (Craft::$app->getUser()->getIsAdmin()) {
+            return $statuses;
+        }
+
+        unset($statuses['approved'], $statuses['rejected']);
+
+        return $statuses;
+    }
 }
