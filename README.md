@@ -1,4 +1,4 @@
-<p align="center"><img src="https://verbb.imgix.net/plugins/workflow/workflow-icon.svg" width="100" height="100" alt="Workflow icon"></p>
+<p align="center"><img src="https://assets.verbb.io/plugins/workflow/workflow-icon.svg" width="100" height="100" alt="Workflow icon"></p>
 <h1 align="center">Workflow for Craft CMS</h1>
 
 Workflow is a Craft CMS plugin for a common publisher-editor scenario when it comes to content authoring.
