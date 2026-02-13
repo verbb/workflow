@@ -482,11 +482,15 @@ class Submission extends Element
         if ($attribute == 'publisher') {
             $user = $this->getPublisher();
 
-            return $user ? Cp::elementChipHtml($user) : '-';
+            return $user ? Cp::elementChipHtml($user, [
+                'hyperlink' => true,
+            ]) : '-';
         } else if ($attribute == 'editor') {
             $user = $this->getEditor();
 
-            return $user ? Cp::elementChipHtml($user) : '-';
+            return $user ? Cp::elementChipHtml($user, [
+                'hyperlink' => true,
+            ]) : '-';
         } else if ($attribute == 'notes') {
             $notes = $this->getNotes();
 
@@ -494,7 +498,9 @@ class Submission extends Element
         } else if ($attribute == 'reviewer') {
             $user = $this->getReviewer();
 
-            return $user ? Cp::elementChipHtml($user) : '-';
+            return $user ? Cp::elementChipHtml($user, [
+                'hyperlink' => true,
+            ]) : '-';
         } else if ($attribute == 'lastReviewDate') {
             if ($lastReview = $this->getLastReview()) {
                 $formatter = Craft::$app->getFormatter();
@@ -513,11 +519,15 @@ class Submission extends Element
         } else if ($attribute == 'ownerId') {
             // Get the draft for the last review
             if ($element = $this->getDraft()) {
-                return Cp::elementChipHtml($element);
+                return Cp::elementChipHtml($element, [
+                    'hyperlink' => true,
+                ]);
             }
 
             if ($element = $this->getOwner()) {
-                return Cp::elementChipHtml($element);
+                return Cp::elementChipHtml($element, [
+                    'hyperlink' => true,
+                ]);
             }
 
             return '-';
