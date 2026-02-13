@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.13 - 2026-02-13
+
+### Changed
+- Update Submission element index table to use hyperlinked element fields.
+
 ## 3.0.12 - 2025-11-06
 
 ### Fixed
