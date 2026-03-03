@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.14 - 2026-03-03
+
+### Changed
+- Update Submission element edit page to use hyperlinked element relation chips.
+
 ## 3.0.13 - 2026-02-13
 
 ### Changed
