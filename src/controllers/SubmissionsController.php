@@ -76,19 +76,21 @@ class SubmissionsController extends Controller
 
         // Skip if there's nothing to change
         if ($submission->status !== $status) {
-            // If trying to approve their own submission, fail
+            // If trying to approve their own submission, fail unless allowed by settings, permission, or event
             if ($status === Review::STATUS_APPROVED && $submission->editorId === $currentUser->id) {
-                $session->setError(Craft::t('workflow', 'You cannot approve your own submission.'));
+                if (!Workflow::$plugin->getSubmissions()->canUserApproveOwnSubmission($currentUser, $submission)) {
+                    $session->setError(Craft::t('workflow', 'You cannot approve your own submission.'));
 
-                Craft::$app->getUrlManager()->setRouteParams([
-                    'submission' => $submission,
-                    'errors' => $submission->getErrors(),
-                ]);
+                    Craft::$app->getUrlManager()->setRouteParams([
+                        'submission' => $submission,
+                        'errors' => $submission->getErrors(),
+                    ]);
 
-                return null;
-            } else {
-                Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission);
+                    return null;
+                }
             }
+
+            Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission);
         }
 
         if (!Craft::$app->getElements()->saveElement($submission)) {

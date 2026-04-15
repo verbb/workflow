@@ -15,6 +15,7 @@ return [
         'editorNotesRequired' => [],
         'publisherNotesRequired' => [],
         'lockDraftSubmissions' => true,
+        'publisherSelfApprovalUserGroups' => [],
 
         // Notifications
         'editorNotifications' => true,
@@ -40,6 +41,7 @@ General
 - `editorNotesRequired` - An array for whether editors are required to enter a note in their submissions.
 - `publisherNotesRequired` - An array for whether publishers are required to enter a note in their submissions.
 - `lockDraftSubmissions` - Whether an entry should be locked for editing after it‘s been submitted for review.
+- `publisherSelfApprovalUserGroups` - Per site, user groups whose members may approve their own submissions (same nested shape as `reviewerUserGroups`). Combined with the **Approve own submissions** permission and the `definePublisherSelfApproval` event.
 
 Notifications
 - `editorNotifications` - Whether email notifications should be delivered to individual editors when approved or rejected.
@@ -85,6 +87,13 @@ return [
         'publisherNotesRequired' => [
             // Site UID => true/false
             '76974830-73a5-45fb-9c73-72ac8c8981dc' => true,
+        ],
+
+        'publisherSelfApprovalUserGroups' => [
+            // Site UID => rows of User Group UIDs (optional extra groups that may self-approve)
+            '76974830-73a5-45fb-9c73-72ac8c8981dc' => [
+                ['8ffaff7f-b68e-4ed0-a74b-4e5596e01735'],
+            ],
         ],
     ]
 ];
