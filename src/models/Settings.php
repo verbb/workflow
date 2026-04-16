@@ -5,6 +5,7 @@ use Craft;
 use craft\base\Model;
 use craft\elements\User;
 use craft\helpers\ArrayHelper;
+use craft\models\Site;
 
 class Settings extends Model
 {
@@ -19,6 +20,7 @@ class Settings extends Model
     public array $editorNotesRequired = [];
     public array $publisherNotesRequired = [];
     public bool $lockDraftSubmissions = true;
+    public array $publisherSelfApprovalUserGroups = [];
 
     // Notifications
     public bool $editorNotifications = true;
@@ -134,6 +136,55 @@ class Settings extends Model
         }
 
         return User::find()->groupId($publisherGroup->id)->all();
+    }
+
+    public function getPublisherSelfApprovalUserGroups(Site $site): array
+    {
+        $siteGroups = $this->publisherSelfApprovalUserGroups[$site->uid] ?? [];
+
+        if (!is_array($siteGroups)) {
+            return [];
+        }
+
+        $userGroups = [];
+
+        foreach ($siteGroups as $siteGroup) {
+            $uid = $siteGroup[0] ?? null;
+
+            if ($uid === null || $uid === '') {
+                continue;
+            }
+
+            $userGroup = Craft::$app->getUserGroups()->getGroupByUid($uid);
+
+            if ($userGroup !== null) {
+                $userGroups[] = $userGroup;
+            }
+        }
+
+        return $userGroups;
+    }
+
+    public function getPublisherSelfApprovalUserGroupsUids(Site $site): array
+    {
+        $uids = [];
+
+        foreach (ArrayHelper::getColumn($this->getPublisherSelfApprovalUserGroups($site), 'uid') as $value) {
+            $uids[] = [$value];
+        }
+
+        return $uids;
+    }
+
+    public function userMatchesPublisherSelfApprovalBypassGroups(User $user, Site $site): bool
+    {
+        foreach ($this->getPublisherSelfApprovalUserGroups($site) as $userGroup) {
+            if ($user->isInGroup($userGroup)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getUserStatuses(User $user, $site): array

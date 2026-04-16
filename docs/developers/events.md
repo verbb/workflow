@@ -45,6 +45,25 @@ Event::on(Submissions::class, Submissions::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
 });
 ```
 
+### The `definePublisherSelfApproval` event
+The event that is triggered when Workflow determines whether a publisher may approve a submission they also submitted as editor. You can set `$event->allowSelfApproval` to change the outcome for that request.
+
+The event is not triggered when the submitting editor is a different user than `$event->user`.
+
+```php
+use verbb\workflow\events\DefinePublisherSelfApprovalEvent;
+use verbb\workflow\services\Submissions;
+use yii\base\Event;
+
+Event::on(Submissions::class, Submissions::EVENT_DEFINE_PUBLISHER_SELF_APPROVAL, function(DefinePublisherSelfApprovalEvent $event) {
+    $user = $event->user;
+    $submission = $event->submission;
+    $site = $event->site;
+
+    // ...
+});
+```
+
 
 ## Email Events
 

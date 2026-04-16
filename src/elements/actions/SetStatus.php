@@ -60,11 +60,13 @@ class SetStatus extends BaseSetStatus
                 continue;
             }
 
-            // If trying to approve their own submission, fail
+            // If trying to approve their own submission, fail unless allowed by settings, permission, or event
             if ($this->status === Review::STATUS_APPROVED && $submission->editorId === $currentUser->id) {
-                $failCount++;
+                if (!Workflow::$plugin->getSubmissions()->canUserApproveOwnSubmission($currentUser, $submission)) {
+                    $failCount++;
 
-                continue;
+                    continue;
+                }
             }
 
             if (!$submissionsService->triggerSubmissionStatus($this->status, $submission)) {

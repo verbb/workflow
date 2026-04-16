@@ -237,6 +237,7 @@ class Workflow extends Plugin
                 'heading' => Craft::t('workflow', 'Workflow'),
                 'permissions' => [
                     'workflow-overview' => ['label' => Craft::t('workflow', 'Submissions')],
+                    'workflow-approve-own-submissions' => ['label' => Craft::t('workflow', 'Approve own submissions')],
                 ],
             ];
         });

@@ -3,6 +3,7 @@ namespace verbb\workflow\services;
 
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
+use verbb\workflow\events\DefinePublisherSelfApprovalEvent;
 use verbb\workflow\events\ReviewerUserGroupsEvent;
 use verbb\workflow\models\Review;
 
@@ -26,6 +27,7 @@ class Submissions extends Component
     // =========================================================================
 
     public const EVENT_AFTER_GET_REVIEWER_USER_GROUPS = 'afterGetReviewerUserGroups';
+    public const EVENT_DEFINE_PUBLISHER_SELF_APPROVAL = 'definePublisherSelfApproval';
 
 
     // Properties
@@ -64,6 +66,38 @@ class Submissions extends Component
         }
 
         return $userGroups;
+    }
+
+    public function canUserApproveOwnSubmission(User $user, Submission $submission): bool
+    {
+        if ($submission->getEditorId() !== $user->id) {
+            return true;
+        }
+
+        $site = Craft::$app->getSites()->getSiteById($submission->ownerSiteId)
+            ?? Craft::$app->getSites()->getPrimarySite();
+
+        $settings = Workflow::$plugin->getSettings();
+
+        $allow = false;
+
+        if ($user->can('workflow-approve-own-submissions')) {
+            $allow = true;
+        }
+
+        if ($settings->userMatchesPublisherSelfApprovalBypassGroups($user, $site)) {
+            $allow = true;
+        }
+
+        $event = new DefinePublisherSelfApprovalEvent([
+            'user' => $user,
+            'submission' => $submission,
+            'site' => $site,
+            'allowSelfApproval' => $allow,
+        ]);
+        $this->trigger(self::EVENT_DEFINE_PUBLISHER_SELF_APPROVAL, $event);
+
+        return $event->allowSelfApproval;
     }
 
     /**

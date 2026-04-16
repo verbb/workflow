@@ -116,6 +116,23 @@
                     on: settings.getPublisherNotesRequired(site),
                     warning: macros.configWarning('publisherNotesRequired', 'workflow'),
                 }) }}
+
+                <hr>
+
+                {{ forms.editableTableField({
+                    label: 'Self-approval User Groups' | t('workflow'),
+                    instructions: 'Select the user groups that may approve submissions they also submitted as editor, for this site.' | t('workflow'),
+                    name: "publisherSelfApprovalUserGroups[#{site.uid}]",
+                    id: "publisherSelfApprovalUserGroups-#{loop.index}",
+                    cols: cols,
+                    rows: settings.getPublisherSelfApprovalUserGroupsUids(site),
+                    addRowLabel: 'Add a user group' | t('workflow'),
+                    errors: settings.getErrors('publisherSelfApprovalUserGroups'),
+                    warning: macros.configWarning('publisherSelfApprovalUserGroups', 'workflow'),
+                    allowAdd: true,
+                    allowDelete: true,
+                    allowReorder: true,
+                })|spaceless }}
             </div>
         </div>
     {% endfor %}

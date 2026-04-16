@@ -253,14 +253,24 @@ class Service extends Component
 
         // If the user is in _both_ editor and publisher groups, work it out.
         if ($currentUser->isInGroup($editorGroup) && $currentUser->isInGroup($publisherGroup)) {
-            // Are there any submissions pending for any users but this one?
             $submissions = $this->_getSubmissionsFromContext($entry);
 
-            $pendingSubmissions = ArrayHelper::where($submissions, function($submission) use ($currentUser) {
+            $pendingSubmissionsFromOthers = ArrayHelper::where($submissions, function($submission) use ($currentUser) {
                 return $submission->status === 'pending' && $submission->editorId != $currentUser->id;
             }, true, true, false);
 
-            if ($pendingSubmissions) {
+            $pendingOwnAllowed = false;
+
+            foreach ($submissions as $submission) {
+                if ($submission->status === 'pending' && $submission->editorId == $currentUser->id) {
+                    if (Workflow::$plugin->getSubmissions()->canUserApproveOwnSubmission($currentUser, $submission)) {
+                        $pendingOwnAllowed = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($pendingSubmissionsFromOthers || $pendingOwnAllowed) {
                 $event->html .= $this->_renderEntrySidebarPanel($entry, 'publisher-pane');
                 return;
             }
