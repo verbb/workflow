@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.19 - 2026-04-29
+
+### Added
+- Added plugin settings to control the ability to self-approve submissions.
+
 ## 2.0.18 - 2025-11-06
 
 ### Fixed
