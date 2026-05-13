@@ -85,7 +85,8 @@ class SubmissionsController extends Controller
                         'errors' => $submission->getErrors(),
                     ]);
 
-                return null;
+                    return null;
+                }
             } else if ($status === Review::STATUS_PENDING) {
                 $session->setError(Craft::t('workflow', 'You cannot change a submission to pending once created.'));
 
@@ -96,7 +97,7 @@ class SubmissionsController extends Controller
 
                 return null;
             } else {
-            Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission);
+                Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission);
             }
         }
 
