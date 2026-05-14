@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.16 - 2026-05-14
+
+### Fixed
+- Fix syntax error in `SubmissionsController::actionSaveSubmission`.
+
 ## 3.0.15 - 2026-04-29
 
 ### Added
