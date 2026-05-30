@@ -330,9 +330,9 @@
 ### Changed
 - Now requires PHP `^8.0.2`.
 - Now requires Craft `^4.0.0`.
-- Revamped Submissions and Reviews. Now captures information each time an action is performed on an entry for better review tracking.
-- **Breaking Change** Update email templates to handle reviews.
-- **Breaking Change** Move email functions to own service.
+- Revamped Submissions and Reviews. Now captures information each time an action is performed on an entry for better review tracking. Refer to [upgrade docs](docs/get-started/upgrading-from-v1) for a more thorough explanation.
+- **Breaking Change** Update email templates to handle reviews. Refer to [upgrade docs](docs/get-started/upgrading-from-v1).
+- **Breaking Change** Move email functions to own service. Refer to [upgrade docs](docs/get-started/upgrading-from-v1).
 - Revamped submission process for more reliably and simplified handling with Craft 4+ updates.
 - Switch `Entry::class, Entry::EVENT_AFTER_SAVE` to `Elements::EVENT_AFTER_SAVE_ELEMENT` to handle some edge-cases.
 - Changed default title of a submission to `Submission for “{entry.title}” on {date}`.
