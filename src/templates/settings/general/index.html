@@ -4,24 +4,22 @@
 {% import 'verbb-base/_macros' as macros %}
 
 {% set fullPageForm = true %}
+{% set selectedTab = 'general' %}
 {% set pageTitle = 'General Settings' | t('workflow') %}
 {% set pageAction = 'workflow/settings/save-settings' %}
 {% set pageUrl = 'workflow/settings/general' %}
 
-{% set crumbs = [
-    { label: pageTitle, url: url(pageUrl) }
-] %}
-
 {% block settingsContent %}
 
 {{ forms.textField({
-    first: true,
     label: 'Plugin Name' | t('workflow'),
     instructions: 'Plugin name for the end user.' | t('workflow'),
     id: 'pluginName',
     name: 'pluginName',
     value: settings.pluginName,
     autofocus: true,
+    required: true,
+    errors: settings.getErrors('pluginName'),
     warning: macros.configWarning('pluginName', 'workflow'),
 }) }}
 

@@ -4,13 +4,10 @@
 {% import 'verbb-base/_macros' as macros %}
 
 {% set fullPageForm = true %}
+{% set selectedTab = 'notifications' %}
 {% set pageTitle = 'Notifications' | t('workflow') %}
 {% set pageAction = 'workflow/settings/save-settings' %}
 {% set pageUrl = 'workflow/settings/notifications' %}
-
-{% set crumbs = [
-    { label: pageTitle, url: url(pageUrl) }
-] %}
 
 {% block settingsContent %}
 

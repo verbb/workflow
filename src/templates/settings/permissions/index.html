@@ -4,13 +4,10 @@
 {% import 'verbb-base/_macros' as macros %}
 
 {% set fullPageForm = true %}
+{% set selectedTab = 'permissions' %}
 {% set pageTitle = 'Permissions' | t('workflow') %}
 {% set pageAction = 'workflow/settings/save-settings' %}
 {% set pageUrl = 'workflow/settings/permissions' %}
-
-{% set crumbs = [
-    { label: pageTitle, url: url(pageUrl) }
-] %}
 
 {% block settingsContent %}
 
@@ -27,7 +24,6 @@
     values: settings.enabledSections,
     errors: settings.getErrors('enabledSections'),
     options: sections,
-    first: true,
     showAllOption: true,
     warning: macros.configWarning('enabledSections', 'workflow'),
 }) }}

@@ -6,13 +6,15 @@
 {% do view.registerAssetBundle('verbb\\workflow\\assetbundles\\WorkflowAsset') %}
 {% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
 
+{% set pageTitle = pageTitle ?? false %}
 {% if title is not defined and pageTitle %}
-    {% set title = craft.workflow.getPluginName() ~ ' — ' ~ pageTitle %}
+    {% set title = pageTitle %}
 {% endif %}
 
 {% set crumbs = [
-    { label: craft.workflow.getPluginName() | t('workflow'), url: url('workflow') },
-    { label: 'Settings' | t('app'), url: url('workflow/settings') },
+    { label: 'Settings' | t('app'), url: url('settings') },
+    { label: 'Plugins' | t('app'), url: url('settings/plugins') },
+    { label: craft.workflow.getPluginName() | t('workflow'), url: url('workflow/settings') },
 ] | merge(crumbs ?? []) %}
 
 {% set pageTabs = craft.workflow.getSettingsNavItems() %}
