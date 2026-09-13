@@ -36,7 +36,7 @@ Workflow supports accessing [Submission](docs:developers/submission) objects via
 ```
 :::
 
-### The `workflowSubmissions` query
+### The `workflowSubmissions` Query
 This query is used to query for submissions.
 
 | Argument | Type | Description
@@ -64,7 +64,7 @@ This query is used to query for submissions.
 | `orderBy`| `String` | Sets the field the returned elements should be ordered by
 | `ownerId`| `[QueryArgument]` | Narrows the query results based on the owner element the submission was made on, per the owners’ IDs.
 
-### The `SubmissionInterface` interface
+### The `SubmissionInterface` Interface
 This is the interface implemented by all submissions.
 
 | Field | Type | Description

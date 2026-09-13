@@ -22,7 +22,7 @@
         "title": "Template Guides",
         "collapsable": false,
         "children": [
-            "template-guides/available-variables",
+            "template-guides/finding-submissions",
             "template-guides/front-end-submission",
             "template-guides/email-notifications"
         ]

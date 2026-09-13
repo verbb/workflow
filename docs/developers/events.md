@@ -3,7 +3,7 @@ Workflow provides events for extending its functionality. Modules and plugins ca
 
 ## Submission Events
 
-### The `beforeSaveSubmission` event
+### The `beforeSaveSubmission` Event
 The event that is triggered before a submission is saved. You can set `$event->isValid` to false to prevent saving.
 
 ```php
@@ -18,7 +18,7 @@ Event::on(Submission::class, Submission::EVENT_BEFORE_SAVE, function(ModelEvent 
 });
 ```
 
-### The `afterSaveSubmission` event
+### The `afterSaveSubmission` Event
 The event that is triggered after a submission is saved.
 
 ```php
@@ -31,7 +31,7 @@ Event::on(Submission::class, Submission::EVENT_AFTER_SAVE, function(ModelEvent $
 });
 ```
 
-### The `afterGetReviewerUserGroups` event
+### The `afterGetReviewerUserGroups` Event
 The event that is triggered after registering user groups for reviewers.
 
 ```php
@@ -45,7 +45,7 @@ Event::on(Submissions::class, Submissions::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
 });
 ```
 
-### The `definePublisherSelfApproval` event
+### The `definePublisherSelfApproval` Event
 The event that is triggered when Workflow determines whether a publisher may approve a submission they also submitted as editor. You can set `$event->allowSelfApproval` to change the outcome for that request.
 
 The event is not triggered when the submitting editor is a different user than `$event->user`.
@@ -67,7 +67,7 @@ Event::on(Submissions::class, Submissions::EVENT_DEFINE_PUBLISHER_SELF_APPROVAL,
 
 ## Email Events
 
-### The `prepareEditorEmail` event
+### The `prepareEditorEmail` Event
 The event that is triggered when preparing the editor email.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
@@ -84,7 +84,7 @@ Event::on(Emails::class, Emails::EVENT_PREPARE_EDITOR_EMAIL, function(PrepareEma
 });
 ```
 
-### The `beforeSendEditorEmail` event
+### The `beforeSendEditorEmail` Event
 The event that is triggered before an email is sent to an editor.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
@@ -102,7 +102,7 @@ Event::on(Emails::class, Emails::EVENT_BEFORE_SEND_EDITOR_EMAIL, function(EmailE
 });
 ```
 
-### The `prepareReviewerEmail` event
+### The `prepareReviewerEmail` Event
 The event that is triggered when preparing the reviewer email.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
@@ -119,7 +119,7 @@ Event::on(Emails::class, Emails::EVENT_PREPARE_REVIEWER_EMAIL, function(PrepareE
 });
 ```
 
-### The `beforeSendReviewerEmail` event
+### The `beforeSendReviewerEmail` Event
 The event that is triggered before an email is sent to a reviewer.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
@@ -137,7 +137,7 @@ Event::on(Emails::class, Emails::EVENT_BEFORE_SEND_REVIEWER_EMAIL, function(Emai
 });
 ```
 
-### The `preparePublisherEmail` event
+### The `preparePublisherEmail` Event
 The event that is triggered when preparing the publisher email.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
@@ -154,7 +154,7 @@ Event::on(Emails::class, Emails::EVENT_PREPARE_PUBLISHER_EMAIL, function(Prepare
 });
 ```
 
-### The `beforeSendPublisherEmail` event
+### The `beforeSendPublisherEmail` Event
 The event that is triggered before an email is sent to a publisher.
 
 The `isValid` event property can be set to `false` to prevent the email from being sent.
@@ -174,7 +174,7 @@ Event::on(Emails::class, Emails::EVENT_BEFORE_SEND_PUBLISHER_EMAIL, function(Ema
 
 ## Review Events
 
-### The `beforeSaveReview` event
+### The `beforeSaveReview` Event
 The event that is triggered before a review is saved.
 
 ```php
@@ -189,7 +189,7 @@ Event::on(Reviews::class, Reviews::EVENT_BEFORE_SAVE_REVIEW, function(ReviewEven
 });
 ```
 
-### The `afterSaveReview` event
+### The `afterSaveReview` Event
 The event that is triggered after a review is saved.
 
 ```php
@@ -204,7 +204,7 @@ Event::on(Reviews::class, Reviews::EVENT_AFTER_SAVE_REVIEW, function(ReviewEvent
 });
 ```
 
-### The `beforeDeleteReview` event
+### The `beforeDeleteReview` Event
 The event that is triggered before a review is deleted.
 
 ```php
@@ -218,7 +218,7 @@ Event::on(Reviews::class, Reviews::EVENT_BEFORE_DELETE_REVIEW, function(ReviewEv
 });
 ```
 
-### The `afterDeleteReview` event
+### The `afterDeleteReview` Event
 The event that is triggered after a review is deleted.
 
 ```php

@@ -5,7 +5,7 @@ Workflow provides example email content as part of the plugin, but you of course
 
 To access these, visit Utilities → System Messages.
 
-## When an editor submits entry for approval
+## When an Editor Submits Entry for Approval
 
 Variable | Description
 --- | ---
@@ -32,7 +32,7 @@ Hey {{ user.friendlyName }},
 {{ submission.getCpEditUrl() }}
 ```
 
-## When a reviewer approves or rejects an editor submission
+## When a Reviewer Approves or Rejects an Editor Submission
 
 Variable | Description
 --- | ---
@@ -60,7 +60,7 @@ Your submission for {{ submission.owner.title }} has been {{ review.approved ? '
 {{ submission.getCpEditUrl() }}
 ```
 
-## When a publisher approves or rejects an editor submission
+## When a Publisher Approves or Rejects an Editor Submission
 
 Variable | Description
 --- | ---

@@ -1,59 +1,161 @@
 # Configuration
-Create a `workflow.php` file under your `/config` directory with the following options available to you. You can also use multi-environment options to change these per environment.
 
-The below shows the defaults already used by Workflow, so you don't need to add these options unless you want to modify the values.
+You can customise Workflow’s settings using a PHP configuration file. This is optional: each setting has a default, so you only need to include the values you want to change.
+
+To override a setting, create `workflow.php` in your Craft project’s `/config` directory and return an array of setting names and values. For example, the following will change the name displayed in the control panel:
 
 ```php
 <?php
 
 return [
-    '*' => [
-        // General
-        'editorUserGroup' => [],
-        'reviewerUserGroups' => [],
-        'publisherUserGroup' => [],
-        'editorNotesRequired' => [],
-        'publisherNotesRequired' => [],
-        'lockDraftSubmissions' => true,
-        'publisherSelfApprovalUserGroups' => [],
-
-        // Notifications
-        'editorNotifications' => true,
-        'editorNotificationsOptions' => [],
-        'reviewerNotifications' => true,
-        'reviewerApprovalNotifications' => false,
-        'publisherNotifications' => true,
-        'publishedAuthorNotifications' => false,
-        'publisherNotificationsUserGroup' => null,
-
-        // Permissions
-        'enabledSections' => '*',
-    ]
+    'pluginName' => 'Workflow Tools',
 ];
 ```
 
-## Configuration options
+All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults.
 
-General
-- `editorUserGroup` - An array of user groups for editors.
-- `reviewerUserGroups` - An array of user groups for each reviewer.
-- `publisherUserGroup` - An array of user groups for publishers.
-- `editorNotesRequired` - An array for whether editors are required to enter a note in their submissions.
-- `publisherNotesRequired` - An array for whether publishers are required to enter a note in their submissions.
-- `lockDraftSubmissions` - Whether an entry should be locked for editing after it‘s been submitted for review.
-- `publisherSelfApprovalUserGroups` - Per site, user groups whose members may approve their own submissions (same nested shape as `reviewerUserGroups`). Combined with the **Approve own submissions** permission and the `definePublisherSelfApproval` event.
+## Configuration Options
 
-Notifications
-- `editorNotifications` - Whether email notifications should be delivered to individual editors when approved or rejected.
-- `editorNotificationsOptions` - Whether editor notifications should include the reviewer's or publisher's email whose triggered the action.
-- `reviewerNotifications` - Whether email notifications should be delivered to reviewers when editors submit an entry for review.
-- `reviewerApprovalNotifications` - Whether email notifications should be delivered to editors when each reviewer approves an entry after review.
-- `publisherNotifications` - Whether email notifications should be delivered to publishers when editors submit an entry for review.
-- `publishedAuthorNotifications` - Whether email notifications should be delivered to the entry author when approved and published by a Publisher.
-- `publisherNotificationsUserGroup` - The user group UID to have email notifications for publishers sent to. By default, all users in the `publisherUserGroup` will receive email notifications.
+### General
 
-Permissions
-- `enabledSections` - An array of section UIDs to enable submissions on. Use '\*' for all.
+::: reference
+### `editorUserGroup`
+
+**Type:** `array` · **Default:** `[]`
+
+An array of user groups for editors.
+:::
+
+
+::: reference
+### `reviewerUserGroups`
+
+**Type:** `array` · **Default:** `[]`
+
+An array of user groups for each reviewer.
+:::
+
+
+::: reference
+### `publisherUserGroup`
+
+**Type:** `array` · **Default:** `[]`
+
+An array of user groups for publishers.
+:::
+
+
+::: reference
+### `editorNotesRequired`
+
+**Type:** `array` · **Default:** `[]`
+
+An array for whether editors are required to enter a note in their submissions.
+:::
+
+
+::: reference
+### `publisherNotesRequired`
+
+**Type:** `array` · **Default:** `[]`
+
+An array for whether publishers are required to enter a note in their submissions.
+:::
+
+
+::: reference
+### `lockDraftSubmissions`
+
+**Type:** `bool` · **Default:** `true`
+
+Whether an entry should be locked for editing after it‘s been submitted for review.
+:::
+
+
+::: reference
+### `publisherSelfApprovalUserGroups`
+
+**Type:** `array` · **Default:** `[]`
+
+Per site, user groups whose members may approve their own submissions (same nested shape as `reviewerUserGroups`). Combined with the **Approve own submissions** permission and the `definePublisherSelfApproval` event.
+:::
+
+
+### Notifications
+
+::: reference
+### `editorNotifications`
+
+**Type:** `bool` · **Default:** `true`
+
+Whether email notifications should be delivered to individual editors when approved or rejected.
+:::
+
+
+::: reference
+### `editorNotificationsOptions`
+
+**Type:** `array` · **Default:** `[]`
+
+Whether editor notifications should include the reviewer's or publisher's email whose triggered the action.
+:::
+
+
+::: reference
+### `reviewerNotifications`
+
+**Type:** `bool` · **Default:** `true`
+
+Whether email notifications should be delivered to reviewers when editors submit an entry for review.
+:::
+
+
+::: reference
+### `reviewerApprovalNotifications`
+
+**Type:** `bool` · **Default:** `false`
+
+Whether email notifications should be delivered to editors when each reviewer approves an entry after review.
+:::
+
+
+::: reference
+### `publisherNotifications`
+
+**Type:** `bool` · **Default:** `true`
+
+Whether email notifications should be delivered to publishers when editors submit an entry for review.
+:::
+
+
+::: reference
+### `publishedAuthorNotifications`
+
+**Type:** `bool` · **Default:** `false`
+
+Whether email notifications should be delivered to the entry author when approved and published by a Publisher.
+:::
+
+
+::: reference
+### `publisherNotificationsUserGroup`
+
+**Type:** `string|null` · **Default:** `null`
+
+The user group UID to have email notifications for publishers sent to. By default, all users in the `publisherUserGroup` will receive email notifications.
+:::
+
+
+### Permissions
+
+::: reference
+### `enabledSections`
+
+**Type:** `mixed` · **Default:** `'*'`
+
+An array of section UIDs to enable submissions on. Use '\*' for all.
+:::
+
 
 ### Multi Site Options
 For some settings like `editorUserGroup`, `reviewerUserGroups`, `publisherUserGroup`, etc. - these are multi-site configurable. You should provide a nested array of User Group UIDs with Site UIDs. For example:
