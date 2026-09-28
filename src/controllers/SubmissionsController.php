@@ -3,12 +3,8 @@ namespace verbb\workflow\controllers;
 
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
-use verbb\workflow\models\Review;
 
 use Craft;
-use craft\db\Table;
-use craft\elements\User;
-use craft\helpers\Db;
 use craft\web\Controller;
 
 use yii\web\ForbiddenHttpException;
@@ -23,6 +19,7 @@ class SubmissionsController extends Controller
     public function actionEdit(?Submission $submission, ?int $submissionId = null): Response
     {
         $this->requireCpRequest();
+        $this->requirePermission('workflow-overview');
 
         $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
@@ -35,12 +32,11 @@ class SubmissionsController extends Controller
             }
         }
 
-        $canEdit = true;
-        $editorGroup = $settings->getEditorUserGroup($submission->site);
-
-        if ($editorGroup && $currentUser && $currentUser->isInGroup($editorGroup)) {
-            $canEdit = false;
+        if (!$currentUser || !Craft::$app->getElements()->canView($submission, $currentUser)) {
+            throw new ForbiddenHttpException('You are not allowed to view this submission.');
         }
+
+        $canEdit = Workflow::$plugin->getSubmissionPermissions()->canManageSubmission($currentUser, $submission);
 
         $variables = [
             'submission' => $submission,
@@ -58,6 +54,7 @@ class SubmissionsController extends Controller
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
+        $this->requirePermission('workflow-overview');
 
         $session = Craft::$app->getSession();
         $currentUser = Craft::$app->getUser()->getIdentity();
@@ -65,7 +62,7 @@ class SubmissionsController extends Controller
         $submissionId = (int)$this->request->getParam('submissionId');
         $siteId = (int)$this->request->getParam('siteId');
         $submission = Workflow::$plugin->getSubmissions()->getSubmissionById($submissionId, $siteId);
-        $status = $this->request->getParam('status');
+        $status = (string)$this->request->getRequiredBodyParam('status');
 
         if (!$submission) {
             $session->setError(Craft::t('workflow', 'Unable to find submission.'));
@@ -73,32 +70,18 @@ class SubmissionsController extends Controller
             return null;
         }
 
-        // Skip if there's nothing to change
-        if ($submission->status !== $status) {
-            // If trying to approve their own submission, fail unless allowed by settings, permission, or event
-            if ($status === Review::STATUS_APPROVED && $submission->editorId === $currentUser->id) {
-                if (!Workflow::$plugin->getSubmissions()->canUserApproveOwnSubmission($currentUser, $submission)) {
-                    $session->setError(Craft::t('workflow', 'You cannot approve your own submission.'));
+        if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canChangeStatus($currentUser, $submission, $status)) {
+            throw new ForbiddenHttpException('You are not allowed to change this submission status.');
+        }
 
-                    Craft::$app->getUrlManager()->setRouteParams([
-                        'submission' => $submission,
-                        'errors' => $submission->getErrors(),
-                    ]);
+        if ($submission->status === $status) {
+            return $this->redirectToPostedUrl($submission);
+        }
 
-                    return null;
-                }
-            } else if ($status === Review::STATUS_PENDING) {
-                $session->setError(Craft::t('workflow', 'You cannot change a submission to pending once created.'));
+        if (!Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission)) {
+            $session->setError(Craft::t('workflow', 'Unable to change submission status.'));
 
-                Craft::$app->getUrlManager()->setRouteParams([
-                    'submission' => $submission,
-                    'errors' => $submission->getErrors(),
-                ]);
-
-                return null;
-            } else {
-                Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission);
-            }
+            return null;
         }
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
@@ -121,12 +104,27 @@ class SubmissionsController extends Controller
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
+        $this->requirePermission('workflow-overview');
 
         $session = Craft::$app->getSession();
+        $currentUser = Craft::$app->getUser()->getIdentity();
 
-        $submissionId = $this->request->getParam('submissionId');
+        $submissionId = (int)$this->request->getRequiredBodyParam('submissionId');
+        $submission = Submission::find()
+            ->id($submissionId)
+            ->siteId('*')
+            ->status(null)
+            ->one();
 
-        if (!Craft::$app->getElements()->deleteElementById($submissionId)) {
+        if (!$submission) {
+            throw new NotFoundHttpException('Submission not found');
+        }
+
+        if (!$currentUser || !Craft::$app->getElements()->canDelete($submission, $currentUser)) {
+            throw new ForbiddenHttpException('You are not allowed to delete this submission.');
+        }
+
+        if (!Craft::$app->getElements()->deleteElement($submission)) {
             $session->setError(Craft::t('workflow', 'Unable to delete submission.'));
 
             return null;

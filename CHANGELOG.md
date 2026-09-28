@@ -4,6 +4,10 @@
 
 ### Changed
 - Route plugin settings through the plugin’s authorized settings controller.
+- Enforce configured Workflow roles and Craft element permissions for submission transitions, draft application, editing and deletion.
+
+### Fixed
+- Fixed authorization gaps that allowed control panel users to act on unrelated submissions and element IDs.
 
 ## 3.0.18 - 2026-09-14
 

@@ -124,12 +124,12 @@ class Submissions extends Component
         return $nextUserGroup;
     }
 
-    public function saveSubmission(ElementInterface $entry): bool
+    public function saveSubmission(ElementInterface $entry, ?Submission $submission = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
-        $submission = $this->_setSubmissionFromPost();
+        $submission = $this->_getSubmission($submission);
         $submission->siteId = $entry->siteId;
         $submission->ownerId = $entry->getCanonicalId();
         $submission->ownerSiteId = $entry->siteId;
@@ -179,13 +179,13 @@ class Submissions extends Component
         return true;
     }
 
-    public function revokeSubmission(ElementInterface $entry): bool
+    public function revokeSubmission(ElementInterface $entry, ?Submission $submission = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         // Revoking a submission will set it as complete
-        $submission = $this->_setSubmissionFromPost();
+        $submission = $this->_getSubmission($submission);
         $submission->isComplete = true;
         $submission->isPending = false;
 
@@ -220,12 +220,12 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveReview(ElementInterface $entry): bool
+    public function approveReview(ElementInterface $entry, ?Submission $submission = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
-        $submission = $this->_setSubmissionFromPost();
+        $submission = $this->_getSubmission($submission);
 
         // Create a new review
         $review = $this->_setReviewFromPost($submission, $entry);
@@ -258,13 +258,13 @@ class Submissions extends Component
         return true;
     }
 
-    public function rejectReview(ElementInterface $entry): bool
+    public function rejectReview(ElementInterface $entry, ?Submission $submission = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         // Rejecting a submission will reset the pending state
-        $submission = $this->_setSubmissionFromPost();
+        $submission = $this->_getSubmission($submission);
         $submission->isPending = false;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
@@ -303,13 +303,13 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveSubmission(ElementInterface $entry, bool $published = true)
+    public function approveSubmission(ElementInterface $entry, bool $published = true, ?Submission $submission = null)
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         // Approving the submission will complete the process
-        $submission = $this->_setSubmissionFromPost();
+        $submission = $this->_getSubmission($submission);
         $submission->isComplete = true;
         $submission->isPending = false;
 
@@ -353,13 +353,13 @@ class Submissions extends Component
         return true;
     }
 
-    public function rejectSubmission(ElementInterface $entry): bool
+    public function rejectSubmission(ElementInterface $entry, ?Submission $submission = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         // Rejecting a submission will reset the pending state
-        $submission = $this->_setSubmissionFromPost();
+        $submission = $this->_getSubmission($submission);
         $submission->isPending = false;
 
         if (!Craft::$app->getElements()->saveElement($submission)) {
@@ -400,41 +400,46 @@ class Submissions extends Component
 
     public function triggerSubmissionStatus(string $status, Submission $submission): bool
     {
-        // Set the submission for context
-        $this->submission = $submission;
-        $entry = $submission->getOwner();
+        $entry = $submission->getDraft();
+
+        if (!$entry) {
+            return false;
+        }
 
         if ($status === Review::STATUS_APPROVED) {
             // Assume we want to approve and publish
-            $result = $this->approveSubmission($entry, true);
+            $result = $this->approveSubmission($entry, true, $submission);
 
-            if ($lastReview = $submission->getLastReview()) {
-                if ($element = $lastReview->getElement()) {
-                    if ($element->getIsDraft()) {
-                        Craft::$app->getDrafts()->applyDraft($element);
-                    }
-                }
+            if ($result && $entry->getIsDraft()) {
+                Craft::$app->getDrafts()->applyDraft($entry);
             }
 
             return $result;
         } else if ($status === Review::STATUS_REJECTED) {
-            return $this->rejectSubmission($entry);
+            return $this->rejectSubmission($entry, $submission);
         } else if ($status === Review::STATUS_REVOKED) {
-            return $this->revokeSubmission($entry);
+            return $this->revokeSubmission($entry, $submission);
         }
 
-        return true;
+        return false;
     }
 
 
     // Private Methods
     // =========================================================================
 
-    private function _setSubmissionFromPost(): Submission
+    private function _getSubmission(?Submission $submission = null): Submission
     {
-        // Allow the submission to be set on this class
-        if ($this->submission) {
-            return $this->submission;
+        if ($submission !== null) {
+            return $submission;
+        }
+
+        // Preserve the existing programmatic context override as a one-shot fallback.
+        if ($this->submission !== null) {
+            $submission = $this->submission;
+            $this->submission = null;
+
+            return $submission;
         }
 
         $request = Craft::$app->getRequest();

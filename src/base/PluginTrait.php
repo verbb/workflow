@@ -7,6 +7,7 @@ use verbb\workflow\services\Content;
 use verbb\workflow\services\Emails;
 use verbb\workflow\services\Reviews;
 use verbb\workflow\services\Service;
+use verbb\workflow\services\SubmissionPermissions;
 use verbb\workflow\services\Submissions;
 
 use verbb\base\LogTrait;
@@ -40,6 +41,7 @@ trait PluginTrait
                 'emails' => Emails::class,
                 'reviews' => Reviews::class,
                 'service' => Service::class,
+                'submissionPermissions' => SubmissionPermissions::class,
                 'submissions' => Submissions::class,
             ],
         ];
@@ -72,6 +74,11 @@ trait PluginTrait
     public function getService(): Service
     {
         return $this->get('service');
+    }
+
+    public function getSubmissionPermissions(): SubmissionPermissions
+    {
+        return $this->get('submissionPermissions');
     }
 
     public function getSubmissions(): Submissions

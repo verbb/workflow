@@ -4,11 +4,11 @@ namespace verbb\workflow\services;
 use verbb\workflow\Workflow;
 use verbb\workflow\elements\Submission;
 use verbb\workflow\helpers\StringHelper;
+use verbb\workflow\models\Review;
 
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
-use craft\db\Table;
 use craft\elements\Entry;
 use craft\events\CreateFieldLayoutFormEvent;
 use craft\events\DefineHtmlEvent;
@@ -16,12 +16,8 @@ use craft\events\DraftEvent;
 use craft\events\ElementEvent;
 use craft\events\ModelEvent;
 use craft\helpers\ArrayHelper;
-use craft\helpers\DateTimeHelper;
-use craft\helpers\Db;
-use craft\helpers\ElementHelper;
-use craft\helpers\UrlHelper;
 
-use DateTime;
+use yii\web\ForbiddenHttpException;
 
 class Service extends Component
 {
@@ -39,6 +35,7 @@ class Service extends Component
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
+        $currentUser = Craft::$app->getUser()->getIdentity();
 
         // Don't trigger for propagating elements
         if ($event->sender->propagating) {
@@ -59,12 +56,35 @@ class Service extends Component
         Craft::$app->getUrlManager()->setRouteParams([
             'workflowNotes' => StringHelper::unSanitizeNotes($workflowNotes),
         ]);
-        
+
+        $submissionId = (int)$request->getBodyParam('submissionId');
+        $submission = $submissionId ? Workflow::$plugin->getSubmissions()->getSubmissionById($submissionId, $event->sender->siteId) : null;
+        $customAction = $action ? Workflow::$plugin->getActions()->getActionById($action) : null;
+        $actionAllowed = false;
+
+        if ($action) {
+            if (!$currentUser || ($submissionId && !$submission)) {
+                $this->_denyEntrySave($event, Craft::t('workflow', 'Unable to perform this Workflow action.'));
+                return;
+            }
+
+            if ($action === 'save-submission') {
+                $actionAllowed = Workflow::$plugin->getSubmissionPermissions()->canSubmit($currentUser, $event->sender, $submission);
+            } else if ($customAction && $submission) {
+                $actionAllowed = Workflow::$plugin->getSubmissionPermissions()->canPerformAction($currentUser, $event->sender, $submission, $action);
+            }
+
+            if (!$actionAllowed) {
+                $this->_denyEntrySave($event, Craft::t('workflow', 'You are not allowed to perform this Workflow action.'));
+                return;
+            }
+        }
+
         // Disable auto-save for an entry that has been submitted. Only real way to do this.
-        // Check to see if this is a draft first
-        if (!$action && $event->sender->getIsDraft()) {
+        // A request action only bypasses the lock after the same server-side authorization used for the action itself.
+        if (!$actionAllowed && $event->sender->getIsDraft()) {
             // Check to see if there's a matching pending (submitted) Workflow submission
-            $submission = Submission::find()
+            $pendingSubmission = Submission::find()
                 ->ownerId($event->sender->getCanonicalId())
                 ->ownerSiteId($event->sender->siteId)
                 ->ownerDraftId($event->sender->draftId)
@@ -73,17 +93,12 @@ class Service extends Component
                 ->isPending(true)
                 ->one();
 
-            if ($submission !== null) {
-                $currentUser = Craft::$app->getUser()->getIdentity();
-
-                // Ensure current user is allowed to review the submission
-                // If the current user is the author, they can't edit their own submission
-                /** @var Submission $submission */
-                if ((!$submission->canUserReview($currentUser, $event->sender->site) || $submission->editorId == $currentUser->id) && $settings->lockDraftSubmissions) {
-                    $event->isValid = false;
-
-                    $event->sender->addError('error', Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
-                }
+            if (
+                $pendingSubmission !== null &&
+                $settings->lockDraftSubmissions &&
+                (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canEditDraft($currentUser, $event->sender, $pendingSubmission))
+            ) {
+                $this->_denyEntrySave($event, Craft::t('workflow', 'Unable to edit entry once it has been submitted for review.'));
             }
         }
 
@@ -110,8 +125,15 @@ class Service extends Component
         }
 
         // Check for any actions registered for this actionId
-        if ($action && $customAction = Workflow::$plugin->getActions()->getActionById($action)) {
-            $customAction->onBeforeSaveEntry($event);
+        if ($actionAllowed && $customAction) {
+            $submissionsService = Workflow::$plugin->getSubmissions();
+            $submissionsService->submission = $submission;
+
+            try {
+                $customAction->onBeforeSaveEntry($event);
+            } finally {
+                $submissionsService->submission = null;
+            }
         }
     }
 
@@ -128,6 +150,7 @@ class Service extends Component
 
         $request = Craft::$app->getRequest();
         $action = $request->getBodyParam('workflow-action');
+        $currentUser = Craft::$app->getUser()->getIdentity();
 
         // When approving, we don't want to perform an action here - wait until the draft has been applied
         if (!$action || $event->element->propagating || $this->afterSaveRun) {
@@ -140,6 +163,9 @@ class Service extends Component
         // submissions, created each time it's called.
         $this->afterSaveRun = true;
 
+        $submissionId = (int)$request->getBodyParam('submissionId');
+        $submission = $submissionId ? Workflow::$plugin->getSubmissions()->getSubmissionById($submissionId, $event->element->siteId) : null;
+
         // Check if we're submitting a new submission
         if ($action == 'save-submission') {
             // If this is a front-end request, and if this is a draft, don't trigger live mode yet.
@@ -151,12 +177,29 @@ class Service extends Component
                 return;
             }
 
-            Workflow::$plugin->getSubmissions()->saveSubmission($event->element);
+            if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canSubmit($currentUser, $event->element, $submission)) {
+                return;
+            }
+
+            Workflow::$plugin->getSubmissions()->saveSubmission($event->element, $submission);
         }
 
         // Check for any actions registered for this actionId
         if ($action && $customAction = Workflow::$plugin->getActions()->getActionById($action)) {
-            $customAction->onAfterSaveElement($event);
+            if (
+                $currentUser &&
+                $submission &&
+                Workflow::$plugin->getSubmissionPermissions()->canPerformAction($currentUser, $event->element, $submission, $action)
+            ) {
+                $submissionsService = Workflow::$plugin->getSubmissions();
+                $submissionsService->submission = $submission;
+
+                try {
+                    $customAction->onAfterSaveElement($event);
+                } finally {
+                    $submissionsService->submission = null;
+                }
+            }
         }
     }
 
@@ -186,10 +229,12 @@ class Service extends Component
         if ($submission) {
             $currentUser = Craft::$app->getUser()->getIdentity();
 
-            // Ensure current user is allowed to publish the submission
-            if ($submission->canUserPublish($currentUser, $event->draft->site)) {
-                Workflow::$plugin->getSubmissions()->approveSubmission($event->draft);
+            // Direct draft application must obey the same publisher, self-approval, target and Craft permission checks.
+            if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canChangeStatus($currentUser, $submission, Review::STATUS_APPROVED)) {
+                throw new ForbiddenHttpException('You are not allowed to apply this submitted draft.');
             }
+
+            Workflow::$plugin->getSubmissions()->approveSubmission($event->draft, true, $submission);
         }
     }
 
@@ -221,10 +266,7 @@ class Service extends Component
 
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        // Ensure current user is allowed to review the submission
-        // If the current user is the author, they can't edit their own submission
-        /** @var Submission $submission */
-        if ((!$submission->canUserReview($currentUser, $event->element->site) || $submission->editorId == $currentUser->id)) {
+        if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canEditDraft($currentUser, $event->element, $submission)) {
             $event->static = true;
         }
     }
@@ -341,21 +383,10 @@ class Service extends Component
     {
         $settings = Workflow::$plugin->getSettings();
 
-        // Make sure workflow is enabled for this section - or all section
-        if (!$settings->enabledSections) {
+        if (!Workflow::$plugin->getSubmissionPermissions()->isSectionEnabled($entry)) {
             Workflow::info('New enabled sections.');
 
             return null;
-        }
-
-        if ($settings->enabledSections != '*') {
-            $enabledSectionIds = Db::idsByUids(Table::SECTIONS, $settings->enabledSections);
-
-            if (!in_array($entry->sectionId, $enabledSectionIds)) {
-                Workflow::info('Entry not in allowed section.');
-
-                return null;
-            }
         }
 
         // Get existing submissions
@@ -388,5 +419,11 @@ class Service extends Component
             ->all();
 
         return $submissions;
+    }
+
+    private function _denyEntrySave(ModelEvent $event, string $message): void
+    {
+        $event->isValid = false;
+        $event->sender->addError('error', $message);
     }
 }

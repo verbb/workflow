@@ -2,12 +2,8 @@
 namespace verbb\workflow\controllers;
 
 use verbb\workflow\Workflow;
-use verbb\workflow\elements\Submission;
 
 use Craft;
-use craft\db\Table;
-use craft\elements\User;
-use craft\helpers\Db;
 use craft\web\Controller;
 
 use yii\web\ForbiddenHttpException;
@@ -46,12 +42,22 @@ class ReviewsController extends Controller
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
+        $this->requirePermission('workflow-overview');
 
         $session = Craft::$app->getSession();
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $reviewId = (int)$this->request->getRequiredBodyParam('reviewId');
+        $review = Workflow::$plugin->getReviews()->getReviewById($reviewId);
 
-        $reviewId = $this->request->getParam('reviewId');
+        if (!$review) {
+            throw new NotFoundHttpException('Review not found');
+        }
 
-        if (!Workflow::$plugin->getReviews()->deleteReviewById($reviewId)) {
+        if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canDeleteReview($currentUser, $review)) {
+            throw new ForbiddenHttpException('You are not allowed to delete this review.');
+        }
+
+        if (!Workflow::$plugin->getReviews()->deleteReview($review)) {
             $session->setError(Craft::t('workflow', 'Unable to delete review.'));
 
             return null;

@@ -9,6 +9,7 @@ use craft\helpers\Json;
 use craft\web\Controller;
 
 use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class ElementsController extends Controller
@@ -18,6 +19,8 @@ class ElementsController extends Controller
 
     public function actionSaveEntry(): Response
     {
+        $this->requirePostRequest();
+
         // Create a draft entry for the section
         $siteId = $this->request->getParam('siteId', Craft::$app->getSites()->getPrimarySite()->id);
         $sectionId = $this->request->getRequiredParam('sectionId');
@@ -37,6 +40,10 @@ class ElementsController extends Controller
         }
 
         $this->_populateEntryModel($entry);
+
+        if (!Craft::$app->getElements()->canSave($entry, static::currentUser())) {
+            throw new ForbiddenHttpException('User not authorized to save this draft.');
+        }
 
         if (!Craft::$app->getElements()->saveElement($entry)) {
             throw new BadRequestHttpException('Unable to save entry: ' . Json::encode($entry->getErrors()) . '.');
@@ -64,7 +71,6 @@ class ElementsController extends Controller
         }
 
         $entry->enabled = (bool)$this->request->getBodyParam('enabled', $entry->enabled);
-        $entry->setEnabledForSite($enabledForSite ?? $entry->getEnabledForSite());
         $entry->title = $this->request->getBodyParam('title', $entry->title);
 
         if (!$entry->typeId) {
@@ -85,7 +91,9 @@ class ElementsController extends Controller
             $authorId = $authorId[0] ?? null;
         }
 
-        $entry->authorId = $authorId;
+        $entry->setAttributesFromRequest([
+            'authorId' => $authorId,
+        ]);
 
         // Parent
         if (($parentId = $this->request->getBodyParam('parentId')) !== null) {

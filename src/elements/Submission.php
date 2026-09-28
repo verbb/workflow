@@ -79,11 +79,13 @@ class Submission extends Element
 
     protected static function defineActions(string $source = null): array
     {
-        $actions = [];
+        $user = Craft::$app->getUser()->getIdentity();
 
-        $actions[] = SetStatus::class;
+        if (!$user || !$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
+            return [];
+        }
 
-        return $actions;
+        return [SetStatus::class];
     }
 
     protected static function defineTableAttributes(): array
@@ -173,11 +175,7 @@ class Submission extends Element
 
     public function canSave(User $user): bool
     {
-        if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
-            return false;
-        }
-
-        return true;
+        return Workflow::$plugin->getSubmissionPermissions()->canManageSubmission($user, $this);
     }
 
     public function canDuplicate(User $user): bool
@@ -191,20 +189,7 @@ class Submission extends Element
 
     public function canDelete(User $user): bool
     {
-        if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
-            return false;
-        }
-
-        // Editors can't delete submissions
-        $settings = Workflow::$plugin->getSettings();
-        $currentSite = Craft::$app->getSites()->getCurrentSite();
-        $editorGroup = $settings->getEditorUserGroup($currentSite);
-
-        if ($editorGroup && $user->isInGroup($editorGroup)) {
-            return false;
-        }
-
-        return true;
+        return Workflow::$plugin->getSubmissionPermissions()->canDeleteSubmission($user, $this);
     }
 
     public function canCreateDrafts(User $user): bool
@@ -252,7 +237,12 @@ class Submission extends Element
 
     public function getOwnerSite(): Site
     {
-        return $this->getOwner()->getSite() ?? Craft::$app->getSites()->getPrimarySite();
+        if ($owner = $this->getOwner()) {
+            return $owner->getSite();
+        }
+
+        return Craft::$app->getSites()->getSiteById($this->ownerSiteId)
+            ?? Craft::$app->getSites()->getPrimarySite();
     }
 
     public function getDraft(): ?Entry
@@ -405,9 +395,7 @@ class Submission extends Element
 
     public function getUserStatuses(User $user, $site): array
     {
-        $settings = Workflow::$plugin->getSettings();
-
-        return $settings->getUserStatuses($user, $site);
+        return Workflow::$plugin->getSubmissionPermissions()->getAllowedStatuses($user, $this);
     }
 
     /**
@@ -415,30 +403,7 @@ class Submission extends Element
      */
     public function canUserReview(User $user, $site): bool
     {
-        $settings = Workflow::$plugin->getSettings();
-        $publisherGroup = $settings->getPublisherUserGroup($site);
-
-        if ($user->isInGroup($publisherGroup)) {
-            return true;
-        }
-
-        $lastReviewer = $this->getReviewer();
-
-        if ($lastReviewer === null) {
-            return true;
-        }
-
-        $canReview = false;
-
-        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($site, $this) as $userGroup) {
-            if ($lastReviewer->isInGroup($userGroup)) {
-                $canReview = false;
-            } else if ($user->isInGroup($userGroup)) {
-                $canReview = true;
-            }
-        }
-
-        return $canReview;
+        return Workflow::$plugin->getSubmissionPermissions()->isNextReviewer($user, $this, $site);
     }
 
     public function canUserPublish(User $user, $site): bool

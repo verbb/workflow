@@ -2,17 +2,11 @@
 namespace verbb\workflow\elements\actions;
 
 use verbb\workflow\Workflow;
-use verbb\workflow\elements\Submission;
 use verbb\workflow\models\Review;
 
 use Craft;
-use craft\base\Element;
-use craft\base\ElementAction;
-use craft\elements\Entry;
 use craft\elements\actions\SetStatus as BaseSetStatus;
 use craft\elements\db\ElementQueryInterface;
-
-use DateTime;
 
 class SetStatus extends BaseSetStatus
 {
@@ -30,18 +24,13 @@ class SetStatus extends BaseSetStatus
         return Craft::t('app', 'Set Status');
     }
 
-
-    // Public Methods
-    // =========================================================================
-
     public function getTriggerHtml(): ?string
     {
-        $settings = Workflow::$plugin->getSettings();
         $currentUser = Craft::$app->getUser()->getIdentity();
         $currentSite = Craft::$app->getSites()->getCurrentSite();
 
         return Craft::$app->getView()->renderTemplate('workflow/_elementactions/status', [
-            'statuses' => $settings->getUserStatuses($currentUser, $currentSite),
+            'statuses' => Workflow::$plugin->getSubmissionPermissions()->getAllowedBulkStatuses($currentUser, $currentSite),
         ]);
     }
 
@@ -60,13 +49,10 @@ class SetStatus extends BaseSetStatus
                 continue;
             }
 
-            // If trying to approve their own submission, fail unless allowed by settings, permission, or event
-            if ($this->status === Review::STATUS_APPROVED && $submission->editorId === $currentUser->id) {
-                if (!Workflow::$plugin->getSubmissions()->canUserApproveOwnSubmission($currentUser, $submission)) {
-                    $failCount++;
+            if (!Workflow::$plugin->getSubmissionPermissions()->canChangeStatus($currentUser, $submission, $this->status)) {
+                $failCount++;
 
-                    continue;
-                }
+                continue;
             }
 
             if (!$submissionsService->triggerSubmissionStatus($this->status, $submission)) {
@@ -111,7 +97,11 @@ class SetStatus extends BaseSetStatus
         $rules = [];
 
         $rules[] = [['status'], 'required'];
-        $rules[] = [['status'], 'in', 'range' => array_keys(Submission::statuses())];
+        $rules[] = [['status'], 'in', 'range' => [
+            Review::STATUS_APPROVED,
+            Review::STATUS_REJECTED,
+            Review::STATUS_REVOKED,
+        ]];
 
         return $rules;
     }

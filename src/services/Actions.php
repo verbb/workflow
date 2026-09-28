@@ -126,8 +126,24 @@ class Actions extends Component
         return null;
     }
 
+    public function getActionRoleById(string $id): ?string
+    {
+        // Ensure all actions are loaded so custom registered actions inherit their registered role.
+        $this->getEditorActions();
+        $this->getReviewerActions();
+        $this->getPublisherActions();
 
-    // Public Methods
+        foreach ($this->_actions as $role => $roleActions) {
+            if (isset($roleActions[$id])) {
+                return $role;
+            }
+        }
+
+        return null;
+    }
+
+
+    // Private Methods
     // =========================================================================
 
     private function _getRoleActions(string $role, callable $fetcher): array
