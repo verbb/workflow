@@ -185,14 +185,16 @@ class Review extends Model
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         if ($user = $this->getUser()) {
+            $userName = Html::encode((string)$user);
+
             if ($currentUser->can('editUsers')) {
-                return Template::raw(Html::a($user, $user->getCpEditUrl()));
+                return Template::raw(Html::a($userName, $user->getCpEditUrl()));
             }
 
-            return Template::raw($user);
+            return Template::raw($userName);
         }
 
-        return Template::raw(Craft::t('workflow', '[Deleted User]'));
+        return Template::raw(Html::encode(Craft::t('workflow', '[Deleted User]')));
     }
 
     public function getStatusName(): ?string

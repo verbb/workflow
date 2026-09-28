@@ -8,6 +8,7 @@
 
 ### Fixed
 - Fixed authorization gaps that allowed control panel users to act on unrelated submissions and element IDs.
+- Fixed a high-severity control-panel rendering vulnerability.
 
 ## 3.0.18 - 2026-09-14
 
