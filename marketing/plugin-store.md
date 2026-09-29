@@ -4,13 +4,11 @@ Editors work in Craft drafts and submit an entry when it is ready for review. Th
 
 ## Features
 
-- **Editor submissions:** Hand a ready draft to the next role without granting publish permission.
-- **Publisher approval:** Accept and publish appropriate changes through a deliberate review action.
-- **Self-approval control:** Decide whether eligible users may approve their own submissions.
-- **Custom step actions:** Register project-specific actions for editor, reviewer, and publisher steps.
-- **Multiple reviewers:** Model additional approval steps with nominated Craft user groups.
-- **Review comments:** Explain an approval or rejection where the editor can act on it.
-- **Email notifications:** Tell the responsible group when a submission needs attention.
-- **Draft overview:** Find draft content across the site before it is forgotten.
-- **Clear approval decisions:** Publishers receive an email when content is waiting, review the proposed changes, and accept or reject the submission with comments. Rejected work returns to the editorial loop with a clear response.
-- **Multi-step reviews:** Insert one or more reviewer groups between editors and publishers for senior editorial, legal, or subject-matter approval. A draft summary helps the team find work that has not yet reached publication.
+- Hand a ready draft to the next role without granting publish permission.
+- Accept and publish appropriate changes through a deliberate review action.
+- Decide whether eligible users may approve their own submissions.
+- Register project-specific actions for editor, reviewer, and publisher steps.
+- Model additional approval steps with nominated Craft user groups.
+- Explain an approval or rejection where the editor can act on it.
+- Tell the responsible group when a submission needs attention.
+- Find draft content across the site before it is forgotten.
