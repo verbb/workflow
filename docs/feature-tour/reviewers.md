@@ -18,6 +18,8 @@ The overall review process will be top-down. So for example, you might have two 
 
 If, however a review is rejected at any stage, the submission will be "cancelled" and the original editor will be notified.
 
+![A submission's review history](../../screenshots/submission-history.png)
+
 Visually, this process would look similar to:
 
 - "Editor" creates and submits entry
