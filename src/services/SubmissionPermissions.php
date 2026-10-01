@@ -140,6 +140,19 @@ class SubmissionPermissions extends Component
         return $submission !== null && $this->canManageSubmission($user, $submission);
     }
 
+    public function canViewReview(User $user, Review $review): bool
+    {
+        $submission = $review->getSubmission();
+
+        if ($submission === null || !Craft::$app->getElements()->canView($submission, $user)) {
+            return false;
+        }
+
+        $entry = $review->getElement() ?? $submission->getOwner();
+
+        return $entry !== null && Craft::$app->getElements()->canView($entry, $user);
+    }
+
     public function isNextReviewer(User $user, Submission $submission, Site $site): bool
     {
         if ($user->admin) {

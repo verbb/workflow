@@ -18,14 +18,22 @@ class ReviewsController extends Controller
     public function actionCompare(?int $newReviewId = null, ?int $oldReviewId = null): Response
     {
         $this->requireCpRequest();
+        $this->requirePermission('workflow-overview');
 
         $reviewsService = Workflow::$plugin->getReviews();
 
         $newReview = $reviewsService->getReviewById($newReviewId);
         $oldReview = $reviewsService->getReviewById($oldReviewId);
 
-        if (!$newReview || !$oldReview) {
+        if (!$newReview || !$oldReview || !$newReview->submissionId || $newReview->submissionId !== $oldReview->submissionId) {
             throw new NotFoundHttpException('Review not found');
+        }
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $permissions = Workflow::$plugin->getSubmissionPermissions();
+
+        if (!$currentUser || !$permissions->canViewReview($currentUser, $newReview) || !$permissions->canViewReview($currentUser, $oldReview)) {
+            throw new ForbiddenHttpException('You are not allowed to compare these reviews.');
         }
 
         $variables = [
