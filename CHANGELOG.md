@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a high-severity server-side template injection vulnerability.
+
 ## 3.0.19 - 2026-09-30
 
 ### Changed
