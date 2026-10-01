@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a high-severity server-side template injection vulnerability.
+- Fixed a moderate-severity authorization bypass vulnerability.
 
 ## 3.0.19 - 2026-09-30
 

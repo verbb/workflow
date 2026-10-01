@@ -17,9 +17,8 @@ use craft\helpers\Db;
 use craft\helpers\StringHelper;
 use craft\models\UserGroup;
 
-use Exception;
-use Throwable;
 use DateTime;
+use Throwable;
 
 class Submissions extends Component
 {
@@ -443,30 +442,7 @@ class Submissions extends Component
             return $submission;
         }
 
-        $request = Craft::$app->getRequest();
-        $submissionId = $request->getParam('submissionId');
-        $siteHandle = $request->getParam('site');
-        $site = null;
-
-        if ($siteHandle) {
-            $site = Craft::$app->getSites()->getSiteByHandle($siteHandle);
-        }
-
-        if (!$site) {
-            $site = Craft::$app->getSites()->getCurrentSite();
-        }
-
-        if ($submissionId) {
-            $submission = $this->getSubmissionById($submissionId, $site->id);
-
-            if (!$submission) {
-                throw new Exception(Craft::t('workflow', 'No submission with the ID “{id}”', ['id' => $submissionId]));
-            }
-        } else {
-            $submission = new Submission();
-        }
-
-        return $submission;
+        return new Submission();
     }
 
     private function _setReviewFromPost(Submission $submission, ElementInterface $entry): Review
