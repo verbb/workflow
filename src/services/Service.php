@@ -70,7 +70,7 @@ class Service extends Component
 
             if ($action === 'save-submission') {
                 $actionAllowed = Workflow::$plugin->getSubmissionPermissions()->canSubmit($currentUser, $event->sender, $submission);
-            } else if ($customAction && $submission) {
+            } elseif ($customAction && $submission) {
                 $actionAllowed = Workflow::$plugin->getSubmissionPermissions()->canPerformAction($currentUser, $event->sender, $submission, $action);
             }
 
@@ -211,7 +211,7 @@ class Service extends Component
 
         // Because we're using "beforeApply" for complicated reasons, we should at least check if things validate first
         $event->draft->setScenario(Element::SCENARIO_LIVE);
-        
+
         if (!$event->draft->validate()) {
             return;
         }
@@ -241,7 +241,7 @@ class Service extends Component
     public function onCreateFieldLayoutForm(CreateFieldLayoutFormEvent $event)
     {
         $settings = Workflow::$plugin->getSettings();
-        
+
         if (!($event->element instanceof Entry)) {
             return;
         }

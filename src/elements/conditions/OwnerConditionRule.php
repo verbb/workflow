@@ -58,7 +58,7 @@ class OwnerConditionRule extends BaseElementSelectConditionRule implements Eleme
             ->ownerId($elementIds)
             ->exists();
     }
-    
+
 
     // Protected Methods
     // =========================================================================

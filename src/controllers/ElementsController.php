@@ -48,7 +48,7 @@ class ElementsController extends Controller
         if (!Craft::$app->getElements()->saveElement($entry)) {
             throw new BadRequestHttpException('Unable to save entry: ' . Json::encode($entry->getErrors()) . '.');
         }
-        
+
         return $this->asModelSuccess($entry, Craft::t('app', '{type} saved.', ['type' => Entry::displayName()]));
     }
 

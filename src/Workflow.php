@@ -86,7 +86,7 @@ class Workflow extends Plugin
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             $this->_registerResaveCommand();
         }
-        
+
         if (Craft::$app->getEdition() !== Craft::Solo) {
             $this->_registerPermissions();
         }

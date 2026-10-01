@@ -35,7 +35,7 @@ return [
     "View your entry by logging into your control panel.\n\n" .
     "{{ submission.ownerCpUrl }}",
 
-    
+
   'Action #{num}' => 'Action #{num}',
   'Actions' => 'Actions',
   'Add a user group' => 'Add a user group',

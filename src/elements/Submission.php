@@ -197,7 +197,7 @@ class Submission extends Element
         if (!$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
             return false;
         }
-        
+
         return false;
     }
 
@@ -450,23 +450,23 @@ class Submission extends Element
             return $user ? Cp::elementChipHtml($user, [
                 'hyperlink' => true,
             ]) : '-';
-        } else if ($attribute == 'editor') {
+        } elseif ($attribute == 'editor') {
             $user = $this->getEditor();
 
             return $user ? Cp::elementChipHtml($user, [
                 'hyperlink' => true,
             ]) : '-';
-        } else if ($attribute == 'notes') {
+        } elseif ($attribute == 'notes') {
             $notes = $this->getNotes();
 
             return $notes ? Template::raw($notes) : '';
-        } else if ($attribute == 'reviewer') {
+        } elseif ($attribute == 'reviewer') {
             $user = $this->getReviewer();
 
             return $user ? Cp::elementChipHtml($user, [
                 'hyperlink' => true,
             ]) : '-';
-        } else if ($attribute == 'lastReviewDate') {
+        } elseif ($attribute == 'lastReviewDate') {
             if ($lastReview = $this->getLastReview()) {
                 $formatter = Craft::$app->getFormatter();
                 return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
@@ -475,13 +475,13 @@ class Submission extends Element
             }
 
             return '-';
-        } else if ($attribute == 'siteId') {
+        } elseif ($attribute == 'siteId') {
             if ($this->ownerSiteId && $site = Craft::$app->getSites()->getSiteById($this->ownerSiteId)) {
                 return $site->name;
             }
 
             return '';
-        } else if ($attribute == 'ownerId') {
+        } elseif ($attribute == 'ownerId') {
             // Get the draft for the last review
             if ($element = $this->getDraft()) {
                 return Cp::elementChipHtml($element, [
@@ -496,7 +496,7 @@ class Submission extends Element
             }
 
             return '-';
-        } else if ($attribute == 'status') {
+        } elseif ($attribute == 'status') {
             $status = $this->getStatus();
             $statusDef = self::statuses()[$status] ?? null;
             $icon = Html::tag('span', '', ['class' => ['status', $statusDef['color'] ?? $status]]);

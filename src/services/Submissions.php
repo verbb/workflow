@@ -57,7 +57,8 @@ class Submissions extends Component
 
         // Fire an 'afterGetReviewerUserGroups' event
         if ($this->hasEventHandlers(self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS)) {
-            $this->trigger(self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
+            $this->trigger(
+                self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
                 new ReviewerUserGroupsEvent([
                     'submission' => $submission,
                     'userGroups' => $userGroups,
@@ -170,7 +171,7 @@ class Submissions extends Component
         // Trigger notification to reviewer
         if ($settings->reviewerNotifications) {
             Workflow::$plugin->getEmails()->sendReviewerNotificationEmail($submission, $review, $entry);
-        } else if ($settings->publisherNotifications) {
+        } elseif ($settings->publisherNotifications) {
             Workflow::$plugin->getEmails()->sendPublisherNotificationEmail($submission, $review, $entry);
         }
 
@@ -371,7 +372,7 @@ class Submissions extends Component
 
             return false;
         }
-        
+
         // Create a new review
         $review = $this->_setReviewFromPost($submission, $entry);
         $review->role = Review::ROLE_PUBLISHER;
@@ -415,9 +416,9 @@ class Submissions extends Component
             }
 
             return $result;
-        } else if ($status === Review::STATUS_REJECTED) {
+        } elseif ($status === Review::STATUS_REJECTED) {
             return $this->rejectSubmission($entry, $submission);
-        } else if ($status === Review::STATUS_REVOKED) {
+        } elseif ($status === Review::STATUS_REVOKED) {
             return $this->revokeSubmission($entry, $submission);
         }
 

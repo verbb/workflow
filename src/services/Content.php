@@ -123,11 +123,11 @@ class Content extends Component
         foreach ($array as $attribute => $value) {
             if ($value instanceof DiffOpAdd) {
                 $newArray['add'][$attribute] = $value->toArray();
-            } else if ($value instanceof DiffOpChange) {
+            } elseif ($value instanceof DiffOpChange) {
                 $newArray['change'][$attribute] = $value->toArray();
-            } else if ($value instanceof DiffOpRemove) {
+            } elseif ($value instanceof DiffOpRemove) {
                 $newArray['remove'][$attribute] = $value->toArray();
-            } else if ($value instanceof Diff) {
+            } elseif ($value instanceof Diff) {
                 $items = $this->_convertDiffToTypedArray($value->getOperations());
 
                 foreach ($items as $action => $item) {
@@ -148,11 +148,11 @@ class Content extends Component
         foreach ($array as $attribute => $value) {
             if ($value instanceof DiffOpAdd) {
                 $newArray['add'] = ($newArray['add'] ?? 0) + 1;
-            } else if ($value instanceof DiffOpChange) {
+            } elseif ($value instanceof DiffOpChange) {
                 $newArray['change'] = ($newArray['change'] ?? 0) + 1;
-            } else if ($value instanceof DiffOpRemove) {
+            } elseif ($value instanceof DiffOpRemove) {
                 $newArray['remove'] = ($newArray['remove'] ?? 0) + 1;
-            } else if ($value instanceof Diff) {
+            } elseif ($value instanceof Diff) {
                 $items = $this->_convertDiffToCount($value->getOperations());
 
                 foreach ($items as $action => $item) {

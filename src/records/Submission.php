@@ -21,4 +21,3 @@ class Submission extends ActiveRecord
         return $this->hasOne(Element::class, ['id' => 'ownerId']);
     }
 }
-

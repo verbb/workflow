@@ -78,7 +78,7 @@ class SetStatus extends BaseSetStatus
 
         if ($failCount !== 0) {
             $this->setMessage(Craft::t('workflow', 'Status updated, with some failures due to validation errors.'));
-        } else if (count($submissions) === 1) {
+        } elseif (count($submissions) === 1) {
             $this->setMessage(Craft::t('workflow', 'Status updated.'));
         } else {
             $this->setMessage(Craft::t('workflow', 'Statuses updated.'));

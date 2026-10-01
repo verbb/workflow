@@ -32,4 +32,3 @@ class Review extends ActiveRecord
         return $this->hasOne(Element::class, ['id' => 'id']);
     }
 }
-

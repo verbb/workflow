@@ -25,15 +25,15 @@ class Submissions extends Widget
 
     // Properties
     // =========================================================================
-    
+
     public int|string|null $siteId = null;
     public int $limit = 10;
     public string $status = 'pending';
-    
+
 
     // Public Methods
     // =========================================================================
-    
+
     public function getBodyHtml(): ?string
     {
         $query = Submission::find()
