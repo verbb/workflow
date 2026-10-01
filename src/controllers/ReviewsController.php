@@ -78,17 +78,28 @@ class ReviewsController extends Controller
 
     public function actionGetCompareModalBody(): Response
     {
+        $this->requireCpRequest();
         $this->requirePostRequest();
         $this->requireAcceptsJson();
 
         $view = $this->getView();
         $reviewsService = Workflow::$plugin->getReviews();
 
-        $reviewId = $this->request->getParam('reviewId');
+        $reviewId = (int)$this->request->getRequiredBodyParam('reviewId');
         $newReview = $reviewsService->getReviewById($reviewId);
+
+        if (!$newReview) {
+            throw new NotFoundHttpException('Review not found');
+        }
 
         // Get the previous review
         $oldReview = $reviewsService->getPreviousReviewById($reviewId);
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        $permissions = Workflow::$plugin->getSubmissionPermissions();
+
+        if (!$currentUser || !$permissions->canViewReviewChanges($currentUser, $newReview) || ($oldReview && !$permissions->canViewReviewChanges($currentUser, $oldReview))) {
+            throw new ForbiddenHttpException('You are not allowed to compare this review.');
+        }
 
         $view->registerAssetBundle(\verbb\workflow\assetbundles\WorkflowAsset::class);
 

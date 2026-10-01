@@ -153,6 +153,40 @@ class SubmissionPermissions extends Component
         return $entry !== null && Craft::$app->getElements()->canView($entry, $user);
     }
 
+    public function canViewReviewChanges(User $user, Review $review): bool
+    {
+        $submission = $review->getSubmission();
+        $entry = $review->getElement() ?? $submission?->getOwner();
+
+        if ($submission === null || !$entry instanceof Entry || !Craft::$app->getElements()->canView($entry, $user)) {
+            return false;
+        }
+
+        if (Craft::$app->getElements()->canView($submission, $user)) {
+            return true;
+        }
+
+        if (!$this->isSectionEnabled($entry)) {
+            return false;
+        }
+
+        $settings = Workflow::$plugin->getSettings();
+        $editorGroup = $settings->getEditorUserGroup($entry->site);
+        $publisherGroup = $settings->getPublisherUserGroup($entry->site);
+
+        if (($editorGroup && $user->isInGroup($editorGroup)) || ($publisherGroup && $user->isInGroup($publisherGroup))) {
+            return true;
+        }
+
+        foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($entry->site, $submission) as $reviewerGroup) {
+            if ($user->isInGroup($reviewerGroup)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isNextReviewer(User $user, Submission $submission, Site $site): bool
     {
         if ($user->admin) {
