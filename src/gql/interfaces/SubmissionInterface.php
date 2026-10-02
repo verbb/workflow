@@ -1,7 +1,9 @@
 <?php
 namespace verbb\workflow\gql\interfaces;
 
+use verbb\workflow\elements\Submission;
 use verbb\workflow\gql\types\generators\SubmissionGenerator;
+use verbb\workflow\helpers\Gql as GqlHelper;
 
 use Craft;
 use craft\gql\interfaces\Element;
@@ -55,6 +57,7 @@ class SubmissionInterface extends Element
                 'name' => 'owner',
                 'type' => Element::getType(),
                 'description' => 'The element that the submission relates to.',
+                'resolve' => fn(Submission $submission) => GqlHelper::resolveSubmissionOwner($submission),
             ],
         ]), self::getName());
     }
