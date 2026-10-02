@@ -96,7 +96,7 @@ class Review extends Model
 
     public function getNotes(bool $sanitize = true): ?string
     {
-        return $sanitize ? StringHelper::unSanitizeNotes($this->_notes) : $this->_notes;
+        return $sanitize ? StringHelper::normalizeNotesForOutput($this->_notes) : $this->_notes;
     }
 
     public function getSubmission(): ?Submission

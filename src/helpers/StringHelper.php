@@ -16,6 +16,16 @@ class StringHelper extends CraftStringHelper
         return $value;
     }
 
+    public static function normalizeNotesForOutput(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        // Legacy notes may be raw, while current notes are already encoded.
+        return StringHelper::sanitizeNotes(html_entity_decode($value, ENT_COMPAT, 'UTF-8'));
+    }
+
     public static function unSanitizeNotes(?string $value): ?string
     {
         return $value;
