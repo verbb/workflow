@@ -128,7 +128,10 @@ class Reviews extends Component
         $reviewRecord->notes = StringHelper::sanitizeNotes($review->getNotes(false));
         $reviewRecord->data = $review->data;
 
-        $reviewRecord->save(false);
+        if (!$reviewRecord->save(false)) {
+            Workflow::info('Review record could not be saved.');
+            return false;
+        }
 
         if (!$review->id) {
             $review->id = $reviewRecord->id;

@@ -7,6 +7,7 @@
 - Replaced the CodeKit asset build with Vite and moved web assets to `src/web`.
 
 ### Fixed
+- Fixed a medium-severity improper exception handling vulnerability.
 - Fixed a high-severity server-side template injection vulnerability.
 - Fixed multiple moderate-severity authorization bypass vulnerabilities.
 - Fixed multiple moderate-severity information disclosure vulnerabilities.

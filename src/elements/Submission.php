@@ -289,6 +289,11 @@ class Submission extends Element
         $this->_reviews = null;
     }
 
+    public function clearDraft(): void
+    {
+        $this->_draft = null;
+    }
+
     public function getLastReview(): ?Review
     {
         // Sorted by latest first be default

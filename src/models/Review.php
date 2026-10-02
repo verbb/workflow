@@ -12,9 +12,11 @@ use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Html;
+use craft\helpers\Json;
 use craft\helpers\Template;
 
 use DateTime;
+use Throwable;
 
 use Twig\Markup;
 
@@ -31,6 +33,9 @@ class Review extends Model
     public const STATUS_PENDING = 'pending';
     public const STATUS_REJECTED = 'rejected';
     public const STATUS_REVOKED = 'revoked';
+
+    private const MAX_NOTES_BYTES = 65535;
+    private const MAX_DATA_BYTES = 16777215;
 
 
     // Static Methods
@@ -216,6 +221,42 @@ class Review extends Model
         }
 
         return false;
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['notes'], function(string $attribute): void {
+            $notes = StringHelper::sanitizeNotes($this->getNotes(false));
+
+            if (strlen($notes) > self::MAX_NOTES_BYTES) {
+                $this->addError($attribute, Craft::t('workflow', 'Review notes are too large to save.'));
+            }
+        }];
+
+        $rules[] = [['data'], function(string $attribute): void {
+            if ($this->data === null) {
+                return;
+            }
+
+            try {
+                $data = Json::encode($this->data);
+            } catch (Throwable) {
+                $this->addError($attribute, Craft::t('workflow', 'Review content could not be saved.'));
+                return;
+            }
+
+            if (strlen($data) > self::MAX_DATA_BYTES) {
+                $this->addError($attribute, Craft::t('workflow', 'Review content is too large to save.'));
+            }
+        }];
+
+        return $rules;
     }
 
 }

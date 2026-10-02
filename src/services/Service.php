@@ -10,6 +10,7 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\elements\Entry;
+use craft\errors\InvalidElementException;
 use craft\events\CreateFieldLayoutFormEvent;
 use craft\events\DefineHtmlEvent;
 use craft\events\DraftEvent;
@@ -19,12 +20,17 @@ use craft\helpers\ArrayHelper;
 
 use yii\web\ForbiddenHttpException;
 
+use Throwable;
+
 class Service extends Component
 {
     // Properties
     // =========================================================================
 
     public bool $afterSaveRun = false;
+
+    /** @var array{submission: Submission, review: Review, ownerId: int, siteId: int, draftElementId: int, approved: bool}|null */
+    private ?array $_draftApproval = null;
 
 
     // Public Methods
@@ -205,18 +211,12 @@ class Service extends Component
 
     public function onBeforeApplyDraft(DraftEvent $event): void
     {
+        $this->_draftApproval = null;
+
         if (!($event->draft instanceof Entry)) {
             return;
         }
 
-        // Because we're using "beforeApply" for complicated reasons, we should at least check if things validate first
-        $event->draft->setScenario(Element::SCENARIO_LIVE);
-
-        if (!$event->draft->validate()) {
-            return;
-        }
-
-        // Check if a publisher has applied the draft by mistake, and there's a pending submission. Just mark as done.
         $submission = Submission::find()
             ->ownerId($event->draft->getCanonicalId())
             ->ownerSiteId($event->draft->siteId)
@@ -226,16 +226,101 @@ class Service extends Component
             ->isPending(true)
             ->one();
 
-        if ($submission) {
-            $currentUser = Craft::$app->getUser()->getIdentity();
-
-            // Direct draft application must obey the same publisher, self-approval, target and Craft permission checks.
-            if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canChangeStatus($currentUser, $submission, Review::STATUS_APPROVED)) {
-                throw new ForbiddenHttpException('You are not allowed to apply this submitted draft.');
-            }
-
-            Workflow::$plugin->getSubmissions()->approveSubmission($event->draft, true, $submission);
+        if (!$submission) {
+            return;
         }
+
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        // Direct draft application must obey the same publisher, self-approval, target and Craft permission checks.
+        if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canChangeStatus($currentUser, $submission, Review::STATUS_APPROVED)) {
+            throw new ForbiddenHttpException('You are not allowed to apply this submitted draft.');
+        }
+
+        // Craft applies some drafts using a less strict scenario, so submitted drafts must fail closed here.
+        $event->draft->setScenario(Element::SCENARIO_LIVE);
+
+        if (!$event->draft->validate()) {
+            throw new InvalidElementException($event->draft);
+        }
+
+        $review = Workflow::$plugin->getSubmissions()->createReview($submission, $event->draft);
+        $review->role = Review::ROLE_PUBLISHER;
+        $review->status = Review::STATUS_APPROVED;
+
+        if (!$review->validate()) {
+            Craft::$app->getUrlManager()->setRouteParams([
+                'submission' => $submission,
+                'review' => $review,
+            ]);
+
+            throw new InvalidElementException($event->draft, Craft::t('workflow', 'Could not save review.'));
+        }
+
+        $this->_draftApproval = [
+            'submission' => $submission,
+            'review' => $review,
+            'ownerId' => $event->draft->getCanonicalId(),
+            'siteId' => $event->draft->siteId,
+            'draftElementId' => $event->draft->id,
+            'approved' => false,
+        ];
+    }
+
+    public function onAfterSaveAppliedDraft(ElementEvent $event): void
+    {
+        $context = $this->_draftApproval;
+
+        if (
+            $context === null ||
+            !($event->element instanceof Entry) ||
+            $event->element->getIsDraft() ||
+            $event->element->getCanonicalId() !== $context['ownerId'] ||
+            $event->element->siteId !== $context['siteId']
+        ) {
+            return;
+        }
+
+        try {
+            $approved = Workflow::$plugin->getSubmissions()->approveSubmissionForApplication(
+                $event->element,
+                $context['submission'],
+                $context['review'],
+            );
+        } catch (Throwable $e) {
+            $this->_draftApproval = null;
+            throw $e;
+        }
+
+        if (!$approved) {
+            $this->_draftApproval = null;
+            throw new InvalidElementException($event->element, Craft::t('workflow', 'Could not approve and publish.'));
+        }
+
+        $this->_draftApproval['approved'] = true;
+    }
+
+    public function onAfterApplyDraft(DraftEvent $event): void
+    {
+        $context = $this->_draftApproval;
+        $this->_draftApproval = null;
+
+        if (
+            $context === null ||
+            !$context['approved'] ||
+            !($event->canonical instanceof Entry) ||
+            $event->canonical->getCanonicalId() !== $context['ownerId'] ||
+            $event->canonical->siteId !== $context['siteId'] ||
+            $event->draft->id !== $context['draftElementId']
+        ) {
+            return;
+        }
+
+        Workflow::$plugin->getSubmissions()->finalizeAppliedSubmission(
+            $event->canonical,
+            $context['submission'],
+            $context['review'],
+        );
     }
 
     public function onCreateFieldLayoutForm(CreateFieldLayoutFormEvent $event)

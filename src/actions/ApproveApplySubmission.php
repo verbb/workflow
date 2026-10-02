@@ -9,7 +9,6 @@ use verbb\workflow\models\Review;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Element;
-use craft\events\ElementEvent;
 use craft\events\ModelEvent;
 use craft\helpers\DateTimeHelper;
 
@@ -67,12 +66,6 @@ class ApproveApplySubmission extends Action
             $event->isValid = false;
         }
     }
-
-    public function onAfterSaveElement(ElementEvent $event): void
-    {
-        Workflow::$plugin->getSubmissions()->approveSubmission($event->element);
-    }
-
 
     // Protected Methods
     // =========================================================================

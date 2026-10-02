@@ -84,17 +84,6 @@ class SubmissionsController extends Controller
             return null;
         }
 
-        if (!Craft::$app->getElements()->saveElement($submission)) {
-            $session->setError(Craft::t('workflow', 'Unable to save submission.'));
-
-            Craft::$app->getUrlManager()->setRouteParams([
-                'submission' => $submission,
-                'errors' => $submission->getErrors(),
-            ]);
-
-            return null;
-        }
-
         $session->setNotice(Craft::t('workflow', 'Submission saved successfully.'));
 
         return $this->redirectToPostedUrl($submission);

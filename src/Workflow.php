@@ -266,13 +266,14 @@ class Workflow extends Plugin
             return;
         }
 
+        // Prepare pending Workflow approvals before Craft starts applying a draft, save them inside Craft's transaction,
+        // and only notify users after the application has committed.
+        Event::on(Drafts::class, Drafts::EVENT_BEFORE_APPLY_DRAFT, [$this->getService(), 'onBeforeApplyDraft']);
+        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getService(), 'onAfterSaveAppliedDraft']);
+        Event::on(Drafts::class, Drafts::EVENT_AFTER_APPLY_DRAFT, [$this->getService(), 'onAfterApplyDraft']);
+
         // Use `Entry::EVENT_BEFORE_SAVE` in order to add validation errors. `Elements::EVENT_BEFORE_SAVE_ELEMENT` doesn't work
         Event::on(Entry::class, Entry::EVENT_BEFORE_SAVE, [$this->getService(), 'onBeforeSaveEntry']);
-
-        // When a publisher applies a draft instead of using the Workflow action, approve any pending submissions
-        // Note the use of "beforeApply" due to when applying a draft of an existing entry, the draft will already be
-        // deleted by the time we reach "afterApply" and the FK constraint updated on the review, so a submission can't be found.
-        Event::on(Drafts::class, Drafts::EVENT_BEFORE_APPLY_DRAFT, [$this->getService(), 'onBeforeApplyDraft']);
 
         // Use `Elements::EVENT_AFTER_SAVE_ELEMENT` so that the element is fully finished with propagating, etc.
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getService(), 'onAfterSaveElement']);
