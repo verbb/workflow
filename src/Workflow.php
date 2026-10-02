@@ -15,6 +15,11 @@ use craft\base\Plugin;
 use craft\console\Application as ConsoleApplication;
 use craft\console\Controller as ConsoleController;
 use craft\console\controllers\ResaveController;
+use craft\controllers\AppController;
+use craft\controllers\ElementIndexesController;
+use craft\controllers\ElementSearchController;
+use craft\controllers\ElementSelectorModalsController;
+use craft\controllers\RelationalFieldsController;
 use craft\elements\Entry;
 use craft\events\DefineConsoleActionsEvent;
 use craft\events\RegisterComponentTypesEvent;
@@ -36,6 +41,7 @@ use craft\web\Application;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
+use yii\base\ActionEvent;
 use yii\base\Event;
 
 class Workflow extends Plugin
@@ -67,6 +73,7 @@ class Workflow extends Plugin
         $this->_registerVariables();
         $this->_registerEventHandlers();
         $this->_registerElementTypes();
+        $this->_registerElementPermissions();
         $this->_registerGraphQl();
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
@@ -205,6 +212,51 @@ class Workflow extends Plugin
     {
         Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function(RegisterComponentTypesEvent $event): void {
             $event->types[] = Submission::class;
+        });
+    }
+
+    private function _registerElementPermissions(): void
+    {
+        $requireSubmissionPermission = function(ActionEvent $event): void {
+            $elementType = $event->sender->request->getParam('elementType');
+
+            if (is_string($elementType) && is_a($elementType, Submission::class, true)) {
+                $event->sender->requireCpRequest();
+                $event->sender->requirePermission('workflow-overview');
+                $event->sender->requirePermission('accessPlugin-workflow');
+            }
+        };
+
+        $controllerClasses = [
+            ElementIndexesController::class,
+            ElementSelectorModalsController::class,
+            RelationalFieldsController::class,
+        ];
+
+        // Element search was added after Craft 5.0, so keep the plugin's existing minimum intact.
+        if (class_exists(ElementSearchController::class)) {
+            $controllerClasses[] = ElementSearchController::class;
+        }
+
+        foreach ($controllerClasses as $controllerClass) {
+            Event::on($controllerClass, ElementIndexesController::EVENT_BEFORE_ACTION, $requireSubmissionPermission);
+        }
+
+        Event::on(AppController::class, AppController::EVENT_BEFORE_ACTION, function(ActionEvent $event): void {
+            if ($event->action->id !== 'render-elements') {
+                return;
+            }
+
+            foreach ($event->sender->request->getBodyParam('elements', []) as $element) {
+                $elementType = $element['type'] ?? null;
+
+                if (is_string($elementType) && is_a($elementType, Submission::class, true)) {
+                    $event->sender->requireCpRequest();
+                    $event->sender->requirePermission('workflow-overview');
+                    $event->sender->requirePermission('accessPlugin-workflow');
+                    return;
+                }
+            }
         });
     }
 
