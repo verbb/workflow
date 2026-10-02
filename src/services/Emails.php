@@ -46,6 +46,11 @@ class Emails extends Component
 
         // If there is no next reviewer user group then send publisher notification email
         if ($reviewerUserGroup === null) {
+            if (!Workflow::$plugin->getSettings()->publisherNotifications) {
+                Workflow::info('Publisher notifications are disabled.');
+                return;
+            }
+
             Workflow::info('No reviewer user groups. Send publisher email.');
 
             Workflow::$plugin->getEmails()->sendPublisherNotificationEmail($submission, $review, $entry);
