@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+- Updated the required version of `verbb/base` to 3.0.19.
+- Replaced the CodeKit asset build with Vite and moved web assets to `src/web`.
+
 ### Fixed
 - Fixed a high-severity server-side template injection vulnerability.
 - Fixed multiple moderate-severity authorization bypass vulnerabilities.

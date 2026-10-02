@@ -1,10 +1,10 @@
 <?php
-namespace verbb\workflow\assetbundles;
+namespace verbb\workflow\web\assets\cp;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-use verbb\base\assetbundles\CpAsset as VerbbCpAsset;
+use verbb\base\web\assets\cp\CpAsset as VerbbCpAsset;
 
 class WorkflowAsset extends AssetBundle
 {
@@ -13,7 +13,7 @@ class WorkflowAsset extends AssetBundle
 
     public function init(): void
     {
-        $this->sourcePath = "@verbb/workflow/resources/dist";
+        $this->sourcePath = '@verbb/workflow/web/assets/cp/dist';
 
         $this->depends = [
             VerbbCpAsset::class,
@@ -21,11 +21,11 @@ class WorkflowAsset extends AssetBundle
         ];
 
         $this->js = [
-            'js/workflow.js',
+            'workflow.js',
         ];
 
         $this->css = [
-            'css/workflow.css',
+            'workflow.css',
         ];
 
         parent::init();

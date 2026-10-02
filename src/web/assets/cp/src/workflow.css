@@ -1,40 +1,21 @@
-// ==========================================================================
-
-// Workflow for Craft CMS
-// Author: Verbb - https://verbb.io/
-
-// ==========================================================================
-
-
-
-// ==========================================================================
-// Workflow Element Index
-// ==========================================================================
-
 .status.approved {
-    background-color: #27AB83;
-    border-color: transparent !important;
+    background-color: #27ab83;
+    border-color: rgba(0, 0, 0, 0) !important;
 }
 
 .status.rejected {
-    background-color: #CF1124;
-    border-color: transparent !important;
+    background-color: #cf1124;
+    border-color: rgba(0, 0, 0, 0) !important;
+}
 
-    body.use-shapes & {
-        border-radius: 1px;
-    }
+body.use-shapes .status.rejected {
+    border-radius: 1px;
 }
 
 .status.revoked {
     --outline-color: var(--gray-500);
     box-shadow: inset 0 0 0 2px var(--outline-color);
 }
-
-
-
-// ==========================================================================
-// Workflow Entry Widget
-// ==========================================================================
 
 .workflow-pane {
     margin: 14px -24px;
@@ -63,9 +44,7 @@
     margin-right: 0;
 }
 
-.workflow-history-pane-heading,
-.workflow-submission-heading,
-.workflow-history-heading {
+.workflow-history-pane-heading, .workflow-submission-heading, .workflow-history-heading {
     position: relative;
     display: flex;
     align-items: center;
@@ -76,27 +55,24 @@
     padding: 0;
 }
 
-.workflow-submission-heading label,
-.workflow-history-heading label {
+.workflow-submission-heading label, .workflow-history-heading label {
     font-weight: bold;
     color: #576575;
     flex: 1;
 }
 
-.workflow-history-pane-heading a.fieldtoggle,
-.workflow-submission-heading a.fieldtoggle,
-.workflow-history-heading a.fieldtoggle {
+.workflow-history-pane-heading a.fieldtoggle, .workflow-submission-heading a.fieldtoggle, .workflow-history-heading a.fieldtoggle {
     position: absolute;
     width: 100%;
     height: 20px;
     margin: 0;
     padding: 0 !important;
     cursor: pointer;
+}
 
-    &:before {
-        left: auto !important;
-        right: 0;
-    }
+.workflow-history-pane-heading a.fieldtoggle:before, .workflow-submission-heading a.fieldtoggle:before, .workflow-history-heading a.fieldtoggle:before {
+    left: auto !important;
+    right: 0;
 }
 
 .workflow-history-pane {
@@ -117,10 +93,10 @@
 .workflow-history {
     padding: 10px 20px;
     border-bottom: 1px solid #e3e5e8;
+}
 
-    &:last-child {
-        border-bottom: 0;
-    }
+.workflow-history:last-child {
+    border-bottom: 0;
 }
 
 .workflow-history-action {
@@ -136,48 +112,37 @@
     padding-top: 10px;
 }
 
-
-
-// ==========================================================================
-// Workflow Dashboard Widget
-// ==========================================================================
-
 .workflow-widget .workflow-block {
     display: flex;
     margin-bottom: 10px;
-
-    .status {
-        margin-top: 4px;
-    }
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-
-    small {
-        color: #aaa;
-        font-size: 85%;
-        display: block;
-    }
-
-    &:hover {
-        text-decoration: none;
-    }
-
-    &:hover small {
-        color: #666;
-        text-decoration: none;
-    }
-
-    &:hover span {
-        text-decoration: underline;
-    }
 }
 
+.workflow-widget .workflow-block .status {
+    margin-top: 4px;
+}
 
-// ==========================================================================
-// Workflow Single
-// ==========================================================================
+.workflow-widget .workflow-block:last-child {
+    margin-bottom: 0;
+}
+
+.workflow-widget .workflow-block small {
+    color: #aaa;
+    font-size: 85%;
+    display: block;
+}
+
+.workflow-widget .workflow-block:hover {
+    text-decoration: none;
+}
+
+.workflow-widget .workflow-block:hover small {
+    color: #666;
+    text-decoration: none;
+}
+
+.workflow-widget .workflow-block:hover span {
+    text-decoration: underline;
+}
 
 .workflow-submission-edit .content-pane {
     --pane-bg: transparent;
@@ -228,30 +193,30 @@
 .workflow-single-review-indicator {
     position: relative;
     width: 60px;
+}
 
-    &::before {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        content: '';
-        display: block;
-        height: 100%;
-        width: 1px;
-        background: #cdd8e4;
-    }
+.workflow-single-review-indicator::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    content: "";
+    display: block;
+    height: 100%;
+    width: 1px;
+    background: #cdd8e4;
+}
 
-    .workflow-single-review:first-child &::before {
-        height: 50%;
-        top: 50%;
-    }
+.workflow-single-review:first-child .workflow-single-review-indicator::before {
+    height: 50%;
+    top: 50%;
+}
 
-    .workflow-single-review:last-child &::before {
-        height: 50%;
-    }
+.workflow-single-review:last-child .workflow-single-review-indicator::before {
+    height: 50%;
+}
 
-    .reviews-count-1 &::before {
-        display: none;
-    }
+.reviews-count-1 .workflow-single-review-indicator::before {
+    display: none;
 }
 
 .workflow-single-review-indicator-icon {
@@ -266,29 +231,30 @@
     position: relative;
     top: 50%;
     left: 50%;
+    -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
 
-    &.approved {
-        background: #10b981;
-    }
+.workflow-single-review-indicator-icon.approved {
+    background: #10b981;
+}
 
-    &.pending {
-        background: #fb923c;
-    }
+.workflow-single-review-indicator-icon.pending {
+    background: #fb923c;
+}
 
-    &.rejected {
-        background: #ef4444;
-    }
+.workflow-single-review-indicator-icon.rejected {
+    background: #ef4444;
+}
 
-    &.revoked {
-        background: #cbd5e1;
-    }
+.workflow-single-review-indicator-icon.revoked {
+    background: #cbd5e1;
+}
 
-    svg {
-        fill: currentColor;
-        width: 100%;
-        height: 100%;
-    }
+.workflow-single-review-indicator-icon svg {
+    fill: currentColor;
+    width: 100%;
+    height: 100%;
 }
 
 .workflow-single-review-content {
@@ -312,74 +278,69 @@
     border-radius: var(--large-border-radius) var(--large-border-radius) 0 0;
     display: flex;
     align-items: center;
+}
 
-    .review-count {
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: uppercase;
-        opacity: 0.6;
-        margin-right: 10px;
-    }
+.workflow-single-review-heading .review-count {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-right: 10px;
+}
 
-    .menubtn {
-        position: absolute;
-        top: 50%;
-        right: 5px;
-        height: 75%;
-        transform: translateY(-50%);
-        padding: 4px 10px;
-        font-size: 12px;
-        background-color: transparent;
+.workflow-single-review-heading .menubtn {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    height: 75%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    padding: 4px 10px;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0);
+}
 
-        &:focus, &:hover {
-            background-color: rgba(96, 125, 159, .15) !important;
-        }
+.workflow-single-review-heading .menubtn:focus, .workflow-single-review-heading .menubtn:hover {
+    background-color: rgba(96, 125, 159, 0.15) !important;
+}
 
-        &:after {
-            width: 6px;
-            height: 6px;
-        }
-    }
+.workflow-single-review-heading .menubtn:after {
+    width: 6px;
+    height: 6px;
 }
 
 .review-status-badge {
     --status-color: 136, 136, 136;
-
     font-size: 10px;
     font-weight: 500;
     text-transform: uppercase;
     cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
     user-select: none;
     padding: 3px 6px;
     border-radius: 4px;
-    border: 1px solid transparent;
+    border: 1px solid rgba(0, 0, 0, 0);
     color: rgba(var(--status-color), 1);
     background: rgba(var(--status-color), 0.05);
     border-color: rgba(var(--status-color), 0.25);
-
-    &.approved {
-        --status-color: 23, 163, 74;
-    }
-
-    &.pending {
-        --status-color: 245, 158, 12;
-    }
-
-    &.rejected {
-        --status-color: 237, 67, 67;
-    }
-
-    &.revoked {
-        --status-color: 136, 136, 136;
-    }
 }
 
+.review-status-badge.approved {
+    --status-color: 23, 163, 74;
+}
 
+.review-status-badge.pending {
+    --status-color: 245, 158, 12;
+}
 
+.review-status-badge.rejected {
+    --status-color: 237, 67, 67;
+}
 
-// ==========================================================================
-// Workflow Review Compare
-// ==========================================================================
+.review-status-badge.revoked {
+    --status-color: 136, 136, 136;
+}
 
 .workflow-compare-reviews {
     display: flex;
@@ -406,43 +367,35 @@
     border-radius: var(--large-border-radius) var(--large-border-radius) 0 0;
     display: flex;
     align-items: center;
-
-    .review-count {
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: uppercase;
-        opacity: 0.6;
-        margin-right: 10px;
-    }
 }
 
-.workflow-compare-review-content .field > .status-badge {
-    &.add {
-        background-color: #17a34a;
-    }
-
-    &.change {
-        background-color: #f59e0c;
-    }
-
-    &.remove {
-        background-color: #ed4343;
-    }
-
-    body.ltr & {
-        left: -16px !important;
-    }
-
-    body.rtl & {
-        right: -16px !important;
-    }
+.workflow-compare-review-heading .review-count {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-right: 10px;
 }
 
+.workflow-compare-review-content .field > .status-badge.add {
+    background-color: #17a34a;
+}
 
+.workflow-compare-review-content .field > .status-badge.change {
+    background-color: #f59e0c;
+}
 
-// ==========================================================================
-// Workflow Review Compare Modal
-// ==========================================================================
+.workflow-compare-review-content .field > .status-badge.remove {
+    background-color: #ed4343;
+}
+
+body.ltr .workflow-compare-review-content .field > .status-badge {
+    left: -16px !important;
+}
+
+body.rtl .workflow-compare-review-content .field > .status-badge {
+    right: -16px !important;
+}
 
 .workflow-review-compare-modal .spinner.big {
     width: 100%;
@@ -464,12 +417,6 @@
     margin: 0;
 }
 
-
-
-// ==========================================================================
-// Workflow Settings
-// ==========================================================================
-
 .workflow-settings-tabs li {
     width: 100%;
     max-width: 100% !important;
@@ -480,36 +427,32 @@
 }
 
 #settings-reviewerUserGroups.editable tbody tr td:first-of-type:before {
-    font-family: 'Craft';
-    content: 'rarr';
+    font-family: "Craft";
+    content: "rarr";
     color: #9aa5b1;
     vertical-align: middle;
     margin-right: 5px;
 }
 
-//
-// Multi-site settings panes
-//
-
 .workflow-settings-pane {
     border: 1px solid #cdd8e4;
     margin-bottom: -2px;
+}
 
-    &:first-child {
-        border-radius: 5px 5px 0 0;
+.workflow-settings-pane:first-child {
+    border-radius: 5px 5px 0 0;
+}
 
-        .pane-toolbar {
-            border-radius: 5px 5px 0 0;
-        }
-    }
+.workflow-settings-pane:first-child .pane-toolbar {
+    border-radius: 5px 5px 0 0;
+}
 
-    &:last-child {
-        border-radius: 0 0 5px 5px;
+.workflow-settings-pane:last-child {
+    border-radius: 0 0 5px 5px;
+}
 
-        .pane-toolbar {
-            border-radius: 0 0 5px 5px;
-        }
-    }
+.workflow-settings-pane:last-child .pane-toolbar {
+    border-radius: 0 0 5px 5px;
 }
 
 .workflow-settings-pane .pane-toolbar {
@@ -523,16 +466,16 @@
     display: block;
     padding: 10px 20px !important;
     margin: 0;
+}
 
-    &::before {
-        right: 20px;
-        left: auto !important;
-        top: 16px;
-        transform-origin: 50% 50%;
-    }
+.workflow-settings-pane .pane-toolbar-title::before {
+    right: 20px;
+    left: auto !important;
+    top: 16px;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
 }
 
 .workflow-settings-pane .settings-content-pane {
     padding: 20px;
 }
-

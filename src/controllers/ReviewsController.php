@@ -101,7 +101,7 @@ class ReviewsController extends Controller
             throw new ForbiddenHttpException('You are not allowed to compare this review.');
         }
 
-        $view->registerAssetBundle(\verbb\workflow\assetbundles\WorkflowAsset::class);
+        $view->registerAssetBundle(\verbb\workflow\web\assets\cp\WorkflowAsset::class);
 
         $html = $view->renderTemplate('workflow/reviews/_compare-modal', [
             'review' => $newReview,

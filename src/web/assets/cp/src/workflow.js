@@ -26,7 +26,7 @@ Craft.Workflow.ViewChangesModal = Garnish.Modal.extend({
             $footer = $('<div class="footer"/>').appendTo($container);
 
         this.base($container, this.settings);
-        
+
         this.$buttons = $('<div class="buttons right"/>').appendTo($footer);
         this.$cancelBtn = $('<div class="btn">' + Craft.t('workflow', 'Close') + '</div>').appendTo(this.$buttons);
         this.$body = $body;

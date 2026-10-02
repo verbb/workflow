@@ -1,6 +1,6 @@
 {% extends 'verbb-base/_layouts' %}
 
-{% do view.registerAssetBundle('verbb\\workflow\\assetbundles\\WorkflowAsset') %}
+{% do view.registerAssetBundle('verbb\\workflow\\web\\assets\\cp\\WorkflowAsset') %}
 
 {% if title is not defined %}
     {% set title = craft.workflow.getPluginName() %}
