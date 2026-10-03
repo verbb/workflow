@@ -37,6 +37,7 @@
             </div>
 
             <input type="hidden" name="submissionId" value="{{ submission.id }}">
+            <input type="hidden" name="workflowReviewId" value="{{ review.id }}">
 
             <div class="workflow-submission-footer">
                 {% set actionMenuItems = craft.workflow.getPlugin().getActions().getPublisherActionsMenuItems(entry, submission, review) %}

@@ -66,6 +66,7 @@
 
 {% if not isNew %}
     <input type="hidden" name="submissionId" value="{{ submission.id }}">
+    <input type="hidden" name="workflowReviewId" value="{{ submission.getLastReview().id ?? '' }}">
 {% endif %}
 
 {% if reviews | length %}

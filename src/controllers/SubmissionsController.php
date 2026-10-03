@@ -78,7 +78,10 @@ class SubmissionsController extends Controller
             return $this->redirectToPostedUrl($submission);
         }
 
-        if (!Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission)) {
+        $expectedReviewId = $this->request->getBodyParam('workflowReviewId');
+        $expectedReviewId = is_numeric($expectedReviewId) && (int)$expectedReviewId > 0 ? (int)$expectedReviewId : null;
+
+        if (!Workflow::$plugin->getSubmissions()->triggerSubmissionStatus($status, $submission, $expectedReviewId)) {
             $session->setError(Craft::t('workflow', 'Unable to change submission status.'));
 
             return null;

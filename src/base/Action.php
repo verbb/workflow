@@ -7,6 +7,7 @@ use verbb\workflow\models\Review;
 use Craft;
 use craft\base\Component;
 use craft\base\ElementInterface;
+use craft\errors\InvalidElementException;
 use craft\events\ElementEvent;
 use craft\events\ModelEvent;
 
@@ -56,6 +57,13 @@ abstract class Action extends Component implements ActionInterface
     protected function defineMenuItem(ElementInterface $element, Submission $submission, Review $review): array
     {
         return [];
+    }
+
+    protected function requireTransition(bool $success, ElementInterface $element): void
+    {
+        if (!$success) {
+            throw new InvalidElementException($element, Craft::t('workflow', 'Could not complete Workflow action.'));
+        }
     }
 
 }

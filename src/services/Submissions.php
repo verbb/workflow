@@ -24,12 +24,14 @@ class Submissions extends Component
 
     public const EVENT_AFTER_GET_REVIEWER_USER_GROUPS = 'afterGetReviewerUserGroups';
     public const EVENT_DEFINE_PUBLISHER_SELF_APPROVAL = 'definePublisherSelfApproval';
+    public const TRANSITION_LOCK_TIMEOUT = 5;
 
 
     // Properties
     // =========================================================================
 
     public ?Submission $submission = null;
+    public ?int $expectedReviewId = null;
 
 
     // Public Methods
@@ -39,6 +41,20 @@ class Submissions extends Component
     {
         /* @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::$app->getElements()->getElementById($id, Submission::class, $siteId);
+    }
+
+    public function getLatestReviewId(Submission $submission): ?int
+    {
+        return $this->_latestReview($submission)?->id;
+    }
+
+    public function getTransitionLockName(Submission $submission, ElementInterface $entry): string
+    {
+        $ownerId = $submission->ownerId ?? $entry->getCanonicalId();
+        $siteId = $submission->ownerSiteId ?? $entry->siteId;
+        $draftId = $entry->draftId ?? $this->_latestReview($submission)?->draftId ?? 0;
+
+        return sprintf('workflow:transition:%d:%d:%d', $ownerId, $siteId, $draftId);
     }
 
     /**
@@ -121,23 +137,28 @@ class Submissions extends Component
         return $nextUserGroup;
     }
 
-    public function saveSubmission(ElementInterface $entry, ?Submission $submission = null): bool
+    public function saveSubmission(ElementInterface $entry, ?Submission $submission = null, ?int $expectedReviewId = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         $submission = $this->_getSubmission($submission);
-        $review = $this->createReview($submission, $entry);
-        $review->role = Review::ROLE_EDITOR;
-        $review->status = Review::STATUS_PENDING;
+        $expectedReviewId = $this->_consumeExpectedReviewId($expectedReviewId);
+        $review = null;
 
-        if (!$this->_saveTransition($submission, $review, [
-            'siteId' => $entry->siteId,
-            'ownerId' => $entry->getCanonicalId(),
-            'ownerSiteId' => $entry->siteId,
-            'isComplete' => false,
-            'isPending' => true,
-        ], 'Could not submit for approval.')) {
+        if (!$this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, &$review): bool {
+            $review = $this->createReview($currentSubmission, $entry);
+            $review->role = Review::ROLE_EDITOR;
+            $review->status = Review::STATUS_PENDING;
+
+            return $this->_saveTransition($currentSubmission, $review, [
+                'siteId' => $entry->siteId,
+                'ownerId' => $entry->getCanonicalId(),
+                'ownerSiteId' => $entry->siteId,
+                'isComplete' => false,
+                'isPending' => true,
+            ], 'Could not submit for approval.');
+        })) {
             return false;
         }
 
@@ -153,20 +174,23 @@ class Submissions extends Component
         return true;
     }
 
-    public function revokeSubmission(ElementInterface $entry, ?Submission $submission = null): bool
+    public function revokeSubmission(ElementInterface $entry, ?Submission $submission = null, ?int $expectedReviewId = null): bool
     {
-        $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         $submission = $this->_getSubmission($submission);
-        $review = $this->createReview($submission, $entry);
-        $review->role = Review::ROLE_EDITOR;
-        $review->status = Review::STATUS_REVOKED;
+        $expectedReviewId = $this->_consumeExpectedReviewId($expectedReviewId);
 
-        if (!$this->_saveTransition($submission, $review, [
-            'isComplete' => true,
-            'isPending' => false,
-        ], 'Could not revoke submission.')) {
+        if (!$this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry): bool {
+            $review = $this->createReview($currentSubmission, $entry);
+            $review->role = Review::ROLE_EDITOR;
+            $review->status = Review::STATUS_REVOKED;
+
+            return $this->_saveTransition($currentSubmission, $review, [
+                'isComplete' => true,
+                'isPending' => false,
+            ], 'Could not revoke submission.');
+        })) {
             return false;
         }
 
@@ -175,29 +199,30 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveReview(ElementInterface $entry, ?Submission $submission = null): bool
+    public function approveReview(ElementInterface $entry, ?Submission $submission = null, ?int $expectedReviewId = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         $submission = $this->_getSubmission($submission);
+        $expectedReviewId = $this->_consumeExpectedReviewId($expectedReviewId);
+        $review = null;
 
-        $review = $this->createReview($submission, $entry);
-        $review->role = Review::ROLE_REVIEWER;
-        $review->status = Review::STATUS_APPROVED;
+        if (!$this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, &$review): bool {
+            $review = $this->createReview($currentSubmission, $entry);
+            $review->role = Review::ROLE_REVIEWER;
+            $review->status = Review::STATUS_APPROVED;
 
-        if (!Workflow::$plugin->getReviews()->saveReview($review)) {
-            $session->setError(Craft::t('workflow', 'Could not save review.'));
+            if (!Workflow::$plugin->getReviews()->saveReview($review)) {
+                $this->_setReviewFailure($currentSubmission, $review);
+                return false;
+            }
 
-            Craft::$app->getUrlManager()->setRouteParams([
-                'submission' => $submission,
-                'review' => $review,
-            ]);
-
+            $currentSubmission->clearReviews();
+            return true;
+        })) {
             return false;
         }
-
-        $submission->clearReviews();
 
         // Trigger notification to the next reviewer, if there is one
         if ($settings->reviewerNotifications) {
@@ -214,19 +239,24 @@ class Submissions extends Component
         return true;
     }
 
-    public function rejectReview(ElementInterface $entry, ?Submission $submission = null): bool
+    public function rejectReview(ElementInterface $entry, ?Submission $submission = null, ?int $expectedReviewId = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         $submission = $this->_getSubmission($submission);
-        $review = $this->createReview($submission, $entry);
-        $review->role = Review::ROLE_REVIEWER;
-        $review->status = Review::STATUS_REJECTED;
+        $expectedReviewId = $this->_consumeExpectedReviewId($expectedReviewId);
+        $review = null;
 
-        if (!$this->_saveTransition($submission, $review, [
-            'isPending' => false,
-        ], 'Could not revoke submission.')) {
+        if (!$this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, &$review): bool {
+            $review = $this->createReview($currentSubmission, $entry);
+            $review->role = Review::ROLE_REVIEWER;
+            $review->status = Review::STATUS_REJECTED;
+
+            return $this->_saveTransition($currentSubmission, $review, [
+                'isPending' => false,
+            ], 'Could not revoke submission.');
+        })) {
             return false;
         }
 
@@ -240,22 +270,34 @@ class Submissions extends Component
         return true;
     }
 
-    public function approveSubmission(ElementInterface $entry, bool $published = true, ?Submission $submission = null)
+    public function approveSubmission(ElementInterface $entry, bool $published = true, ?Submission $submission = null, ?int $expectedReviewId = null)
     {
         $submission = $this->_getSubmission($submission);
-        $review = $this->createReview($submission, $entry);
+        $expectedReviewId = $this->_consumeExpectedReviewId($expectedReviewId);
+        $review = null;
 
-        return $this->_approveSubmission($entry, $published, $submission, $review, true);
+        if (!$this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, &$review): bool {
+            $review = $this->createReview($currentSubmission, $entry);
+            return $this->_approveSubmission($entry, $currentSubmission, $review);
+        })) {
+            return false;
+        }
+
+        $this->_sendApprovalNotifications($entry, $submission, $review, $published);
+
+        return true;
     }
 
-    public function approveSubmissionForApplication(ElementInterface $entry, Submission $submission, Review $review): bool
+    public function approveSubmissionForApplication(ElementInterface $entry, Submission $submission, Review $review, ?int $expectedReviewId = null): bool
     {
-        $review->elementId = $entry->getCanonicalId();
-        $review->elementSiteId = $entry->siteId;
-        $review->draftId = null;
-        $review->data = Workflow::$plugin->getContent()->getRevisionData($entry);
+        return $this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, $review): bool {
+            $review->elementId = $entry->getCanonicalId();
+            $review->elementSiteId = $entry->siteId;
+            $review->draftId = null;
+            $review->data = Workflow::$plugin->getContent()->getRevisionData($entry);
 
-        return $this->_approveSubmission($entry, true, $submission, $review, false);
+            return $this->_approveSubmission($entry, $currentSubmission, $review);
+        });
     }
 
     public function finalizeAppliedSubmission(ElementInterface $entry, Submission $submission, Review $review): void
@@ -283,19 +325,24 @@ class Submissions extends Component
         return $review;
     }
 
-    public function rejectSubmission(ElementInterface $entry, ?Submission $submission = null): bool
+    public function rejectSubmission(ElementInterface $entry, ?Submission $submission = null, ?int $expectedReviewId = null): bool
     {
         $settings = Workflow::$plugin->getSettings();
         $session = Craft::$app->getSession();
 
         $submission = $this->_getSubmission($submission);
-        $review = $this->createReview($submission, $entry);
-        $review->role = Review::ROLE_PUBLISHER;
-        $review->status = Review::STATUS_REJECTED;
+        $expectedReviewId = $this->_consumeExpectedReviewId($expectedReviewId);
+        $review = null;
 
-        if (!$this->_saveTransition($submission, $review, [
-            'isPending' => false,
-        ], 'Could not revoke submission.')) {
+        if (!$this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, &$review): bool {
+            $review = $this->createReview($currentSubmission, $entry);
+            $review->role = Review::ROLE_PUBLISHER;
+            $review->status = Review::STATUS_REJECTED;
+
+            return $this->_saveTransition($currentSubmission, $review, [
+                'isPending' => false,
+            ], 'Could not revoke submission.');
+        })) {
             return false;
         }
 
@@ -309,7 +356,7 @@ class Submissions extends Component
         return true;
     }
 
-    public function triggerSubmissionStatus(string $status, Submission $submission): bool
+    public function triggerSubmissionStatus(string $status, Submission $submission, ?int $expectedReviewId = null): bool
     {
         $entry = $submission->getDraft();
 
@@ -319,7 +366,7 @@ class Submissions extends Component
 
         if ($status === Review::STATUS_APPROVED) {
             if (!$entry->getIsDraft()) {
-                return $this->approveSubmission($entry, true, $submission);
+                return $this->approveSubmission($entry, true, $submission, $expectedReviewId);
             }
 
             Craft::$app->getDrafts()->applyDraft($entry);
@@ -338,9 +385,9 @@ class Submissions extends Component
 
             return true;
         } elseif ($status === Review::STATUS_REJECTED) {
-            return $this->rejectSubmission($entry, $submission);
+            return $this->rejectSubmission($entry, $submission, $expectedReviewId);
         } elseif ($status === Review::STATUS_REVOKED) {
-            return $this->revokeSubmission($entry, $submission);
+            return $this->revokeSubmission($entry, $submission, $expectedReviewId);
         }
 
         return false;
@@ -350,7 +397,7 @@ class Submissions extends Component
     // Private Methods
     // =========================================================================
 
-    private function _approveSubmission(ElementInterface $entry, bool $published, Submission $submission, Review $review, bool $notify): bool
+    private function _approveSubmission(ElementInterface $entry, Submission $submission, Review $review): bool
     {
         $review->role = Review::ROLE_PUBLISHER;
         $review->status = Review::STATUS_APPROVED;
@@ -360,10 +407,6 @@ class Submissions extends Component
             'isPending' => false,
         ], 'Could not approve and publish.')) {
             return false;
-        }
-
-        if ($notify) {
-            $this->_sendApprovalNotifications($entry, $submission, $review, $published);
         }
 
         return true;
@@ -382,6 +425,117 @@ class Submissions extends Component
         }
 
         Craft::$app->getSession()->setNotice(Craft::t('workflow', 'Entry approved and published.'));
+    }
+
+    private function _withTransitionLock(Submission $submission, ElementInterface $entry, ?int $expectedReviewId, callable $callback): bool
+    {
+        $expectedState = [
+            'isComplete' => (bool)$submission->isComplete,
+            'isPending' => (bool)$submission->isPending,
+            'reviewId' => $submission->id === null ? null : ($expectedReviewId ?? $this->getLatestReviewId($submission)),
+        ];
+        $lockName = $this->getTransitionLockName($submission, $entry);
+        $mutex = Craft::$app->getMutex();
+        $ownsLock = !$mutex->isAcquired($lockName);
+
+        if ($ownsLock && !$mutex->acquire($lockName, self::TRANSITION_LOCK_TIMEOUT)) {
+            $this->_setTransitionConflict($submission);
+            return false;
+        }
+
+        try {
+            $currentSubmission = $this->_currentTransitionSubmission($submission, $entry, $expectedState);
+
+            if ($currentSubmission === null) {
+                $this->_setTransitionConflict($submission);
+                return false;
+            }
+
+            if (!$callback($currentSubmission)) {
+                return false;
+            }
+
+            $this->_syncTransitionSubmission($submission, $currentSubmission);
+            return true;
+        } finally {
+            if ($ownsLock) {
+                $mutex->release($lockName);
+            }
+        }
+    }
+
+    private function _currentTransitionSubmission(Submission $submission, ElementInterface $entry, array $expectedState): ?Submission
+    {
+        if ($submission->id === null) {
+            $existingSubmissions = Submission::find()
+                ->ownerId($entry->getCanonicalId())
+                ->ownerSiteId($entry->siteId)
+                ->ownerDraftId($entry->draftId)
+                ->siteId($entry->siteId)
+                ->status(null)
+                ->all();
+
+            foreach ($existingSubmissions as $existingSubmission) {
+                if (!$existingSubmission->isComplete) {
+                    return null;
+                }
+            }
+
+            return $submission;
+        }
+
+        $currentSubmission = Submission::find()
+            ->id($submission->id)
+            ->siteId($entry->siteId)
+            ->status(null)
+            ->one();
+
+        if ($currentSubmission === null) {
+            return null;
+        }
+
+        $currentState = [
+            'isComplete' => (bool)$currentSubmission->isComplete,
+            'isPending' => (bool)$currentSubmission->isPending,
+            'reviewId' => $this->getLatestReviewId($currentSubmission),
+        ];
+
+        return $currentState === $expectedState ? $currentSubmission : null;
+    }
+
+    private function _latestReview(Submission $submission): ?Review
+    {
+        $latestReview = null;
+
+        foreach ($submission->getReviews() as $review) {
+            if ($review->id !== null && ($latestReview === null || $review->id > $latestReview->id)) {
+                $latestReview = $review;
+            }
+        }
+
+        return $latestReview;
+    }
+
+    private function _consumeExpectedReviewId(?int $expectedReviewId): ?int
+    {
+        $expectedReviewId ??= $this->expectedReviewId;
+        $this->expectedReviewId = null;
+
+        return $expectedReviewId;
+    }
+
+    private function _syncTransitionSubmission(Submission $submission, Submission $currentSubmission): void
+    {
+        if ($submission === $currentSubmission) {
+            return;
+        }
+
+        $submission->id = $currentSubmission->id;
+        $submission->uid = $currentSubmission->uid;
+        $submission->isComplete = $currentSubmission->isComplete;
+        $submission->isPending = $currentSubmission->isPending;
+        $submission->clearReviews();
+        $submission->clearDraft();
     }
 
     private function _saveTransition(Submission $submission, Review $review, array $attributes, string $submissionError): bool
@@ -467,6 +621,15 @@ class Submissions extends Component
         Craft::$app->getUrlManager()->setRouteParams([
             'submission' => $submission,
             'review' => $review,
+        ]);
+    }
+
+    private function _setTransitionConflict(Submission $submission): void
+    {
+        Craft::$app->getSession()->setError(Craft::t('workflow', 'This submission changed before the action could be completed. Please reload and try again.'));
+
+        Craft::$app->getUrlManager()->setRouteParams([
+            'submission' => $submission,
         ]);
     }
 

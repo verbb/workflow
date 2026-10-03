@@ -32,7 +32,7 @@ class ApproveReview extends Action
 
     public function onAfterSaveElement(ElementEvent $event): void
     {
-        Workflow::$plugin->getSubmissions()->approveReview($event->element);
+        $this->requireTransition(Workflow::$plugin->getSubmissions()->approveReview($event->element), $event->element);
     }
 
 

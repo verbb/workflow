@@ -32,7 +32,7 @@ class RevokeSubmission extends Action
 
     public function onAfterSaveElement(ElementEvent $event): void
     {
-        Workflow::$plugin->getSubmissions()->revokeSubmission($event->element);
+        $this->requireTransition(Workflow::$plugin->getSubmissions()->revokeSubmission($event->element), $event->element);
     }
 
 

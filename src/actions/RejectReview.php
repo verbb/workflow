@@ -32,7 +32,7 @@ class RejectReview extends Action
 
     public function onAfterSaveElement(ElementEvent $event): void
     {
-        Workflow::$plugin->getSubmissions()->rejectReview($event->element);
+        $this->requireTransition(Workflow::$plugin->getSubmissions()->rejectReview($event->element), $event->element);
     }
 
 

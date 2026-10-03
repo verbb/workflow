@@ -203,7 +203,10 @@ class Reviews extends Component
                 'uid',
             ])
             ->from(['{{%workflow_reviews}}'])
-            ->orderBy('dateCreated desc');
+            ->orderBy([
+                'dateCreated' => SORT_DESC,
+                'id' => SORT_DESC,
+            ]);
     }
 
     private function _getReviewRecordById(int $reviewId = null): ?ReviewRecord

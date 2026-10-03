@@ -71,6 +71,7 @@
 
             {# We're re-submitting on an existing, incomplete submission, so don't start again #}
             <input type="hidden" name="submissionId" value="{{ submission.id ?? '' }}">
+            <input type="hidden" name="workflowReviewId" value="{{ submission.getLastReview().id ?? '' }}">
         </div>
     {% endif %}
 {% endblock %}
@@ -96,6 +97,7 @@
         </div>
 
         <input type="hidden" name="submissionId" value="{{ submission.id }}">
+        <input type="hidden" name="workflowReviewId" value="{{ review.id }}">
 
         <div class="workflow-submission-footer">
             <a class="btn formsubmit" data-param="workflow-action" data-value="revoke-submission" data-redirect="{{ '{cpEditUrl}' | hash }}">{{ 'Revoke submission' | t('workflow') }}</a>

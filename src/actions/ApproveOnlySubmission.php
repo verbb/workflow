@@ -32,7 +32,7 @@ class ApproveOnlySubmission extends Action
 
     public function onAfterSaveElement(ElementEvent $event): void
     {
-        Workflow::$plugin->getSubmissions()->approveSubmission($event->element, false);
+        $this->requireTransition(Workflow::$plugin->getSubmissions()->approveSubmission($event->element, false), $event->element);
     }
 
 
