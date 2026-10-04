@@ -2,7 +2,7 @@
     "name": "verbb/workflow",
     "description": "A Craft CMS plugin for reviewing and approving draft content.",
     "type": "craft-plugin",
-    "version": "3.0.19",
+    "version": "3.0.20",
     "keywords": [
         "craft",
         "cms",
