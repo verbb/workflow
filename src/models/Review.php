@@ -132,13 +132,18 @@ class Review extends Model
                 ->siteId($this->elementSiteId)
                 ->status(null);
 
-            if ($this->draftId) {
-                $elementQuery->draftId($this->draftId)->draftOf($this->elementId);
-            } else {
-                $elementQuery->id($this->elementId);
+            if (!$this->draftId) {
+                return $this->_element = $elementQuery->id($this->elementId)->one();
             }
 
-            return $this->_element = $elementQuery->one();
+            // Unpublished drafts are their own canonical element, so draftOf() excludes them.
+            $element = $elementQuery->draftId($this->draftId)->one();
+
+            if ($element?->getCanonicalId() !== $this->elementId) {
+                return null;
+            }
+
+            return $this->_element = $element;
         }
 
         return null;
