@@ -373,10 +373,12 @@ class Service extends Component
     {
         $context = $this->_draftApproval;
 
+        // Applying a versioned entry also saves a revision with the same canonical ID.
         if (
             $context === null ||
             !($event->element instanceof Entry) ||
             $event->element->getIsDraft() ||
+            $event->element->getIsRevision() ||
             $event->element->getCanonicalId() !== $context['ownerId'] ||
             $event->element->siteId !== $context['siteId']
         ) {
