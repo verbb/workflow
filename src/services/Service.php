@@ -30,7 +30,6 @@ class Service extends Component
 
     public bool $afterSaveRun = false;
 
-    /** @var array{submission: Submission, review: Review, ownerId: int, siteId: int, draftElementId: int, expectedReviewId: int|null, lockName: string, approved: bool}|null */
     private ?array $_draftApproval = null;
     private ?string $_entryActionLockName = null;
     private ?int $_expectedReviewId = null;
@@ -46,13 +45,18 @@ class Service extends Component
         $action = $request->getBodyParam('workflow-action');
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        // Don't trigger for propagating elements
-        if ($event->sender->propagating) {
+        // Propagation and revision snapshots must not repeat the requested Workflow action.
+        if ($event->sender->propagating || $event->sender->getIsRevision()) {
             return;
         }
 
         // Don't trigger for Matrix/etc which are entries
         if ($event->sender->fieldId) {
+            return;
+        }
+
+        // Craft saves the canonical entry and other site drafts while applying an already-authorized draft.
+        if ($this->_isApplyingSubmissionEntry($event->sender)) {
             return;
         }
 
@@ -83,7 +87,7 @@ class Service extends Component
             $submissionsService = Workflow::$plugin->getSubmissions();
             $lockSubmission = $submission ?? new Submission();
             $lockName = $submissionsService->getTransitionLockName($lockSubmission, $event->sender);
-            $appliesDraft = in_array($action, ['approve-submission', 'approve-apply-submission'], true);
+            $appliesDraft = $event->sender->getIsDraft() && in_array($action, ['approve-submission', 'approve-apply-submission'], true);
 
             if (!$appliesDraft && !$this->_acquireEntryActionLock($lockName)) {
                 $this->_denyEntrySave($event, Craft::t('workflow', 'This submission is already being updated. Please reload and try again.'));
@@ -101,11 +105,11 @@ class Service extends Component
                     $this->_denyEntrySave($event, Craft::t('workflow', 'Unable to perform this Workflow action.'));
                     return;
                 }
-            } elseif ($action === 'save-submission') {
+            } elseif ($action === 'save-submission' && $event->sender->getCanonicalId()) {
                 $activeSubmission = Submission::find()
                     ->ownerId($event->sender->getCanonicalId())
                     ->ownerSiteId($event->sender->siteId)
-                    ->ownerDraftId($event->sender->draftId)
+                    ->ownerDraftId($event->sender->draftId ?? ':empty:')
                     ->siteId($event->sender->siteId)
                     ->status(null)
                     ->isComplete(false)
@@ -141,7 +145,7 @@ class Service extends Component
             $pendingSubmission = Submission::find()
                 ->ownerId($event->sender->getCanonicalId())
                 ->ownerSiteId($event->sender->siteId)
-                ->ownerDraftId($event->sender->draftId)
+                ->ownerDraftId($event->sender->draftId ?? ':empty:')
                 ->limit(1)
                 ->isComplete(false)
                 ->isPending(true)
@@ -212,8 +216,8 @@ class Service extends Component
         $action = $request->getBodyParam('workflow-action');
         $currentUser = Craft::$app->getUser()->getIdentity();
 
-        // When approving, we don't want to perform an action here - wait until the draft has been applied
-        if (!$action || $event->element->propagating || $this->afterSaveRun) {
+        // Draft application has its own completion hook; other actions run once after the entry is saved.
+        if (!$action || $event->element->getIsRevision() || $event->element->propagating || $this->afterSaveRun || $this->_isApplyingSubmissionEntry($event->element)) {
             return;
         }
 
@@ -359,6 +363,7 @@ class Service extends Component
                 'ownerId' => $event->draft->getCanonicalId(),
                 'siteId' => $event->draft->siteId,
                 'draftElementId' => $event->draft->id,
+                'draftId' => $event->draft->draftId,
                 'expectedReviewId' => $expectedReviewId,
                 'lockName' => $lockName,
                 'approved' => false,
@@ -376,6 +381,7 @@ class Service extends Component
         // Applying a versioned entry also saves a revision with the same canonical ID.
         if (
             $context === null ||
+            $context['approved'] ||
             !($event->element instanceof Entry) ||
             $event->element->getIsDraft() ||
             $event->element->getIsRevision() ||
@@ -577,6 +583,22 @@ class Service extends Component
 
     // Private Methods
     // =========================================================================
+
+    private function _isApplyingSubmissionEntry(Entry $entry): bool
+    {
+        $context = $this->_draftApproval;
+
+        if ($context === null || $entry->getCanonicalId() !== $context['ownerId'] || !Craft::$app->getMutex()->isAcquired($context['lockName'])) {
+            return false;
+        }
+
+        if ($entry->getIsDraft()) {
+            // Craft merges canonical changes into the same draft on its other sites before applying it.
+            return $entry->id === $context['draftElementId'] && $entry->draftId === $context['draftId'];
+        }
+
+        return $entry->siteId === $context['siteId'];
+    }
 
     private function _renderEntrySidebarPanel($entry, $template): ?string
     {

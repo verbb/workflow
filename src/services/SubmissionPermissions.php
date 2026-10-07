@@ -22,7 +22,7 @@ class SubmissionPermissions extends Component
 
     public function canSubmit(User $user, Entry $entry, ?Submission $submission = null): bool
     {
-        if (!$entry->getIsDraft() || !$this->isSectionEnabled($entry) || !$this->_canSaveEntry($user, $entry)) {
+        if ($entry->getIsRevision() || !$this->isSectionEnabled($entry) || !$this->_canSaveEntry($user, $entry)) {
             return false;
         }
 
@@ -31,10 +31,14 @@ class SubmissionPermissions extends Component
         }
 
         if ($submission === null) {
+            if (!$entry->getCanonicalId()) {
+                return true;
+            }
+
             $existingSubmission = Submission::find()
                 ->ownerId($entry->getCanonicalId())
                 ->ownerSiteId($entry->siteId)
-                ->ownerDraftId($entry->draftId)
+                ->ownerDraftId($entry->draftId ?? ':empty:')
                 ->isComplete(false)
                 ->limit(1)
                 ->one();
@@ -84,7 +88,7 @@ class SubmissionPermissions extends Component
 
     public function canChangeStatus(User $user, Submission $submission, string $status): bool
     {
-        $entry = $submission->getDraft();
+        $entry = $submission->getReviewableEntry();
 
         if (!$entry || !$this->_canActOnPendingSubmission($user, $entry, $submission)) {
             return false;
@@ -229,11 +233,12 @@ class SubmissionPermissions extends Component
             return false;
         }
 
-        $draft = $submission->getDraft();
+        $target = $submission->getReviewableEntry();
 
-        return $draft !== null
-            && $entry->getIsDraft()
-            && $draft->draftId === $entry->draftId;
+        return $target !== null
+            && !$entry->getIsRevision()
+            && $target->id === $entry->id
+            && $target->draftId === $entry->draftId;
     }
 
     public function getAllowedStatuses(User $user, Submission $submission): array

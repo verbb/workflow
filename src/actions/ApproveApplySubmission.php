@@ -8,11 +8,8 @@ use verbb\workflow\models\Review;
 
 use Craft;
 use craft\base\ElementInterface;
-use craft\base\Element;
+use craft\events\ElementEvent;
 use craft\events\ModelEvent;
-use craft\helpers\DateTimeHelper;
-
-use DateTime;
 
 class ApproveApplySubmission extends Action
 {
@@ -37,25 +34,9 @@ class ApproveApplySubmission extends Action
     {
         $settings = Workflow::$plugin->getSettings();
         $request = Craft::$app->getRequest();
-        $currentSite = Craft::$app->getSites()->getCurrentSite();
+        $currentSite = $event->sender->site;
 
         $workflowNotes = (string)$request->getBodyParam('workflowNotes');
-
-        // For multi-sites, we only want to act on the current site's entry. Returning early will respect the
-        // section defaults for enabling the entry per-site.
-        if (Craft::$app->getIsMultiSite()) {
-            $currentSiteId = $currentSite->id;
-
-            if ($siteHandle = $request->getParam('site')) {
-                if ($site = Craft::$app->getSites()->getSiteByHandle($siteHandle)) {
-                    $currentSiteId = $site->id;
-                }
-            }
-
-            if ($event->sender->siteId != $currentSiteId) {
-                return;
-            }
-        }
 
         // We also need to validate notes fields, if required before we save the entry
         if ($settings->getPublisherNotesRequired($currentSite) && !$workflowNotes) {
@@ -67,13 +48,22 @@ class ApproveApplySubmission extends Action
         }
     }
 
+    public function onAfterSaveElement(ElementEvent $event): void
+    {
+        // Draft approvals are completed by the application hooks after Craft saves the canonical entry.
+        if (!$event->element->getIsDraft() && !$event->element->getIsRevision()) {
+            $this->requireTransition(Workflow::$plugin->getSubmissions()->approveSubmission($event->element), $event->element);
+        }
+    }
+
+
     // Protected Methods
     // =========================================================================
 
     protected function defineMenuItem(ElementInterface $element, Submission $submission, Review $review): array
     {
         return [
-            'action' => 'elements/apply-draft',
+            'action' => $element->getIsDraft() ? 'elements/apply-draft' : 'elements/save',
             'redirect' => '{cpEditUrl}',
         ];
     }

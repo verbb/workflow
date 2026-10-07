@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Fixed
+- Fixed submission statuses and approval actions for entries submitted without a draft. ([#815](https://github.com/verbb/workflow/issues/815))
+- Fixed Workflow approval actions failing when Craft applies drafts, including entries propagated across multiple sites. ([#815](https://github.com/verbb/workflow/issues/815))
 - Fixed required publisher notes not being validated when approving through submission statuses or native draft application.
 - Fixed deleted submitted drafts being treated as submissions of their canonical entries.
 - Fixed HTML front-end submissions when Craft URLs include `index.php`.

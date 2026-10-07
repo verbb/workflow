@@ -11,6 +11,7 @@ use verbb\workflow\models\Review;
 use Craft;
 use craft\base\Component;
 use craft\base\ElementInterface;
+use craft\elements\Entry;
 use craft\helpers\Component as ComponentHelper;
 
 class Actions extends Component
@@ -165,7 +166,13 @@ class Actions extends Component
     {
         $items = [];
 
+        $user = Craft::$app->getUser()->getIdentity();
+
         foreach ($actions as $action) {
+            if (!$user || !$element instanceof Entry || !Workflow::$plugin->getSubmissionPermissions()->canPerformAction($user, $element, $submission, $action::id())) {
+                continue;
+            }
+
             $items[] = $action->getMenuItem($element, $submission, $review);
         }
 

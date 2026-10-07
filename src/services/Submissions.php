@@ -9,6 +9,7 @@ use verbb\workflow\models\Review;
 
 use Craft;
 use craft\base\Component;
+use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\db\Table;
 use craft\elements\Entry;
@@ -52,7 +53,7 @@ class Submissions extends Component
     {
         $ownerId = $submission->ownerId ?? $entry->getCanonicalId();
         $siteId = $submission->ownerSiteId ?? $entry->siteId;
-        $draftId = $entry->draftId ?? $this->_latestReview($submission)?->draftId ?? 0;
+        $draftId = $entry->draftId ?? ($submission->id ? $this->_latestReview($submission)?->draftId : null) ?? 0;
 
         return sprintf('workflow:transition:%d:%d:%d', $ownerId, $siteId, $draftId);
     }
@@ -358,7 +359,7 @@ class Submissions extends Component
 
     public function triggerSubmissionStatus(string $status, Submission $submission, ?int $expectedReviewId = null): bool
     {
-        $entry = $submission->getDraft();
+        $entry = $submission->getReviewableEntry();
 
         if (!$entry) {
             return false;
@@ -366,7 +367,7 @@ class Submissions extends Component
 
         if ($status === Review::STATUS_APPROVED) {
             if (!$entry->getIsDraft()) {
-                return $this->approveSubmission($entry, true, $submission, $expectedReviewId);
+                return $this->_publishEntrySubmission($entry, $submission, $expectedReviewId);
             }
 
             Craft::$app->getDrafts()->applyDraft($entry);
@@ -396,6 +397,45 @@ class Submissions extends Component
 
     // Private Methods
     // =========================================================================
+
+    private function _publishEntrySubmission(Entry $entry, Submission $submission, ?int $expectedReviewId): bool
+    {
+        $review = null;
+        $success = $this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, &$review): bool {
+            // Publishing the entry and recording approval must succeed together.
+            $transaction = Craft::$app->getDb()->beginTransaction();
+
+            try {
+                $entry->enabled = true;
+                $entry->enabledForSite = true;
+                $entry->setScenario(Element::SCENARIO_LIVE);
+
+                if (!Craft::$app->getElements()->saveElement($entry)) {
+                    $transaction->rollBack();
+                    return false;
+                }
+
+                $review = $this->createReview($currentSubmission, $entry);
+
+                if (!$this->_approveSubmission($entry, $currentSubmission, $review)) {
+                    $transaction->rollBack();
+                    return false;
+                }
+
+                $transaction->commit();
+                return true;
+            } catch (Throwable $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+        });
+
+        if ($success) {
+            $this->_sendApprovalNotifications($entry, $submission, $review, true);
+        }
+
+        return $success;
+    }
 
     private function _approveSubmission(ElementInterface $entry, Submission $submission, Review $review): bool
     {
@@ -470,7 +510,7 @@ class Submissions extends Component
             $existingSubmissions = Submission::find()
                 ->ownerId($entry->getCanonicalId())
                 ->ownerSiteId($entry->siteId)
-                ->ownerDraftId($entry->draftId)
+                ->ownerDraftId($entry->draftId ?? ':empty:')
                 ->siteId($entry->siteId)
                 ->status(null)
                 ->all();
