@@ -42,7 +42,7 @@ class RejectSubmission extends Action
     protected function defineMenuItem(ElementInterface $element, Submission $submission, Review $review): array
     {
         return [
-            'action' => 'elements/save-draft',
+            'action' => $element->getIsDraft() ? 'elements/save-draft' : 'elements/save',
             'redirect' => '{cpEditUrl}',
         ];
     }
