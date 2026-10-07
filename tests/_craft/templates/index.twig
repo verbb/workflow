@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Workflow test form</title></head>
+<body>
+{% requireLogin %}
+<h1>Submit an article</h1>
+<form method="post">
+    {{ csrfInput() }}
+    {{ actionInput('workflow/elements/save-entry') }}
+    {{ redirectInput('submitted') }}
+    <input type="hidden" name="sectionId" value="{{ craft.app.entries.getSectionByHandle('articles').id }}">
+    <input type="hidden" name="workflow-action" value="save-submission">
+    <input type="hidden" name="enabled" value="0">
+    <label>Title <input name="title" required></label>
+    <label>Summary <textarea name="fields[summary]" required></textarea></label>
+    <button type="submit">Submit for review</button>
+</form>
+</body>
+</html>

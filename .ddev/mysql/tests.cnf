@@ -1,0 +1,4 @@
+[mysqld]
+# Disposable test data does not need a disk flush for every transaction.
+innodb_flush_log_at_trx_commit=2
+sync_binlog=0

@@ -1,0 +1,29 @@
+name: Tests
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ddev/github-action-setup-ddev@v1
+        with:
+          version: "1.24.4"
+          autostart: false
+      - name: Clean-install integration tests
+        run: ddev test
+      - name: Test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-diagnostics
+          include-hidden-files: true
+          path: |
+            .cache/verbb-tests/latest.log
+            .cache/verbb-tests/junit.xml
+            .cache/verbb-tests/result.json
+            .cache/verbb-tests/app/storage/logs/

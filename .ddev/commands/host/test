@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+## Description: Rebuild an isolated Craft installation and run Pest.
+## Usage: test [Pest arguments]
+## HostExecution: true
+set -euo pipefail
+cd "$DDEV_APPROOT"
+# Starting also verifies that this project name belongs to the current checkout.
+ddev start
+exec ddev exec --raw -- php tests/runtime/run.php "$@"

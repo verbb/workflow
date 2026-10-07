@@ -1,0 +1,21 @@
+{
+    "project": "workflow-craft5-tests",
+    "suites": {
+        "default": [
+            "--exclude-group=slow",
+            "--exclude-group=perf",
+            "--exclude-group=perf-large",
+            "--exclude-group=migrate-plugins"
+        ],
+        "all": [
+            "--exclude-group=perf-large",
+            "--exclude-group=migrate-plugins"
+        ],
+        "performance": [
+            "--group=perf"
+        ],
+        "slow": [
+            "--group=slow"
+        ]
+    }
+}

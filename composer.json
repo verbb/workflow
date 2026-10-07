@@ -40,5 +40,12 @@
         "handle": "workflow",
         "changelogUrl": "https://raw.githubusercontent.com/verbb/workflow/craft-5/CHANGELOG.md",
         "class": "verbb\\workflow\\Workflow"
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.8",
+        "craftcms/cms": "5.11.4"
+    },
+    "scripts": {
+        "test": "ddev test"
     }
 }

@@ -1,0 +1,10 @@
+name: workflow-craft5-tests
+type: php
+docroot: tests/runtime/web
+php_version: "8.3"
+database:
+  type: mysql
+  version: "8.0"
+composer_version: "2"
+performance_mode: none
+timezone: UTC
