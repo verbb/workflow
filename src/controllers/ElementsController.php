@@ -128,17 +128,17 @@ class ElementsController extends Controller
 
         if ($redirectUrl) {
             $urlParams = parse_url($redirectUrl);
-            $pathParts = explode('/', $urlParams['path']);
-            $elementIdSlug = end($pathParts);
+            parse_str($urlParams['query'] ?? '', $queryParams);
+            // Craft can place the CP route in its path parameter instead of the URL path.
+            $pathParam = Craft::$app->getConfig()->getGeneral()->pathParam;
+            $path = $queryParams[$pathParam] ?? ($urlParams['path'] ?? '');
+            $elementIdSlug = basename($path);
             $elementId = explode('-', $elementIdSlug)[0] ?? null;
-            $queryParams = [];
-
-            foreach (explode('&', $urlParams['query']) as $urlParam) {
-                $urlParamParts = explode('=', $urlParam);
-                $queryParams[$urlParamParts[0]] = $urlParamParts[1];
-            }
-
             $draftId = $queryParams['draftId'] ?? null;
+
+            if (!ctype_digit((string)$elementId) || !ctype_digit((string)$draftId)) {
+                return null;
+            }
 
             return Entry::find()
                 ->id($elementId)
