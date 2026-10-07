@@ -112,11 +112,11 @@ class SubmissionQuery extends ElementQuery
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.ownerSiteId', $this->ownerSiteId));
         }
 
-        if ($this->isComplete) {
+        if ($this->isComplete !== null) {
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.isComplete', $this->isComplete));
         }
 
-        if ($this->isPending) {
+        if ($this->isPending !== null) {
             $this->subQuery->andWhere(Db::parseParam('workflow_submissions.isPending', $this->isPending));
         }
 
@@ -129,27 +129,27 @@ class SubmissionQuery extends ElementQuery
         }
 
         if ($this->editorId) {
-            $reviewQuery = (clone $reviewQuery)
+            $roleReviewQuery = (clone $reviewQuery)
                 ->andWhere(Db::parseParam('workflow_reviews.role', Review::ROLE_EDITOR))
                 ->andWhere(Db::parseParam('workflow_reviews.userId', $this->editorId));
 
-            $this->subQuery->innerJoin(['workflow_reviews' => '{{%workflow_reviews}}'], '[[workflow_reviews.id]] = (' . $reviewQuery->getRawSql() . ')');
+            $this->subQuery->innerJoin(['editorReview' => '{{%workflow_reviews}}'], '[[editorReview.id]] = (' . $roleReviewQuery->getRawSql() . ')');
         }
 
         if ($this->reviewerId) {
-            $reviewQuery = (clone $reviewQuery)
+            $roleReviewQuery = (clone $reviewQuery)
                 ->andWhere(Db::parseParam('workflow_reviews.role', Review::ROLE_REVIEWER))
                 ->andWhere(Db::parseParam('workflow_reviews.userId', $this->reviewerId));
 
-            $this->subQuery->innerJoin(['workflow_reviews' => '{{%workflow_reviews}}'], '[[workflow_reviews.id]] = (' . $reviewQuery->getRawSql() . ')');
+            $this->subQuery->innerJoin(['reviewerReview' => '{{%workflow_reviews}}'], '[[reviewerReview.id]] = (' . $roleReviewQuery->getRawSql() . ')');
         }
 
         if ($this->publisherId) {
-            $reviewQuery = (clone $reviewQuery)
+            $roleReviewQuery = (clone $reviewQuery)
                 ->andWhere(Db::parseParam('workflow_reviews.role', Review::ROLE_PUBLISHER))
                 ->andWhere(Db::parseParam('workflow_reviews.userId', $this->publisherId));
 
-            $this->subQuery->innerJoin(['workflow_reviews' => '{{%workflow_reviews}}'], '[[workflow_reviews.id]] = (' . $reviewQuery->getRawSql() . ')');
+            $this->subQuery->innerJoin(['publisherReview' => '{{%workflow_reviews}}'], '[[publisherReview.id]] = (' . $roleReviewQuery->getRawSql() . ')');
         }
 
         if ($this->_orderByLastReviewDate()) {

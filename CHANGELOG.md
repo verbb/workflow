@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed completed submissions preventing editors from submitting again.
+- Fixed combining editor, reviewer, and publisher filters in submission queries.
+
 ## 3.0.21 - 2026-10-07
 
 ### Changed
