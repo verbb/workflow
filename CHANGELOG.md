@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- Fixed deleted submitted drafts being treated as submissions of their canonical entries.
 - Fixed HTML front-end submissions when Craft URLs include `index.php`.
 - Fixed completed submissions preventing editors from submitting again.
 - Fixed combining editor, reviewer, and publisher filters in submission queries.

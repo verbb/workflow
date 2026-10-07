@@ -262,6 +262,25 @@ class Submission extends Element
         return null;
     }
 
+    public function getReviewableEntry(): ?Entry
+    {
+        // Resolve the review's actual target. A missing draft must not fall back to the owner entry.
+        $review = $this->getLastReview();
+
+        // A deleted draft must not become an approval of its canonical entry.
+        if ($review && !empty($review->data['draftId']) && !$review->draftId) {
+            return null;
+        }
+
+        $entry = $review?->getElement();
+
+        if (!$entry instanceof Entry || $entry->getIsRevision()) {
+            return null;
+        }
+
+        return $entry;
+    }
+
     public function getOwnerCpUrl(bool $includeDraft = true): ?string
     {
         if ($includeDraft && $draft = $this->getDraft()) {

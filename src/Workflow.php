@@ -50,7 +50,7 @@ class Workflow extends Plugin
 
     public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
-    public string $schemaVersion = '2.6.0';
+    public string $schemaVersion = '2.6.1';
     public string $minVersionRequired = '1.7.0';
 
 

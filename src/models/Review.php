@@ -166,6 +166,7 @@ class Review extends Model
     {
         $element = $this->getElement();
         $attributes = $this->data ?? [];
+        unset($attributes['draftId']);
         $fieldContent = ArrayHelper::remove($attributes, 'fields') ?? [];
 
         // The element/draft on the review might've been deleted (applied)

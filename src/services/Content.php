@@ -36,7 +36,10 @@ class Content extends Component
             $nextReview = $reviews[$key + 1] ?? [];
 
             if ($nextReview) {
-                $diff = $differ->doDiff(($nextReview->data ?? []), ($review->data ?? []));
+                $oldData = $nextReview->data ?? [];
+                $newData = $review->data ?? [];
+                unset($oldData['draftId'], $newData['draftId']);
+                $diff = $differ->doDiff($oldData, $newData);
 
                 $content[] = $this->_convertDiffToCount($diff);
             }
@@ -49,6 +52,7 @@ class Content extends Component
 
     public function getDiff(array $oldArray, array $newArray): array
     {
+        unset($oldArray['draftId'], $newArray['draftId']);
         $differ = new MapDiffer(true);
         $diff = $differ->doDiff($oldArray, $newArray);
 
@@ -72,6 +76,8 @@ class Content extends Component
     public function getRevisionData(Entry $revision): array
     {
         $revisionData = [
+            // Preserve the target when Craft clears the draft foreign key after deletion.
+            'draftId' => $revision->draftId,
             'sectionId' => $revision->sectionId,
             'typeId' => $revision->typeId,
             'authorId' => $revision->authorId,
