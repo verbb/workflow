@@ -507,16 +507,19 @@ class Submissions extends Component
     private function _currentTransitionSubmission(Submission $submission, ElementInterface $entry, array $expectedState): ?Submission
     {
         if ($submission->id === null) {
-            $existingSubmissions = Submission::find()
-                ->ownerId($entry->getCanonicalId())
-                ->ownerSiteId($entry->siteId)
-                ->ownerDraftId($entry->draftId ?? ':empty:')
-                ->siteId($entry->siteId)
-                ->status(null)
-                ->all();
+            // Craft may already have started a repeatable-read transaction before the mutex was acquired.
+            // Locking reads see decisions committed by a competing request, rather than that older snapshot.
+            $db = Craft::$app->getDb();
+            $existingIds = $db->createCommand('SELECT [[id]] FROM {{%workflow_submissions}} WHERE [[ownerId]] = :ownerId AND [[ownerSiteId]] = :siteId AND [[isComplete]] = :complete FOR UPDATE', [
+                ':ownerId' => $entry->getCanonicalId(),
+                ':siteId' => $entry->siteId,
+                ':complete' => false,
+            ])->queryColumn();
 
-            foreach ($existingSubmissions as $existingSubmission) {
-                if (!$existingSubmission->isComplete) {
+            foreach ($existingIds as $id) {
+                $latestReview = $db->createCommand('SELECT [[draftId]] FROM {{%workflow_reviews}} WHERE [[submissionId]] = :id ORDER BY [[id]] DESC LIMIT 1 FOR UPDATE', [':id' => $id])->queryOne();
+
+                if ($latestReview && ($latestReview['draftId'] === null ? null : (int)$latestReview['draftId']) === $entry->draftId) {
                     return null;
                 }
             }
@@ -534,10 +537,18 @@ class Submissions extends Component
             return null;
         }
 
+        $db = Craft::$app->getDb();
+        $row = $db->createCommand('SELECT [[isComplete]], [[isPending]] FROM {{%workflow_submissions}} WHERE [[id]] = :id FOR UPDATE', [':id' => $submission->id])->queryOne();
+        $reviewId = $db->createCommand('SELECT [[id]] FROM {{%workflow_reviews}} WHERE [[submissionId]] = :id ORDER BY [[id]] DESC LIMIT 1 FOR UPDATE', [':id' => $submission->id])->queryScalar();
+
+        if (!$row) {
+            return null;
+        }
+
         $currentState = [
-            'isComplete' => (bool)$currentSubmission->isComplete,
-            'isPending' => (bool)$currentSubmission->isPending,
-            'reviewId' => $this->getLatestReviewId($currentSubmission),
+            'isComplete' => (bool)$row['isComplete'],
+            'isPending' => (bool)$row['isPending'],
+            'reviewId' => $reviewId === false ? null : (int)$reviewId,
         ];
 
         return $currentState === $expectedState ? $currentSubmission : null;
