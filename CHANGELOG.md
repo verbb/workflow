@@ -5,6 +5,7 @@
 ### Fixed
 - Fixed completed submissions preventing editors from submitting again.
 - Fixed combining editor, reviewer, and publisher filters in submission queries.
+- Fixed Workflow control-panel permissions not being available on fresh installs.
 
 ## 3.0.21 - 2026-10-07
 

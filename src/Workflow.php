@@ -37,7 +37,6 @@ use craft\services\Elements;
 use craft\services\Gql;
 use craft\services\SystemMessages;
 use craft\services\UserPermissions;
-use craft\web\Application;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -50,6 +49,7 @@ class Workflow extends Plugin
     // =========================================================================
 
     public bool $hasCpSettings = true;
+    public bool $hasCpSection = true;
     public string $schemaVersion = '2.6.0';
     public string $minVersionRequired = '1.7.0';
 
@@ -79,15 +79,6 @@ class Workflow extends Plugin
         if (Craft::$app->getRequest()->getIsCpRequest()) {
             $this->_registerCpRoutes();
             $this->_registerWidgets();
-
-            // Only show the menu item if user has permission to overview
-            Craft::$app->on(Application::EVENT_INIT, function() {
-                if ($currentUser = Craft::$app->getUser()->getIdentity()) {
-                    if ($currentUser->can('workflow-overview') && $currentUser->can('accessPlugin-workflow')) {
-                        $this->hasCpSection = true;
-                    }
-                }
-            });
         }
 
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
@@ -111,6 +102,13 @@ class Workflow extends Plugin
 
     public function getCpNavItem(): ?array
     {
+        $user = Craft::$app->getUser()->getIdentity();
+
+        // Keep the CP permission registered even when navigation is hidden for the current user.
+        if (!$user || !$user->can('workflow-overview') || !$user->can('accessPlugin-workflow')) {
+            return null;
+        }
+
         $nav = parent::getCpNavItem();
 
         $nav['label'] = $this->getPluginName();
