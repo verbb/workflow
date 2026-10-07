@@ -4,10 +4,13 @@
     "scripts": {
         "build": "npm run build:css && npm run build:js",
         "build:css": "vite build --mode css",
-        "build:js": "vite build --mode js"
+        "build:js": "vite build --mode js",
+        "test:browser": "ddev test --filter=\"installs the plugin\" && playwright test",
+        "test:browser:installed": "playwright test"
     },
     "devDependencies": {
         "esbuild": "^0.28.2",
+        "playwright": "1.61.1",
         "vite": "^8.2.0"
     }
 }

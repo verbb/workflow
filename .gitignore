@@ -36,3 +36,4 @@
 /.ddev/docker-compose.tests-local.yaml
 
 /tests/runtime/web/cpresources
+/output/playwright/

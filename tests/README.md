@@ -30,10 +30,22 @@ The Pest suite exercises actual Craft web controllers and Workflow event handler
 
 Add regression cases under `tests/Feature` or `tests/Services` and use the request helpers in `tests/Pest.php`. `tests/Support/request.php` boots the normal Craft web application, selects a fixture identity, and dispatches the requested controller action. CSRF validation is disabled only for these CLI requests. Keep fixture creation in `tests/runtime/seed.php` or the request worker; do not repair production schema or services in the test bootstrap. Tests must preserve their own targets and avoid depending on execution order.
 
-The integration baseline is Craft 5.11.4, PHP 8.3, and MySQL 8. PostgreSQL, other Craft/PHP versions, third-party field plugins, and real mail transports need separate compatibility coverage.
+## Browser tests
+
+The small Playwright suite complements Pest with actual Chromium interactions: editor submission, draft locking and revocation, the publisher action menu, required-note errors and recovery, native Apply draft, and front-end HTML forms. Browser requests use normal fixture-account login and CSRF validation. Fixture setup and database assertions use the same CLI request worker; there is no browser-accessible authentication shortcut. Notifications remain disabled in the browser fixtures, while Pest notification tests restrict delivery to local files.
+
+```sh
+npm ci
+npx playwright install chromium
+npm run test:browser
+```
+
+`test:browser` prepares a clean test application first. To run against an application already created by `ddev test`, use `npm run test:browser:installed`. Run only one suite at a time: a clean installation resets the shared test fixtures. Browser tests use one worker and fresh browser contexts; traces and screenshots are retained on failure under `output/playwright`.
+
+The tested baseline is MySQL 8, PHP 8.3, Craft 5.11.4, and Chromium. PostgreSQL, other Craft/PHP versions, Firefox/WebKit, third-party field plugins, and real mail transports are not covered by this suite. Add these as deliberate compatibility jobs or dedicated fixtures when relevant; passing this baseline does not establish compatibility across that wider matrix.
 
 ## Results and CI
 
 Results are written to `.cache/verbb-tests/result.json`, `.cache/verbb-tests/junit.xml`, and `.cache/verbb-tests/latest.log`. Craft logs remain under the generated application's storage. Setup failures stop the run; an empty or incomplete suite cannot report success.
 
-The GitHub Actions workflow runs the clean-install Pest suite on pull requests and manual dispatch, and uploads diagnostics. The dedicated DDEV project can be stopped with `ddev stop` or removed with `ddev delete` from this checkout when no tests are running; the next run recreates it.
+The GitHub Actions workflow runs the clean-install Pest suite followed by the browser suite on pull requests and manual dispatch, and uploads diagnostics. Browser JUnit results are written to `.cache/verbb-tests/browser-junit.xml`. The dedicated DDEV project can be stopped with `ddev stop` or removed with `ddev delete` from this checkout when no tests are running; the next run recreates it.
