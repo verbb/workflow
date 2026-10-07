@@ -11,6 +11,7 @@
 - Fixed review and revoke actions for submissions attached directly to entries.
 - Fixed completed submissions preventing editors from submitting again.
 - Fixed concurrent decisions creating duplicate reviews and notifications.
+- Fixed entries remaining enabled when saving an approval review failed.
 - Fixed combining editor, reviewer, and publisher filters in submission queries.
 - Fixed Workflow control-panel permissions not being available on fresh installs.
 

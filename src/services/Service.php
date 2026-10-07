@@ -201,6 +201,17 @@ class Service extends Component
         }
     }
 
+    public function onAfterSaveEntry(ModelEvent $event): void
+    {
+        $entry = $event->sender;
+        $action = Craft::$app->getRequest()->getBodyParam('workflow-action');
+
+        // Canonical approvals must persist their review before Craft commits the entry save.
+        if (!$entry->getIsDraft() && in_array($action, ['approve-submission', 'approve-apply-submission'], true)) {
+            $this->onAfterSaveElement(new ElementEvent(['element' => $entry]));
+        }
+    }
+
     public function onAfterSaveElement(ElementEvent $event): void
     {
         if (!($event->element instanceof Entry)) {
