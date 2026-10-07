@@ -239,11 +239,17 @@ class Review extends Model
 
         $rules[] = [['notes'], function(string $attribute): void {
             $notes = StringHelper::sanitizeNotes($this->getNotes(false));
+            $site = $this->elementSiteId ? Craft::$app->getSites()->getSiteById($this->elementSiteId) : null;
+
+            // Native draft application and status changes must validate the same notes as the entry form.
+            if ($this->role === self::ROLE_PUBLISHER && $this->status === self::STATUS_APPROVED && $site && Workflow::$plugin->getSettings()->getPublisherNotesRequired($site) && !trim($notes)) {
+                $this->addError($attribute, Craft::t('workflow', 'Notes are required'));
+            }
 
             if (strlen($notes) > self::MAX_NOTES_BYTES) {
                 $this->addError($attribute, Craft::t('workflow', 'Review notes are too large to save.'));
             }
-        }];
+        }, 'skipOnEmpty' => false];
 
         $rules[] = [['data'], function(string $attribute): void {
             if ($this->data === null) {

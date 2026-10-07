@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- Fixed required publisher notes not being validated when approving through submission statuses or native draft application.
 - Fixed deleted submitted drafts being treated as submissions of their canonical entries.
 - Fixed HTML front-end submissions when Craft URLs include `index.php`.
 - Fixed completed submissions preventing editors from submitting again.
