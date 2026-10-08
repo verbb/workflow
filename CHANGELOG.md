@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.22 - 2026-10-08
 
 ### Fixed
 - Fixed submission statuses and approval actions for entries submitted without a draft. ([#815](https://github.com/verbb/workflow/issues/815))
