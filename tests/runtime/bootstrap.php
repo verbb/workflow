@@ -39,3 +39,16 @@ define('CRAFT_STORAGE_PATH', $appRoot . '/storage');
 define('CRAFT_RUNTIME_PATH', CRAFT_STORAGE_PATH . '/runtime');
 define('CRAFT_WEB_ROOT', $appRoot . '/web');
 require_once CRAFT_VENDOR_PATH . '/autoload.php';
+
+// Mutation runs load a changed class only inside the owned CLI test runtime; production source stays untouched.
+if ($mutation = getenv('WORKFLOW_TEST_MUTANT')) {
+    if (PHP_SAPI !== 'cli' || !preg_match('/^[a-z-]+$/D', $mutation)) {
+        throw new RuntimeException('Invalid mutation test request.');
+    }
+    $mutationFile = $runtimeRoot . '/mutations/' . $mutation . '.php';
+    $resolved = realpath($mutationFile);
+    if (!$resolved || !str_starts_with($resolved, realpath($runtimeRoot) . '/mutations/')) {
+        throw new RuntimeException('Mutation source must belong to the test runtime.');
+    }
+    require $resolved;
+}

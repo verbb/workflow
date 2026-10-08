@@ -16,6 +16,8 @@ jobs:
           autostart: false
       - name: Clean-install integration tests
         run: ddev test
+      - name: Mutation regression checks
+        run: ddev exec --raw -- php tests/runtime/mutate.php
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -35,5 +37,8 @@ jobs:
             .cache/verbb-tests/junit.xml
             .cache/verbb-tests/result.json
             .cache/verbb-tests/browser-junit.xml
+            .cache/verbb-tests/mutations/*.log
+            .cache/verbb-tests/mutations/*.xml
+            .cache/verbb-tests/mutations/result.json
             output/playwright/
             .cache/verbb-tests/app/storage/logs/
