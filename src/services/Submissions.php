@@ -121,21 +121,43 @@ class Submissions extends Component
     {
         $reviewerUserGroups = $this->getReviewerUserGroups($entry->site, $submission);
 
-        $lastReviewer = $submission->getReviewer();
+        // Review progress belongs to the recorded stage, not the reviewer's current group memberships.
+        $completedGroups = [];
 
-        if ($lastReviewer === null) {
-            return $reviewerUserGroups[0] ?? null;
-        }
+        foreach (array_reverse($submission->getReviews()) as $review) {
+            if ($review->role === Review::ROLE_EDITOR) {
+                $completedGroups = [];
+                continue;
+            }
 
-        $nextUserGroup = null;
+            if ($review->role !== Review::ROLE_REVIEWER || $review->status !== Review::STATUS_APPROVED) {
+                continue;
+            }
 
-        foreach ($reviewerUserGroups as $key => $userGroup) {
-            if ($lastReviewer->isInGroup($userGroup)) {
-                $nextUserGroup = $reviewerUserGroups[$key + 1] ?? $nextUserGroup;
+            $groupUid = $review->data['reviewerGroupUid'] ?? null;
+
+            // Older reviews lack stage metadata; replay their approvals in configured stage order.
+            if (!$groupUid) {
+                foreach ($reviewerUserGroups as $group) {
+                    if (!isset($completedGroups[$group->uid])) {
+                        $groupUid = $group->uid;
+                        break;
+                    }
+                }
+            }
+
+            if ($groupUid) {
+                $completedGroups[$groupUid] = true;
             }
         }
 
-        return $nextUserGroup;
+        foreach ($reviewerUserGroups as $group) {
+            if (!isset($completedGroups[$group->uid])) {
+                return $group;
+            }
+        }
+
+        return null;
     }
 
     public function saveSubmission(ElementInterface $entry, ?Submission $submission = null, ?int $expectedReviewId = null): bool
@@ -213,6 +235,7 @@ class Submissions extends Component
             $review = $this->createReview($currentSubmission, $entry);
             $review->role = Review::ROLE_REVIEWER;
             $review->status = Review::STATUS_APPROVED;
+            $review->data['reviewerGroupUid'] = $this->getNextReviewerUserGroup($currentSubmission, $entry)?->uid;
 
             if (!Workflow::$plugin->getReviews()->saveReview($review)) {
                 $this->_setReviewFailure($currentSubmission, $review);

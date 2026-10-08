@@ -9,6 +9,7 @@
 - Fixed deleted submitted drafts being treated as submissions of their canonical entries.
 - Fixed HTML front-end submissions when Craft URLs include `index.php`.
 - Fixed review and revoke actions for submissions attached directly to entries.
+- Fixed review stages getting stuck or being skipped when reviewers belonged to multiple groups or changed group membership.
 - Fixed completed submissions preventing editors from submitting again.
 - Fixed concurrent decisions creating duplicate reviews and notifications.
 - Fixed entries remaining enabled when saving an approval review failed.

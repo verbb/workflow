@@ -31,3 +31,14 @@ it('tracks additions removals and changed field values', function() {
     expect($diff['enabled']['type'])->toBe('add');
     expect($diff['fields']['summary:1']['type'])->toBe('change');
 });
+
+it('excludes reviewer stage metadata from content differences and revision attributes', function() {
+    $content = verbb\workflow\Workflow::$plugin->getContent();
+    expect($content->getDiff(['title' => 'Same'], ['title' => 'Same', 'reviewerGroupUid' => 'stage-uid']))->toBe([]);
+    $fixture = workflowSubmission('draft', context: ['reviewStages' => 1]);
+    $reviewed = workflowAction($fixture, 'approve-review', 'reviewerOne');
+    workflowAssertSuccess($reviewed);
+    $result = workflowRequest(['route' => 'workflow/reviews/get-compare-modal-body', 'body' => ['reviewId' => $reviewed['submission']['reviewId']]]);
+    workflowAssertSuccess($result);
+    expect($result['html'])->not->toContain('reviewerGroupUid');
+});

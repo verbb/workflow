@@ -38,7 +38,7 @@ class Content extends Component
             if ($nextReview) {
                 $oldData = $nextReview->data ?? [];
                 $newData = $review->data ?? [];
-                unset($oldData['draftId'], $newData['draftId']);
+                unset($oldData['draftId'], $newData['draftId'], $oldData['reviewerGroupUid'], $newData['reviewerGroupUid']);
                 $diff = $differ->doDiff($oldData, $newData);
 
                 $content[] = $this->_convertDiffToCount($diff);
@@ -52,7 +52,7 @@ class Content extends Component
 
     public function getDiff(array $oldArray, array $newArray): array
     {
-        unset($oldArray['draftId'], $newArray['draftId']);
+        unset($oldArray['draftId'], $newArray['draftId'], $oldArray['reviewerGroupUid'], $newArray['reviewerGroupUid']);
         $differ = new MapDiffer(true);
         $diff = $differ->doDiff($oldArray, $newArray);
 
