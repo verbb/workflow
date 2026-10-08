@@ -80,3 +80,35 @@ test('front-end HTML form submits with real login and CSRF validation', async ({
     expect(result.submission.reviewCount).toBe(1);
     expect(result.entry.summary).toBe('Front-end browser content');
 });
+
+test('canonical editing creates a private provisional autosave', async ({page}) => {
+    const fixture = request({fixture: 'canonical', author: 'canonicalEditor'});
+    await openDraft(page, fixture, 'canonicalEditor');
+    const autosave = page.waitForResponse(response => response.request().method() === 'POST' && decodeURIComponent(response.url()).includes('elements/save-draft'));
+    await page.getByRole('textbox', {name: 'Summary Required', exact: true}).fill('Private browser autosave');
+    await page.getByRole('heading', {level: 1}).click();
+    await autosave;
+    const privateDraft = request({findProvisionalOf: fixture.target.canonicalId, user: 'canonicalEditor'});
+    expect(privateDraft.entry.provisional).toBe(true);
+    expect(privateDraft.entry.summary).toBe('Private browser autosave');
+    expect(privateDraft.canonical.summary).toBe('Original summary');
+    expect(privateDraft.submissionCount).toBe(0);
+});
+
+test('a suspended publisher cannot approve from an already open editor', async ({page}) => {
+    const fixture = draft(true);
+    await openDraft(page, fixture, 'publisher');
+    const changed = request({mutateUsers: {publisher: {suspended: true}}});
+    try {
+        const decision = page.waitForResponse(response => response.request().method() === 'POST' && (response.request().postData() || '').includes('approve-submission'));
+        await approve(page);
+        const response = await decision;
+        expect([302, 401, 403]).toContain(response.status());
+        const result = request({target: fixture.target, user: 'admin'});
+        expect(result.submission.pending).toBe(true);
+        expect(result.submission.reviewCount).toBe(1);
+        expect(result.canonical.summary).toBe('Original summary');
+    } finally {
+        request({mutateUsers: changed.restoreUsers, user: 'admin'});
+    }
+});
