@@ -26,10 +26,15 @@ it('requires Craft entry permissions in addition to the publisher role', functio
 it('rejects a submission ID belonging to another entry', function(string $kind) {
     $fixture = workflowSubmission($kind);
     $other = workflowSubmission($kind);
-    $result = workflowApprove($fixture, overrides: ['body' => ['submissionId' => $other['submission']['id'], 'workflowReviewId' => $other['submission']['reviewId']]]);
+    $result = workflowApprove($fixture, overrides: ['submissionId' => $fixture['submission']['id'], 'body' => ['submissionId' => $other['submission']['id'], 'workflowReviewId' => $other['submission']['reviewId']]]);
+    workflowAssertDenied($result);
     expect($result['submission']['status'])->toBe('pending');
     expect($result['submission']['reviewCount'])->toBe(1);
     expect($result['canonical'])->toBe($fixture['canonical']);
+    $untouched = workflowInspect($other);
+    expect($untouched['submission']['status'])->toBe('pending');
+    expect($untouched['submission']['reviewCount'])->toBe(1);
+    expect($untouched['canonical'])->toBe($other['canonical']);
 })->with(['draft', 'legacy']);
 
 it('rejects an approval posted to another site', function(string $kind) {

@@ -37,6 +37,7 @@ it('supports Craft native draft application', function(string $kind) {
 it('does not let a non-publisher approve', function(string $kind) {
     $fixture = workflowSubmission($kind);
     $result = workflowApprove($fixture, overrides: ['user' => 'outsider']);
+    workflowAssertDenied($result);
     expect($result['submission']['status'])->toBe('pending');
     expect($result['submission']['reviewCount'])->toBe(1);
     expect($result['menu'])->toBe([]);
@@ -45,6 +46,7 @@ it('does not let a non-publisher approve', function(string $kind) {
 it('does not allow self approval without permission', function() {
     $fixture = workflowSubmission('frontend', author: 'selfPublisher');
     $result = workflowApprove($fixture, overrides: ['user' => 'selfPublisher']);
+    workflowAssertDenied($result);
     expect($result['submission']['status'])->toBe('pending');
     expect($result['submission']['reviewCount'])->toBe(1);
 });

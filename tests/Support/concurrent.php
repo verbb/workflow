@@ -45,10 +45,12 @@ function workflowRace(array $fixture, array $actions): array
     mkdir($directory);
     $requests = [];
     try {
-        foreach ($actions as $index => $action) {
+        foreach ($actions as $index => $decision) {
+            $action = is_array($decision) ? $decision['action'] : $decision;
+            $actor = is_array($decision) ? $decision['user'] : 'publisher';
             $requests[] = workflowStartRequest([
                 'target' => $fixture['target'], 'siteId' => $fixture['target']['siteId'],
-                'context' => $fixture['context'] ?? [], 'user' => 'publisher',
+                'context' => $fixture['context'] ?? [], 'user' => $actor,
                 'barrier' => ['directory' => $directory, 'index' => $index],
                 'route' => $fixture['target']['draftId'] ? (in_array($action, ['approve-submission', 'approve-apply-submission']) ? 'elements/apply-draft' : 'elements/save-draft') : 'elements/save',
                 'body' => ['enabled' => $fixture['entry']['enabled'], 'enabledForSite' => $fixture['entry']['enabledForSite'], 'workflow-action' => $action, 'submissionId' => $fixture['submission']['id'], 'workflowReviewId' => $fixture['submission']['reviewId'], 'workflowNotes' => 'Concurrent decision'],

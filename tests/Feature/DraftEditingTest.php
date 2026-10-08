@@ -5,6 +5,8 @@ it('enforces pending draft locking for each workflow role', function(string $use
     $result = workflowEdit($fixture, $user, ['fields' => ['summary' => 'Edited while pending']]);
     if ($allowed) {
         workflowAssertSuccess($result);
+    } else {
+        workflowAssertDenied($result);
     }
     expect($result['entry']['summary'])->toBe($allowed ? 'Edited while pending' : 'Revised summary');
     expect($result['submission']['reviewCount'])->toBe(1);

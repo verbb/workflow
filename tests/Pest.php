@@ -65,7 +65,7 @@ function workflowStatus(array $fixture, string $status = 'approved', array $over
 
 function workflowInspect(array $fixture, string $user = 'publisher'): array
 {
-    return workflowRequest(['target' => $fixture['target'], 'siteId' => $fixture['target']['siteId'], 'context' => $fixture['context'] ?? [], 'user' => $user]);
+    return workflowRequest(['target' => $fixture['target'], 'submissionId' => $fixture['submission']['id'] ?? null, 'siteId' => $fixture['target']['siteId'], 'context' => $fixture['context'] ?? [], 'user' => $user]);
 }
 
 function workflowAction(array $fixture, string $action, string $user = 'publisher', array $overrides = []): array
@@ -107,4 +107,43 @@ function workflowBulk(array $fixtures, string $status, string $user = 'publisher
         'route' => 'element-indexes/perform-action', 'user' => $user,
         'body' => ['elementType' => verbb\workflow\elements\Submission::class, 'elementAction' => verbb\workflow\elements\actions\SetStatus::class, 'elementIds' => array_column(array_column($fixtures, 'submission'), 'id'), 'status' => $status, 'viewState' => ['mode' => 'table', 'static' => false], 'source' => '*', 'context' => 'index', 'criteria' => ['siteId' => $fixtures[0]['target']['siteId'], 'status' => null]],
     ]);
+}
+
+function workflowWithUsers(array $changes, callable $test): void
+{
+    $changed = workflowRequest(['mutateUsers' => $changes]);
+    workflowAssertSuccess($changed);
+    try {
+        $test();
+    } finally {
+        workflowAssertSuccess(workflowRequest(['mutateUsers' => $changed['restoreUsers']]));
+    }
+}
+
+function workflowWithPermissions(array $changes, callable $test): void
+{
+    $changed = workflowRequest(['mutatePermissions' => $changes]);
+    workflowAssertSuccess($changed);
+    try {
+        $test();
+    } finally {
+        workflowAssertSuccess(workflowRequest(['mutatePermissions' => $changed['restorePermissions']]));
+    }
+}
+
+function workflowAssertDenied(array $result): void
+{
+    // A PHP/runtime failure must never count as a successful permission test.
+    if (isset($result['exception'])) {
+        expect($result['exception']['class'])->toBeIn([yii\web\ForbiddenHttpException::class, yii\web\UnauthorizedHttpException::class, craft\errors\InvalidElementException::class]);
+        expect($result['exception']['message'])->toMatch('/authoriz|permission|Workflow|submission|approve|save/i');
+    } else {
+        expect($result['httpStatus'] ?? 200)->toBeGreaterThanOrEqual(400);
+        expect($result['response']['errors'] ?? $result['response']['message'] ?? $result['error'])->not->toBeEmpty();
+    }
+}
+
+function workflowSaveDraft(array $fixture, array $body, string $user = 'canonicalEditor', bool $followResponse = false): array
+{
+    return workflowRequest(['target' => $fixture['target'], 'submissionId' => $fixture['submission']['id'] ?? null, 'siteId' => $fixture['target']['siteId'], 'context' => $fixture['context'] ?? [], 'route' => 'elements/save-draft', 'user' => $user, 'body' => $body + ['provisional' => $fixture['entry']['provisional'] ?? false], 'followResponse' => $followResponse]);
 }

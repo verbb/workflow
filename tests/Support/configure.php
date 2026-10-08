@@ -14,8 +14,11 @@ foreach (['editorNotesRequired', 'publisherNotesRequired'] as $key) {
         $settings->$key = [$siteUid => $context[$key]];
     }
 }
-if ($context['reviewStages'] ?? 0) {
+if (array_key_exists('reviewStages', $context)) {
     $settings->reviewerUserGroups[$siteUid] = array_map(fn($handle) => [$f['groups'][$handle]], array_slice(['reviewersOne', 'reviewersTwo'], 0, $context['reviewStages']));
+}
+if (isset($context['reviewGroups'])) {
+    $settings->reviewerUserGroups[$siteUid] = array_map(fn($handle) => [$f['groups'][$handle]], $context['reviewGroups']);
 }
 if ($context['separateSitePublisher'] ?? false) {
     $secondary = $app->getSites()->getSiteById($f['sites'][1]);

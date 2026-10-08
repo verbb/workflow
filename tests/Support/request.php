@@ -31,8 +31,15 @@ $out = ['mail' => [], 'context' => $input['context'] ?? []];
 require __DIR__ . '/configure.php';
 try {
     $target = $input['target'] ?? null;
+    require __DIR__ . '/mutations.php';
     if (isset($input['graphql'])) {
         $out['graphql'] = $app->getGql()->executeQuery(new craft\models\GqlSchema(['name' => 'Test schema', 'scope' => $input['scope']]), $input['graphql']);
+    }
+    if (isset($input['findProvisionalOf'])) {
+        $found = craft\elements\Entry::find()->draftOf($input['findProvisionalOf'])->provisionalDrafts(true)->draftCreator($user->id)->siteId($siteId)->status(null)->one();
+        if ($found) {
+            $target = ['elementId' => $found->id, 'canonicalId' => $found->getCanonicalId(), 'draftId' => $found->draftId, 'siteId' => $siteId];
+        }
     }
     if (isset($input['findTitle'])) {
         $found = craft\elements\Entry::find()->title($input['findTitle'])->siteId($siteId)->drafts(null)->status(null)->one();
@@ -43,19 +50,26 @@ try {
     if (isset($input['fixture'])) {
         $kind = $input['fixture'];
         $author = $f['users'][$input['author'] ?? 'editor'];
-        $entry = new craft\elements\Entry(['sectionId' => $f['sectionId'], 'typeId' => $f['typeId'], 'siteId' => $siteId, 'title' => 'Article ' . bin2hex(random_bytes(5)), 'enabled' => $kind === 'draft']);
+        $sectionId = $f['sectionId'];
+        if (isset($context['sectionType']) || isset($context['propagation'])) {
+            require __DIR__ . '/section.php';
+        }
+        $entry = (($context['sectionType'] ?? '') === 'single' ? craft\elements\Entry::find()->sectionId($sectionId)->siteId($siteId)->status(null)->one() : null) ?? new craft\elements\Entry(['sectionId' => $sectionId, 'typeId' => $f['typeId'], 'siteId' => $siteId, 'title' => 'Article ' . bin2hex(random_bytes(5)), 'enabled' => in_array($kind, ['draft', 'provisional'], true)]);
+        $entry->enabled = in_array($kind, ['draft', 'provisional'], true);
         $entry->setAuthorIds([$author]);
         $entry->setFieldValue('summary', 'Original summary');
+        $entry->setFieldValue('localizedSummary', 'Original localized content');
         if (!$app->getElements()->saveElement($entry)) {
             throw new RuntimeException(json_encode($entry->getErrors()));
         }
         if ($context['complexContent'] ?? false) {
             require __DIR__ . '/complex-content.php';
         }
-        if ($kind === 'draft') {
-            $entry = $app->getDrafts()->createDraft($entry, $author, 'Editorial changes');
+        if (in_array($kind, ['draft', 'provisional'], true)) {
+            $entry = $app->getDrafts()->createDraft($entry, $author, 'Editorial changes', provisional: $kind === 'provisional');
             $entry->title .= ' revised';
             $entry->setFieldValue('summary', 'Revised summary');
+            $entry->setFieldValue('localizedSummary', 'Revised localized content');
             if (!$app->getElements()->saveElement($entry)) {
                 throw new RuntimeException(json_encode($entry->getErrors()));
             }
@@ -99,6 +113,15 @@ try {
         } elseif ($input['alter'] === 'siblingDraft') {
             $sibling = $app->getDrafts()->createDraft($entry->getCanonical(true), $f['users']['editor'], 'Unsubmitted draft');
             $out['siblingDraftId'] = $sibling->draftId;
+            $out['siblingTarget'] = ['elementId' => $sibling->id, 'canonicalId' => $sibling->getCanonicalId(), 'draftId' => $sibling->draftId, 'siteId' => $siteId];
+        } elseif ($input['alter'] === 'stripReviewerMetadata') {
+            $submission = $p->getSubmissions()->getSubmissionById($input['submissionId'], $siteId);
+            foreach ($submission->getReviews() as $review) {
+                unset($review->data['reviewerGroupUid']);
+                if (!$p->getReviews()->saveReview($review)) {
+                    throw new RuntimeException('Cannot create legacy stage history.');
+                }
+            }
         } elseif ($input['alter'] === 'migrateReview') {
             $review = $p->getSubmissions()->getSubmissionById($input['submissionId'], $siteId)->getLastReview();
             unset($review->data['draftId']);
@@ -143,6 +166,12 @@ try {
         if (is_string($response?->data)) {
             $out['html'] = $response->data;
         }
+        if ($input['followResponse'] ?? false) {
+            $target = null;
+        }
+        if (!$target && isset($response->data['elementId'], $response->data['canonicalId'], $response->data['draftId'])) {
+            $target = ['elementId' => $response->data['elementId'], 'canonicalId' => $response->data['canonicalId'], 'draftId' => $response->data['draftId'], 'siteId' => $siteId];
+        }
         if (!$target && isset($response->data['model'])) {
             $model = $response->data['model'];
             $target = ['elementId' => $model['id'], 'canonicalId' => $model['canonicalId'], 'draftId' => $model['draftId'], 'siteId' => $model['siteId']];
@@ -162,9 +191,15 @@ try {
 }
 if ($target) {
     $out['target'] = $target;
-    $submission = verbb\workflow\elements\Submission::find()->ownerId($target['canonicalId'])->ownerSiteId($target['siteId'])->siteId($target['siteId'])->status(null)->orderBy(['id' => SORT_DESC])->one();
+    $submissionQuery = verbb\workflow\elements\Submission::find()->ownerId($target['canonicalId'])->ownerSiteId($target['siteId'])->siteId($target['siteId'])->status(null)->orderBy(['id' => SORT_DESC]);
+    // Keep assertions on the fixture even when a negative test posts another submission's ID.
+    $inspectId = $input['submissionId'] ?? $input['body']['submissionId'] ?? null;
+    if ($inspectId) {
+        $submissionQuery->id($inspectId);
+    }
+    $submission = $submissionQuery->one();
     $entry = craft\elements\Entry::find()->id($target['elementId'])->drafts(null)->provisionalDrafts(null)->siteId($target['siteId'])->status(null)->one();
-    $out['entry'] = $entry ? ['id' => $entry->id, 'summary' => $entry->getFieldValue('summary'), 'title' => $entry->title, 'enabled' => $entry->enabled, 'enabledForSite' => $entry->getEnabledForSite()] : null;
+    $out['entry'] = $entry ? ['id' => $entry->id, 'summary' => $entry->getFieldValue('summary'), 'title' => $entry->title, 'enabled' => $entry->enabled, 'enabledForSite' => $entry->getEnabledForSite(), 'provisional' => $entry->isProvisionalDraft, 'draftId' => $entry->draftId] : null;
     $out['cpUrl'] = $entry?->getCpEditUrl();
     if ($submission) {
         $out['submission'] = ['id' => $submission->id, 'reviewId' => $submission->getLastReview()->id, 'status' => $submission->status, 'complete' => $submission->isComplete, 'pending' => $submission->isPending, 'reviewCount' => count($submission->getReviews()), 'reviewDraftId' => $submission->getLastReview()->draftId, 'snapshotDraftId' => $submission->getLastReview()->data['draftId'] ?? null, 'statuses' => $user ? $p->getSubmissionPermissions()->getAllowedStatuses($user, $submission) : []];
@@ -179,6 +214,8 @@ if ($target) {
         $out['content'] = $canonical ? ['related' => $canonical->getFieldValue('relatedEntries')->ids(), 'details' => $canonical->getFieldValue('details'), 'blocks' => array_map(fn($block) => ['title' => $block->title, 'summary' => $block->getFieldValue('summary')], $canonical->getFieldValue('body')->all())] : null;
     }
     $out['draftExists'] = $entry?->getIsDraft() ?? false;
+    $out['localizations'] = array_map(fn($localized) => ['siteId' => $localized->siteId, 'summary' => $localized->getFieldValue('summary'), 'enabledForSite' => $localized->enabledForSite], craft\elements\Entry::find()->id($target['canonicalId'])->site('*')->status(null)->all());
+    $out['draftCount'] = (int)craft\elements\Entry::find()->draftOf($target['canonicalId'])->drafts(true)->provisionalDrafts(null)->siteId($siteId)->status(null)->count();
     $out['submissionCount'] = (int)verbb\workflow\elements\Submission::find()->ownerId($target['canonicalId'])->siteId($target['siteId'])->status(null)->count();
     $out['revisionCount'] = (int)(new craft\db\Query())->from(craft\db\Table::REVISIONS)->where(['canonicalId' => $target['canonicalId']])->count();
 }
