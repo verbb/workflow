@@ -34,6 +34,16 @@ it('supports Craft native draft application', function(string $kind) {
     expect($result['submission']['reviewCount'])->toBe(2);
 })->with(['frontend', 'draft']);
 
+it('approves a secondary-site draft while the primary site is current', function() {
+    $fixture = workflowSubmission('draft', 1);
+    $sites = json_decode(file_get_contents(CRAFT_BASE_PATH . '/../fixtures.json'), true)['sites'];
+    $result = workflowApprove($fixture, overrides: ['currentSiteId' => $sites[0]]);
+    workflowAssertSuccess($result);
+    expect($result['submission']['status'])->toBe('approved');
+    expect($result['submission']['complete'])->toBeTrue();
+    expect($result['canonical']['summary'])->toBe('Revised summary');
+});
+
 it('does not let a non-publisher approve', function(string $kind) {
     $fixture = workflowSubmission($kind);
     $result = workflowApprove($fixture, overrides: ['user' => 'outsider']);

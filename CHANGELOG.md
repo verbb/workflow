@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed approving and publishing drafts on secondary sites. ([#816](https://github.com/verbb/workflow/issues/816))
+
 ## 3.0.22 - 2026-10-08
 
 ### Fixed

@@ -13,7 +13,7 @@ $_SERVER['SERVER_PORT'] = 80;
 $app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/web.php';
 $f = json_decode(file_get_contents(CRAFT_BASE_PATH . '/../fixtures.json'), true);
 $siteId = $input['siteId'] ?? $f['sites'][0];
-$app->getSites()->setCurrentSite($siteId);
+$app->getSites()->setCurrentSite($input['currentSiteId'] ?? $siteId);
 $p = verbb\workflow\Workflow::$plugin;
 $request = $app->getRequest();
 $request->getHeaders()->set('Accept', ($input['json'] ?? true) ? 'application/json' : 'text/html');
