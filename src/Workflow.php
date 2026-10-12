@@ -29,6 +29,7 @@ use craft\events\RegisterGqlSchemaComponentsEvent;
 use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
+use craft\enums\CmsEdition;
 use craft\helpers\UrlHelper;
 use craft\models\FieldLayout;
 use craft\services\Dashboard;
@@ -85,7 +86,7 @@ class Workflow extends Plugin
             $this->_registerResaveCommand();
         }
 
-        if (Craft::$app->getEdition() !== Craft::Solo) {
+        if (Craft::$app->edition !== CmsEdition::Solo) {
             $this->_registerPermissions();
         }
     }

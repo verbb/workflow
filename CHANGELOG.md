@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- Updated Craft API usage to avoid deprecated calls.
+
 ### Fixed
 - Fixed approving and publishing drafts on secondary sites. ([#816](https://github.com/verbb/workflow/issues/816))
 

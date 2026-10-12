@@ -3,7 +3,6 @@ namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
 use craft\db\Query;
-use craft\helpers\MigrationHelper;
 
 use Throwable;
 
@@ -14,7 +13,11 @@ class m241030_000000_user_fk extends Migration
      */
     public function safeUp(): bool
     {
-        MigrationHelper::dropAllForeignKeysOnTable('{{%workflow_reviews}}');
+        $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'submissionId');
+        $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'elementId');
+        $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'elementSiteId');
+        $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'draftId');
+        $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'userId');
 
         $this->addForeignKey(null, '{{%workflow_reviews}}', 'submissionId', '{{%workflow_submissions}}', 'id', 'CASCADE', null);
         $this->addForeignKey(null, '{{%workflow_reviews}}', 'elementId', '{{%elements}}', 'id', 'SET NULL', null);

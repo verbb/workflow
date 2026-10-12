@@ -3,7 +3,6 @@ namespace verbb\workflow\migrations;
 
 use craft\db\Migration;
 use craft\helpers\Db;
-use craft\helpers\MigrationHelper;
 
 class Install extends Migration
 {
@@ -93,11 +92,17 @@ class Install extends Migration
     public function dropForeignKeys(): void
     {
         if ($this->db->tableExists('{{%workflow_submissions}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%workflow_submissions}}', $this);
+            $this->dropForeignKeyIfExists('{{%workflow_submissions}}', 'id');
+            $this->dropForeignKeyIfExists('{{%workflow_submissions}}', 'ownerId');
+            $this->dropForeignKeyIfExists('{{%workflow_submissions}}', 'ownerSiteId');
         }
 
         if ($this->db->tableExists('{{%workflow_reviews}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%workflow_reviews}}', $this);
+            $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'submissionId');
+            $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'elementId');
+            $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'elementSiteId');
+            $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'draftId');
+            $this->dropForeignKeyIfExists('{{%workflow_reviews}}', 'userId');
         }
     }
 }
