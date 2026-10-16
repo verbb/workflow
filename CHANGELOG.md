@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed line breaks in review notes not being preserved in submission history and entry sidebars. ([#817](https://github.com/verbb/workflow/issues/817))
+
 ## 3.0.23 - 2026-10-15
 
 ### Changed

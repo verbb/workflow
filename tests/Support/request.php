@@ -157,6 +157,10 @@ try {
             }
         }
         $response = $app->runAction($input['route'], $input['params'] ?? []);
+        if (($input['renderResponse'] ?? false) && $response?->format === craft\web\TemplateResponseFormatter::FORMAT) {
+            (new craft\web\TemplateResponseFormatter())->format($response);
+            $out['html'] = $response->content;
+        }
         $out['response'] = array_intersect_key(is_array($response?->data) ? $response->data : [], array_flip(['message', 'errors', 'success']));
         if (is_array($response?->data) && isset($response->data['html'])) {
             $out['html'] = $response->data['html'];

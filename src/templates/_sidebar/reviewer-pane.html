@@ -17,7 +17,7 @@
                         <p>{{ review.getUserUrl() }} {{ 'submitted this entry for review on {date}. Please review this entry before approving' | t('workflow', { date: review.dateCreated | datetime('medium') }) }}</p>
 
                         {% if review.notes %}
-                            <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) | raw }}</p>
+                            <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) | raw | nl2br }}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                         <p style="color: #da5a47;">{{ 'This entry was submitted for review on {date} and is awaiting approval. Changes cannot be made until approved.' | t('workflow', { date: review.dateCreated | datetime('medium') }) }}</p>
 
                         {% if review.notes %}
-                            <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) | raw }}</p>
+                            <p class="code">{{ '{role} Notes: “{note}”' | t('workflow', { role: review.roleName, note: review.notes }) | raw | nl2br }}</p>
                         {% endif %}
                     </div>
                 </div>

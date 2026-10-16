@@ -1,5 +1,30 @@
 <?php
 
+it('preserves review note line breaks while keeping HTML escaped', function(string $newline, bool $encoded) {
+    $fixture = workflowSubmission('draft');
+    $notes = 'First & feedback' . $newline . $newline . '<strong>Second</strong><br>';
+    $review = verbb\workflow\Workflow::$plugin->getReviews()->getReviewById($fixture['submission']['reviewId']);
+    $review->setNotes($notes);
+    expect(verbb\workflow\Workflow::$plugin->getReviews()->saveReview($review))->toBeTrue();
+
+    // Cover both current encoded storage and legacy records containing plain text.
+    if (!$encoded) {
+        Craft::$app->getDb()->createCommand()->update('{{%workflow_reviews}}', ['notes' => $notes], ['id' => $review->id])->execute();
+    }
+
+    $result = workflowRequest([
+        'route' => 'workflow/submissions/edit',
+        'params' => ['submissionId' => $fixture['submission']['id']],
+        'json' => false,
+        'renderResponse' => true,
+    ]);
+    workflowAssertSuccess($result);
+    preg_match('/<p>[^<]*Notes: .*?<\/p>/s', $result['html'], $matches);
+    expect($matches)->not->toBeEmpty();
+    expect($matches[0])->toContain('First &amp; feedback<br />' . $newline . '<br />' . $newline . '&lt;strong&gt;Second&lt;/strong&gt;&lt;br&gt;');
+    expect($matches[0])->not->toContain('<strong>Second</strong>');
+})->with(["\n", "\r\n", "\r"])->with([true, false]);
+
 it('renders the review comparison through its controller', function() {
     $fixture = workflowSubmission('draft');
     $approved = workflowApprove($fixture);
