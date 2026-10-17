@@ -16,7 +16,18 @@ jobs:
       COMPOSER_ALLOW_SUPERUSER: 1
     timeout-minutes: 20
     steps:
+      # Git avoids the archive fallback, which omits files marked export-ignore.
+      - name: Install Git for checkout
+        run: |
+          sed -i 's|deb.debian.org/debian-security|archive.debian.org/debian-security|g; s|deb.debian.org/debian|archive.debian.org/debian|g; /bullseye-updates/d' /etc/apt/sources.list
+          apt-get -o Acquire::Check-Valid-Until=false update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git ca-certificates
       - uses: actions/checkout@v5
+      - name: Verify complete checkout
+        run: |
+          test "$(git rev-parse --is-inside-work-tree)" = true
+          test -f .github/scripts/setup-minimum-php.sh
+          test -f tests/php-check/tests/run.php
       - name: Install minimum PHP dependencies
         run: bash .github/scripts/setup-minimum-php.sh
       - name: Verify exact minimum interpreter
