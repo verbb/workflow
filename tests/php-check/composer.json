@@ -1,0 +1,21 @@
+{
+    "name": "verbb/php-check",
+    "description": "PHP syntax and class-resolution checks for Verbb projects.",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.2",
+        "nikic/php-parser": "^5.7"
+    },
+    "scripts": {
+        "test": "php tests/run.php"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Verbb\\PhpCheck\\": "src/"
+        }
+    }
+}

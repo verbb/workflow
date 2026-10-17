@@ -37,3 +37,4 @@
 
 /tests/runtime/web/cpresources
 /output/playwright/
+/.ddev/config.zz-ci.yaml
