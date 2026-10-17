@@ -10,16 +10,15 @@ jobs:
   php-check:
     name: PHP 8.2.0 syntax and imports
     runs-on: ubuntu-22.04
+    # setup-php selects a current patch; the official image preserves the exact minimum.
+    container: php:8.2.0-cli@sha256:fa840989efc52df732278f59377e780f65d6aa8c384bb9724babf190b49f4c35
+    env:
+      COMPOSER_ALLOW_SUPERUSER: 1
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2.0'
-          extensions: bcmath, curl, dom, fileinfo, gd, iconv, intl, mbstring, pdo_mysql, sodium, zip
-          coverage: none
-          tools: composer:v2
-          ini-values: memory_limit=1G
+      - name: Install minimum PHP dependencies
+        run: bash .github/scripts/setup-minimum-php.sh
       - name: Verify exact minimum interpreter
         run: |
           php -r 'echo PHP_VERSION, PHP_EOL; exit(PHP_VERSION === "8.2.0" ? 0 : 1);'
@@ -30,7 +29,7 @@ jobs:
       - name: Class checker regression tests
         run: php tests/php-check/tests/run.php
       - name: Check validation tooling
-        run: php tests/php-check/bin/check.php --project tests/php-check --vendor tests/php-check/vendor tests/php-check/src tests/php-check/bin tests/php-check/prepare.php tests/php-check/tests .github/scripts/check-runtime-lock.php
+        run: php tests/php-check/bin/check.php --project tests/php-check --vendor tests/php-check/vendor tests/php-check/src tests/php-check/bin tests/php-check/prepare.php tests/php-check/tests
       - name: Prepare minimum PHP dependencies
         run: php tests/php-check/prepare.php
       - name: Resolve dependencies on PHP 8.2.0
@@ -38,7 +37,7 @@ jobs:
       - name: Verify dependency platform requirements
         run: composer check-platform-reqs --working-dir=.cache/php-check --no-plugins
       - name: Check all production PHP
-        run: php tests/php-check/bin/check.php --project . --vendor .cache/php-check/vendor --optional tests/php-check/optional.json src
+        run: php tests/php-check/bin/check.php --project . --vendor .cache/php-check/vendor --optional tests/php-check/optional.json src .github/scripts/check-runtime-lock.php
       - name: Dependency diagnostics
         if: always()
         uses: actions/upload-artifact@v4
