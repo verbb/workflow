@@ -25,6 +25,8 @@ jobs:
       - uses: actions/checkout@v5
       - name: Verify complete checkout
         run: |
+          # Checkout trusts the workspace only in its temporary Git configuration.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           test "$(git rev-parse --is-inside-work-tree)" = true
           test -f .github/scripts/setup-minimum-php.sh
           test -f tests/php-check/tests/run.php
