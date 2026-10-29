@@ -63,6 +63,9 @@ try {
     }
     $log = fopen($runtime . '/latest.log', 'w');
     $run = static function(array $command, ?string $cwd = null) use ($root, $log): void {
+        if ($command[0] === 'php') {
+            $command[0] = PHP_BINARY;
+        }
         $process = proc_open($command, [0 => STDIN, 1 => ['pipe', 'w'], 2 => ['redirect', 1]], $pipes, $cwd ?? $root);
         if (!is_resource($process)) {
             throw new RuntimeException('Unable to start ' . $command[0]);
@@ -98,7 +101,7 @@ try {
         'repositories' => [['type' => 'path', 'url' => '../../..', 'options' => ['symlink' => true, 'reference' => 'config']]],
         'minimum-stability' => 'dev', 'prefer-stable' => true,
         'autoload-dev' => ['psr-4' => ['Tests\\' => '../../../tests/']],
-        'config' => ['allow-plugins' => ['craftcms/plugin-installer' => true, 'pestphp/pest-plugin' => true, 'yiisoft/yii2-composer' => true]],
+        'config' => ['platform' => ['php' => '8.2.0', 'php-64bit' => '8.2.0'], 'allow-plugins' => ['craftcms/plugin-installer' => true, 'pestphp/pest-plugin' => true, 'yiisoft/yii2-composer' => true]],
     ];
     file_put_contents($app . '/composer.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     if (is_file(__DIR__ . '/composer.lock')) {
@@ -152,7 +155,8 @@ PHP
         exit(0);
     }
     @unlink($runtime . '/junit.xml');
-    $run(['php', '-d', 'memory_limit=1G', 'tests/runtime/pest.php', '--fail-on-empty-test-suite', '--fail-on-risky', '--enforce-time-limit', ...(array_filter($args, static fn($arg) => str_starts_with($arg, '--default-time-limit')) ? [] : ['--default-time-limit=60']), '--configuration', 'phpunit.craft.xml', '--log-junit', $runtime . '/junit.xml', ...$config['suites'][$suite], ...array_values($args)]);
+    @unlink($runtime . '/events.log');
+    $run(['php', '-d', 'memory_limit=1G', 'tests/runtime/pest.php', '--fail-on-empty-test-suite', '--fail-on-risky', '--enforce-time-limit', ...(array_filter($args, static fn($arg) => str_starts_with($arg, '--default-time-limit')) ? [] : ['--default-time-limit=60']), '--configuration', 'phpunit.craft.xml', '--log-events-text', $runtime . '/events.log', '--log-junit', $runtime . '/junit.xml', ...$config['suites'][$suite], ...array_values($args)]);
     // An application exit(0) inside a test must not masquerade as a completed suite.
     $report = is_file($runtime . '/junit.xml') ? simplexml_load_file($runtime . '/junit.xml') : false;
     if (!$report || (int)$report->testsuite['tests'] < 1) {

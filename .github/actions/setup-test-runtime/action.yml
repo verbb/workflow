@@ -1,0 +1,27 @@
+name: Set up plugin tests
+description: Start and verify the repository-owned Craft test runtime.
+inputs:
+  php-version:
+    description: PHP release line, or the exact minimum 8.2.0.
+    required: true
+    default: '8.3'
+  docroot:
+    description: Public directory for the disposable Craft application.
+    default: tests/runtime/web
+runs:
+  using: composite
+  steps:
+    - name: Verify shared CI files
+      shell: bash
+      run: python3 .github/scripts/check-ci.py
+    - uses: ddev/github-action-setup-ddev@v1
+      with:
+        version: '1.25.4'
+        autostart: false
+        installScriptUrl: https://raw.githubusercontent.com/ddev/ddev/v1.25.4/scripts/install_ddev.sh
+    - name: Configure and verify PHP
+      shell: bash
+      env:
+        TEST_PHP_VERSION: ${{ inputs.php-version }}
+        TEST_DOCROOT: ${{ inputs.docroot }}
+      run: bash .github/scripts/configure-ddev.sh "$TEST_PHP_VERSION" "$TEST_DOCROOT"

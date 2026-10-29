@@ -1,0 +1,18 @@
+{
+  "version": "2026-10-29.1",
+  "sha256": {
+    ".github/actions/setup-test-runtime/action.yml": "c6945e3f1caaf7f6afb2469e4f2943b96c498c3cc537f99764164ae49bd15409",
+    ".github/php-minimum/Dockerfile": "c7f8dda49f1e5d53300bf279669709a1c867fc2d8ea1aca15766286d58365c8e",
+    ".github/php-minimum/docker-compose.yaml": "0f3863da5113f9676084b70c25d716bc3e3954ecd33ed8260ae1a855b502ce4e",
+    ".github/scripts/check-ci.py": "1f7171b5a80daf0aff350cd5ebec89a276c871457ad00337dcf7feeff95048e7",
+    ".github/scripts/check-runtime-lock.php": "caeef0c3036f54ab2527bba9e773e072ba386df044884056928b89a2f07e7a00",
+    ".github/scripts/configure-ddev.sh": "0bed928865d2ab418bdbef37a6b0f239b07975f434f577696af992cce758a74e",
+    ".github/scripts/pest-exit.php": "6380b5791e44c5d96d0775db381074a3a7a6d640b8f378a94e762b0724f7b1c2",
+    ".github/scripts/prepare-check-dependencies.php": "40d67e3f04744874979515b0cf72e2c8985c0ffeebca6d5a2332570504f74223",
+    ".github/scripts/record-inputs.py": "ecefaf3081301ca6289f6364ed100511b275d516e31008dcca2cae6913ecdd02",
+    ".github/scripts/run-ci.sh": "4525a5a61925f2984d29f852181ee28a53293796a13d2f38b195c5980d79400f",
+    ".github/scripts/runtime-preflight.php": "24d258e2be8d5269e71ee7d6705a28ffe4dec050547afb91eb6ddee4ba9d36cf",
+    ".github/scripts/setup-minimum-php.sh": "f7eb16038d92b6b3e3d6fac28288d6726b44d8b57637c23fcd4774f10d9ba238",
+    ".github/scripts/test-runner-guards.php": "85b75334c65d83fd8cdf086db8a1b032d6107883ba330721dd59f4760daa3ed7"
+  }
+}

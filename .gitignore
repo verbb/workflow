@@ -38,3 +38,5 @@
 /tests/runtime/web/cpresources
 /output/playwright/
 /.ddev/config.zz-ci.yaml
+
+/.ddev/docker-compose.php-minimum.yaml

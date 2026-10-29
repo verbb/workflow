@@ -1,0 +1,25 @@
+# Copied into .ddev only for the exact-minimum jobs.
+services:
+  php-minimum:
+    container_name: ddev-${DDEV_SITENAME}-php-minimum
+    platform: linux/amd64
+    build:
+      context: ../.github
+      dockerfile: php-minimum/Dockerfile
+    user: "${DDEV_UID}:${DDEV_GID}"
+    working_dir: /var/www/html
+    command: [sleep, infinity]
+    restart: "no"
+    environment:
+      IS_DDEV_PROJECT: "true"
+      DDEV_SITENAME: ${DDEV_SITENAME}
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: ${DDEV_APPROOT}
+    volumes:
+      - ../:/var/www/html:cached
+    healthcheck:
+      test: [CMD, php, -r, 'exit(PHP_VERSION === "8.2.0" ? 0 : 1);']
+      interval: 5s
+      timeout: 5s
+      retries: 12

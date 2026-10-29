@@ -70,7 +70,10 @@ try {
     $run('generated Craft behavior typo', '<?php new \\craft\\behaviors\\CustomFieldsBehavior();', false, ['CustomFieldsBehavior']);
 
     mkdir($temp . '/tests/php-check', 0777, true);
+    mkdir($temp . '/tests/runtime', 0777, true);
+    mkdir($temp . '/.github/scripts', 0777, true);
     copy($root . '/prepare.php', $temp . '/tests/php-check/prepare.php');
+    copy(dirname($root, 2) . '/.github/scripts/prepare-check-dependencies.php', $temp . '/.github/scripts/prepare-check-dependencies.php');
     $prepare = static function() use ($temp): array {
         $process = proc_open([PHP_BINARY, $temp . '/tests/php-check/prepare.php'], [1 => ['pipe', 'w'], 2 => ['redirect', 1]], $pipes);
         $output = stream_get_contents($pipes[1]);
@@ -78,13 +81,14 @@ try {
         return [proc_close($process), $output];
     };
     $manifest = [
+        'name' => 'vendor/plugin',
         'require' => ['php' => '^8.2', 'vendor/production' => '^1.0'],
         'require-dev' => ['vendor/testing' => '^2.0'],
-        'repositories' => [['type' => 'path', 'url' => 'vendor/example']],
     ];
     $original = json_encode($manifest);
     file_put_contents($temp . '/composer.json', $original);
     file_put_contents($temp . '/composer.lock', 'retained development lock');
+    file_put_contents($temp . '/tests/runtime/composer.lock', 'retained integration lock');
     [$status, $output] = $prepare();
     if (PHP_VERSION !== '8.2.0') {
         if ($status === 0 || !str_contains($output, 'requires PHP 8.2.0')) {
@@ -95,24 +99,23 @@ try {
         if ($status !== 0) {
             throw new RuntimeException('Minimum dependency preparation failed: ' . $output);
         }
-        $prepared = json_decode(file_get_contents($temp . '/.cache/php-check/composer.json'), true, 512, JSON_THROW_ON_ERROR);
-        if ($prepared['config']['platform']['php'] !== '8.2.0' || $prepared['require'] !== array_merge($manifest['require'], $manifest['require-dev'])) {
-            throw new RuntimeException('Minimum preparation must preserve requirements and pin the PHP platform.');
+        $prepared = json_decode(file_get_contents($temp . '/.cache/verbb-tests/app/composer.json'), true, 512, JSON_THROW_ON_ERROR);
+        if ($prepared['config']['platform'] !== ['php' => '8.2.0', 'php-64bit' => '8.2.0'] || $prepared['require'] !== array_merge($manifest['require-dev'], [$manifest['name'] => '*'])) {
+            throw new RuntimeException('Static and behavioral checks must use the same minimum dependency manifest.');
         }
         $assertions++;
-        if ($prepared['repositories'][0]['url'] !== $temp . '/vendor/example') {
-            throw new RuntimeException('Local dependency paths must resolve from the project, not the cache directory.');
+        if ($prepared['repositories'][0]['url'] !== '../../..' || $prepared['repositories'][0]['options']['reference'] !== 'config') {
+            throw new RuntimeException('The plugin path must match the integration runtime.');
         }
         $assertions++;
-        if (file_get_contents($temp . '/composer.json') !== $original || file_get_contents($temp . '/composer.lock') !== 'retained development lock' || file_exists($temp . '/.cache/php-check/composer.lock')) {
-            throw new RuntimeException('Minimum preparation must leave development dependencies untouched.');
+        if (file_get_contents($temp . '/composer.json') !== $original || file_get_contents($temp . '/composer.lock') !== 'retained development lock' || file_get_contents($temp . '/.cache/verbb-tests/app/composer.lock') !== 'retained integration lock') {
+            throw new RuntimeException('Minimum preparation must reuse the integration lock and leave development dependencies untouched.');
         }
         $assertions++;
-        $manifest['repositories'][0]['url'] = 'unavailable-package';
-        file_put_contents($temp . '/composer.json', json_encode($manifest));
+        unlink($temp . '/tests/runtime/composer.lock');
         [$status, $output] = $prepare();
-        if ($status === 0 || !str_contains($output, 'Required local dependency is unavailable')) {
-            throw new RuntimeException('Unavailable required packages must fail explicitly: ' . $output);
+        if ($status === 0 || !str_contains($output, 'retained integration dependency lock is required')) {
+            throw new RuntimeException('A missing integration lock must fail instead of resolving fresh dependencies: ' . $output);
         }
         $assertions++;
     }
