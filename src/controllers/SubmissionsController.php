@@ -92,7 +92,7 @@ class SubmissionsController extends Controller
         return $this->redirectToPostedUrl($submission);
     }
 
-    public function actionDeleteSubmission(): Response
+    public function actionDeleteSubmission(): ?Response
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
