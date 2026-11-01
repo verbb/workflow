@@ -57,6 +57,7 @@ return [
   'Changing this may result in submissions being lost in the review process.' => 'Changing this may result in submissions being lost in the review process.',
   'Close' => 'Close',
   'Could not approve and publish.' => 'Could not approve and publish.',
+  'Could not reject submission.' => 'Could not reject submission.',
   'Could not revoke submission.' => 'Could not revoke submission.',
   'Could not save review.' => 'Could not save review.',
   'Could not submit for approval.' => 'Could not submit for approval.',

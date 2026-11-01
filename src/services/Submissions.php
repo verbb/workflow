@@ -279,7 +279,7 @@ class Submissions extends Component
 
             return $this->_saveTransition($currentSubmission, $review, [
                 'isPending' => false,
-            ], 'Could not revoke submission.');
+            ], 'Could not reject submission.');
         })) {
             return false;
         }
@@ -365,7 +365,7 @@ class Submissions extends Component
 
             return $this->_saveTransition($currentSubmission, $review, [
                 'isPending' => false,
-            ], 'Could not revoke submission.');
+            ], 'Could not reject submission.');
         })) {
             return false;
         }

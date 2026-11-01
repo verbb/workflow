@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed an error when a submission couldn’t be deleted from the control panel.
+- Fixed failed rejections showing “Could not revoke submission.” instead of a rejection error.
 
 ## 3.0.25 - 2026-10-22
 
