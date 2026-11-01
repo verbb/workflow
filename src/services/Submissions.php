@@ -128,6 +128,7 @@ class Submissions extends Component
         foreach (array_reverse($submission->getReviews()) as $review) {
             if ($review->role === Review::ROLE_EDITOR) {
                 $completedGroups = [];
+
                 continue;
             }
 
@@ -142,6 +143,7 @@ class Submissions extends Component
                 foreach ($reviewerUserGroups as $group) {
                     if (!isset($completedGroups[$group->uid])) {
                         $groupUid = $group->uid;
+
                         break;
                     }
                 }
@@ -240,10 +242,12 @@ class Submissions extends Component
 
             if (!Workflow::$plugin->getReviews()->saveReview($review)) {
                 $this->_setReviewFailure($currentSubmission, $review);
+
                 return false;
             }
 
             $currentSubmission->clearReviews();
+
             return true;
         })) {
             return false;
@@ -303,6 +307,7 @@ class Submissions extends Component
 
         if (!$this->_withTransitionLock($submission, $entry, $expectedReviewId, function(Submission $currentSubmission) use ($entry, &$review): bool {
             $review = $this->createReview($currentSubmission, $entry);
+
             return $this->_approveSubmission($entry, $currentSubmission, $review);
         })) {
             return false;
@@ -436,6 +441,7 @@ class Submissions extends Component
 
                 if (!Craft::$app->getElements()->saveElement($entry)) {
                     $transaction->rollBack();
+
                     return false;
                 }
 
@@ -443,13 +449,16 @@ class Submissions extends Component
 
                 if (!$this->_approveSubmission($entry, $currentSubmission, $review)) {
                     $transaction->rollBack();
+
                     return false;
                 }
 
                 $transaction->commit();
+
                 return true;
             } catch (Throwable $e) {
                 $transaction->rollBack();
+
                 throw $e;
             }
         });
@@ -504,6 +513,7 @@ class Submissions extends Component
 
         if ($ownsLock && !$mutex->acquire($lockName, self::TRANSITION_LOCK_TIMEOUT)) {
             $this->_setTransitionConflict($submission);
+
             return false;
         }
 
@@ -512,6 +522,7 @@ class Submissions extends Component
 
             if ($currentSubmission === null) {
                 $this->_setTransitionConflict($submission);
+
                 return false;
             }
 
@@ -520,6 +531,7 @@ class Submissions extends Component
             }
 
             $this->_syncTransitionSubmission($submission, $currentSubmission);
+
             return true;
         } finally {
             if ($ownsLock) {
@@ -617,6 +629,7 @@ class Submissions extends Component
     {
         if (!$review->validate()) {
             $this->_setReviewFailure($submission, $review);
+
             return false;
         }
 
@@ -659,6 +672,7 @@ class Submissions extends Component
             }
 
             $this->_restoreTransition($submission, $review, $originalAttributes, $originalSubmissionId, $originalSubmissionUid, $originalReviewId, $originalReviewSubmissionId);
+
             throw $e;
         }
 
