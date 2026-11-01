@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.26 - 2026-11-01
 
 ### Fixed
 - Fixed an error when a submission couldn’t be deleted from the control panel.
