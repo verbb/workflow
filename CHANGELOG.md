@@ -6,6 +6,7 @@
 - Fixed an error when a submission couldn’t be deleted from the control panel.
 - Fixed failed rejections showing “Could not revoke submission.” instead of a rejection error.
 - Fixed deleting a submission from its edit page redirecting to a 404.
+- Fixed `afterGetReviewerUserGroups` event handlers being unable to change the reviewer user groups.
 
 ## 3.0.25 - 2026-10-22
 

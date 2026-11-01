@@ -70,13 +70,14 @@ class Submissions extends Component
 
         // Fire an 'afterGetReviewerUserGroups' event
         if ($this->hasEventHandlers(self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS)) {
-            $this->trigger(
-                self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS,
-                new ReviewerUserGroupsEvent([
-                    'submission' => $submission,
-                    'userGroups' => $userGroups,
-                ])
-            );
+            $event = new ReviewerUserGroupsEvent([
+                'submission' => $submission,
+                'userGroups' => $userGroups,
+            ]);
+
+            $this->trigger(self::EVENT_AFTER_GET_REVIEWER_USER_GROUPS, $event);
+
+            return $event->userGroups ?? [];
         }
 
         return $userGroups;
