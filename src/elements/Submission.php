@@ -218,6 +218,7 @@ class Submission extends Element
         $this->ownerSiteId = $owner->siteId;
     }
 
+    #[AllowedInSandbox]
     public function getOwner(): ?Entry
     {
         if ($this->_owner !== null) {
@@ -336,6 +337,7 @@ class Submission extends Element
         return null;
     }
 
+    #[AllowedInSandbox]
     public function getEditor(): ?User
     {
         // As there will only ever be a single editor in a submission, find it

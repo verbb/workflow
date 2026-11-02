@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Fixed
-- Fixed notification emails failing to send when Craft’s `enableTwigSandbox` setting is on. Customised messages that print `submission.ownerSite` or `review.user` directly need to use `submission.ownerSite.name` or `review.user.name` instead.
+- Fixed notification emails failing to send when Craft’s `enableTwigSandbox` setting is on. Customised messages that print `submission.ownerSite`, `review.user` or `submission.editor` directly are updated automatically.
 
 ## 3.0.26 - 2026-11-01
 

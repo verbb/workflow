@@ -51,7 +51,7 @@ class Workflow extends Plugin
 
     public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
-    public string $schemaVersion = '2.6.1';
+    public string $schemaVersion = '2.6.2';
     public string $minVersionRequired = '1.7.0';
 
 
@@ -253,6 +253,7 @@ class Workflow extends Plugin
                     $event->sender->requireCpRequest();
                     $event->sender->requirePermission('workflow-overview');
                     $event->sender->requirePermission('accessPlugin-workflow');
+
                     return;
                 }
             }
