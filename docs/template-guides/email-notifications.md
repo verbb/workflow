@@ -5,17 +5,22 @@ Workflow provides example email content as part of the plugin, but you of course
 
 To access these, visit Utilities → System Messages.
 
+::: tip
+When Craft’s `enableTwigSandbox` setting is on, these messages can only read the values used in the examples below, plus what Craft allows on its own elements. Print a site or user through a property such as `submission.ownerSite.name` or `review.user.name`, not on its own. You can allow more through `config/twig-sandbox.php`.
+:::
+
 ## When an Editor Submits Entry for Approval
 
 Variable | Description
 --- | ---
 `submission` | A [Submission](docs:developers/submission) element.
+`review` | A [Review](docs:developers/review) model.
 `user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
 
 ### Example Subject
 
 ```twig
-"{{ submission.owner.title }}" has been submitted for approval on {{ siteName }}.
+"{{ submission.ownerTitle }}" has been submitted for approval on {{ submission.ownerSite.name }}.
 ```
 
 ### Example Body
@@ -23,13 +28,13 @@ Variable | Description
 ```twig
 Hey {{ user.friendlyName }},
 
-{{ submission.editor }} has submitted the entry "{{ submission.owner.title }}" for approval on {{ siteName }}.
+{{ review.user.name }} has submitted the entry "{{ submission.ownerTitle }}" for approval on {{ submission.ownerSite.name }}.
 
-{% if submission.editorNotes %}Notes: "{{ submission.editorNotes }}"
+{% if review.notes %}{{ review.roleName }} Notes: "{{ review.notes }}"
 
 {% endif %}To review it please log into your control panel.
 
-{{ submission.getCpEditUrl() }}
+{{ submission.ownerCpUrl }}
 ```
 
 ## When a Reviewer Approves or Rejects an Editor Submission
@@ -43,7 +48,7 @@ Variable | Description
 ### Example Subject
 
 ```twig
-Your submission for "{{ submission.owner.title }}" has been {{ review.approved ? 'approved' : 'rejected' }} on {{ siteName }}.
+Your submission for "{{ submission.ownerTitle }}" has been {{ review.status }} on {{ submission.ownerSite.name }}.
 ```
 
 ### Example Body
@@ -51,13 +56,13 @@ Your submission for "{{ submission.owner.title }}" has been {{ review.approved ?
 ```twig
 Hey {{ user.friendlyName }},
 
-Your submission for {{ submission.owner.title }} has been {{ review.approved ? 'approved' : 'rejected' }} {{ review.dateCreated | date }} on {{ siteName }}.
+Your submission for {{ submission.ownerTitle }} has been {{ review.status }} {{ review.dateCreated | date }} on {{ submission.ownerSite.name }}.
 
-{% if review.notes %}Notes: "{{ review.notes }}"
+{% if review.notes %}{{ review.roleName }} Notes: "{{ review.notes }}"
 
 {% endif %}View your submission by logging into your control panel.
 
-{{ submission.getCpEditUrl() }}
+{{ submission.ownerCpUrl }}
 ```
 
 ## When a Publisher Approves or Rejects an Editor Submission
@@ -65,12 +70,13 @@ Your submission for {{ submission.owner.title }} has been {{ review.approved ? '
 Variable | Description
 --- | ---
 `submission` | A [Submission](docs:developers/submission) element.
+`review` | A [Review](docs:developers/review) model.
 `user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
 
 ### Example Subject
 
 ```twig
-Your submission for "{{ submission.owner.title }}" has been {{ submission.status }} on {{ siteName }}.
+Your submission for "{{ submission.ownerTitle }}" has been {{ review.status }} on {{ submission.ownerSite.name }}.
 ```
 
 ### Example Body
@@ -78,11 +84,11 @@ Your submission for "{{ submission.owner.title }}" has been {{ submission.status
 ```twig
 Hey {{ user.friendlyName }},
 
-Your submission for {{ submission.owner.title }} has been {{ submission.status }} {{ (submission.status == 'approved') ? submission.dateApproved | date : submission.dateRejected | date }} on {{ siteName }}.
+Your submission for {{ submission.ownerTitle }} has been {{ review.status }} {{ review.dateCreated | date }} on {{ submission.ownerSite.name }}.
 
-{% if submission.publisherNotes %}Notes: "{{ submission.publisherNotes }}"
+{% if review.notes %}{{ review.roleName }} Notes: "{{ review.notes }}"
 
 {% endif %}View your submission by logging into your control panel.
 
-{{ submission.getCpEditUrl() }}
+{{ submission.ownerCpUrl }}
 ```

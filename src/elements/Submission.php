@@ -21,6 +21,7 @@ use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\i18n\Locale;
 use craft\models\Site;
+use craft\web\twig\AllowedInSandbox;
 
 use DateTime;
 
@@ -230,11 +231,15 @@ class Submission extends Element
         return null;
     }
 
+    // System messages render in Craft's Twig sandbox when `enableTwigSandbox` is on, so anything
+    // the default messages read has to be allowed explicitly.
+    #[AllowedInSandbox]
     public function getOwnerTitle(): string
     {
         return $this->getOwner()->title ?? '';
     }
 
+    #[AllowedInSandbox]
     public function getOwnerSite(): Site
     {
         if ($owner = $this->getOwner()) {
@@ -281,6 +286,7 @@ class Submission extends Element
         return $entry;
     }
 
+    #[AllowedInSandbox]
     public function getOwnerCpUrl(bool $includeDraft = true): ?string
     {
         if ($includeDraft && $draft = $this->getDraft()) {
@@ -493,6 +499,7 @@ class Submission extends Element
         } elseif ($attribute == 'lastReviewDate') {
             if ($lastReview = $this->getLastReview()) {
                 $formatter = Craft::$app->getFormatter();
+
                 return Html::tag('span', $formatter->asTimestamp($lastReview->dateCreated, Locale::LENGTH_SHORT), [
                     'title' => $formatter->asDatetime($lastReview->dateCreated, Locale::LENGTH_SHORT),
                 ]);

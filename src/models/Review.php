@@ -14,6 +14,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\Html;
 use craft\helpers\Json;
 use craft\helpers\Template;
+use craft\web\twig\AllowedInSandbox;
 
 use DateTime;
 use Throwable;
@@ -71,9 +72,16 @@ class Review extends Model
     public ?int $draftId = null;
     public ?int $userId = null;
     public ?string $role = null;
+
+    // Read by the default system messages, which can render in Craft's Twig sandbox.
+    #[AllowedInSandbox]
     public ?string $status = null;
+
     public ?array $data = null;
+
+    #[AllowedInSandbox]
     public ?DateTime $dateCreated = null;
+
     public ?DateTime $dateUpdated = null;
     public ?string $uid = null;
 
@@ -99,6 +107,7 @@ class Review extends Model
         $this->_notes = $value;
     }
 
+    #[AllowedInSandbox]
     public function getNotes(bool $sanitize = true): ?string
     {
         return $sanitize ? StringHelper::normalizeNotesForOutput($this->_notes) : $this->_notes;
@@ -149,6 +158,7 @@ class Review extends Model
         return null;
     }
 
+    #[AllowedInSandbox]
     public function getUser(): ?User
     {
         if ($this->_user !== null) {
@@ -213,6 +223,7 @@ class Review extends Model
         return self::statuses()[$this->status] ?? ucfirst($this->status);
     }
 
+    #[AllowedInSandbox]
     public function getRoleName(): ?string
     {
         return self::roles()[$this->role] ?? ucfirst($this->role);
@@ -260,6 +271,7 @@ class Review extends Model
                 $data = Json::encode($this->data);
             } catch (Throwable) {
                 $this->addError($attribute, Craft::t('workflow', 'Review content could not be saved.'));
+
                 return;
             }
 

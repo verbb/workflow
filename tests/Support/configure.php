@@ -47,6 +47,9 @@ $mailer->fileTransportPath = CRAFT_STORAGE_PATH . '/test-mail';
 $mailer->on(yii\mail\BaseMailer::EVENT_AFTER_SEND, function($event) use (&$out) {
     $out['mail'][] = ['to' => $event->message->getTo(), 'cc' => $event->message->getCc(), 'replyTo' => $event->message->getReplyTo(), 'subject' => $event->message->getSubject(), 'sent' => $event->isSuccessful];
 });
+if ($context['twigSandbox'] ?? false) {
+    Craft::$app->getConfig()->getGeneral()->enableTwigSandbox = true;
+}
 if ($context['notifications'] ?? false) {
     foreach (['editorNotifications', 'reviewerNotifications', 'publisherNotifications', 'publishedAuthorNotifications'] as $key) {
         $settings->$key = ($context['notifications'][$key] ?? true);

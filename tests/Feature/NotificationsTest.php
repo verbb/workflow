@@ -65,3 +65,29 @@ it('can notify editors of reviewer approval with reviewer reply details', functi
     expect(array_keys($editorMail['replyTo']))->toBe(['reviewerOne@example.test']);
     expect(array_keys($editorMail['cc']))->toBe(['reviewerOne@example.test']);
 });
+
+it('sends every default notification with the Twig sandbox enabled', function() {
+    $context = ['reviewStages' => 1, 'notifications' => true, 'reviewerApprovalNotifications' => true, 'twigSandbox' => true];
+
+    $submitted = workflowSubmission('draft', context: $context);
+    expect(workflowRecipients($submitted))->toBe(['reviewerOne@example.test']);
+
+    $reviewed = workflowAction($submitted, 'approve-review', 'reviewerOne');
+    workflowAssertSuccess($reviewed);
+    expect(workflowRecipients($reviewed))->toContain('editor@example.test', 'publisher@example.test');
+
+    $published = workflowApprove($reviewed);
+    workflowAssertSuccess($published);
+    expect($published['mail'])->toHaveCount(2);
+
+    $rejected = workflowAction(workflowSubmission('frontend', context: ['notifications' => true, 'twigSandbox' => true]), 'reject-submission', 'publisher');
+    workflowAssertSuccess($rejected);
+    expect(workflowRecipients($rejected))->toBe(['editor@example.test']);
+
+    foreach ([$submitted, $reviewed, $published, $rejected] as $result) {
+        foreach ($result['mail'] as $mail) {
+            expect($mail['sent'])->toBeTrue();
+            expect($mail['subject'])->not->toContain('{{');
+        }
+    }
+});
