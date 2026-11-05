@@ -48,6 +48,7 @@ class Emails extends Component
         if ($reviewerUserGroup === null) {
             if (!Workflow::$plugin->getSettings()->publisherNotifications) {
                 Workflow::info('Publisher notifications are disabled.');
+
                 return;
             }
 
@@ -72,6 +73,7 @@ class Emails extends Component
 
         if (!$event->isValid) {
             Workflow::info('Reviewer notification was cancelled by event.');
+
             return;
         }
 
@@ -99,6 +101,7 @@ class Emails extends Component
 
                 if (!$event->isValid) {
                     Workflow::info('Reviewer notification was cancelled by event.');
+
                     continue;
                 }
 
@@ -134,6 +137,7 @@ class Emails extends Component
 
         if (!$event->isValid) {
             Workflow::info('Publisher notification was cancelled by event.');
+
             return;
         }
 
@@ -161,6 +165,7 @@ class Emails extends Component
 
                 if (!$event->isValid) {
                     Workflow::info('Publisher notification was cancelled by event.');
+
                     continue;
                 }
 
@@ -209,6 +214,7 @@ class Emails extends Component
 
         if (!$event->isValid) {
             Workflow::info('Editor notification was cancelled by event.');
+
             return;
         }
 
@@ -271,6 +277,7 @@ class Emails extends Component
 
             if (!$event->isValid) {
                 Workflow::info('Editor notification was cancelled by event.');
+
                 return;
             }
 
@@ -295,6 +302,12 @@ class Emails extends Component
     {
         Workflow::info('Preparing published author notification.');
 
+        if (!$entry->getAuthor()) {
+            Workflow::info('Published Author notification skipped, as the entry has no author.');
+
+            return;
+        }
+
         $settings = Workflow::$plugin->getSettings();
 
         // Fire a 'prepareEditorEmail' event
@@ -306,6 +319,7 @@ class Emails extends Component
 
         if (!$event->isValid) {
             Workflow::info('Published Author notification was cancelled by event.');
+
             return;
         }
 
@@ -328,6 +342,7 @@ class Emails extends Component
 
             if (!$event->isValid) {
                 Workflow::info('Published Author notification was cancelled by event.');
+
                 return;
             }
 
