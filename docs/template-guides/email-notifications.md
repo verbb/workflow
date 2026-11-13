@@ -13,9 +13,9 @@ When Craft’s `enableTwigSandbox` setting is on, these messages can only read t
 
 Variable | Description
 --- | ---
-`submission` | A [Submission](docs:developers/submission) element.
-`review` | A [Review](docs:developers/review) model.
-`user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
+`submission` | A [Submission](docs:reference/submission) element.
+`review` | A [Review](docs:reference/review) model.
+`user` | A [User](https://docs.craftcms.com/api/v5/craft-elements-user.html) element.
 
 ### Example Subject
 
@@ -41,9 +41,9 @@ Hey {{ user.friendlyName }},
 
 Variable | Description
 --- | ---
-`submission` | A [Submission](docs:developers/submission) element.
-`review` | A [Review](docs:developers/review) model.
-`user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
+`submission` | A [Submission](docs:reference/submission) element.
+`review` | A [Review](docs:reference/review) model.
+`user` | A [User](https://docs.craftcms.com/api/v5/craft-elements-user.html) element.
 
 ### Example Subject
 
@@ -69,9 +69,9 @@ Your submission for {{ submission.ownerTitle }} has been {{ review.status }} {{ 
 
 Variable | Description
 --- | ---
-`submission` | A [Submission](docs:developers/submission) element.
-`review` | A [Review](docs:developers/review) model.
-`user` | A [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) element.
+`submission` | A [Submission](docs:reference/submission) element.
+`review` | A [Review](docs:reference/review) model.
+`user` | A [User](https://docs.craftcms.com/api/v5/craft-elements-user.html) element.
 
 ### Example Subject
 

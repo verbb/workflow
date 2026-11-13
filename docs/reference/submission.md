@@ -18,7 +18,7 @@ The ID of the submission.
 
 **Type:** `craft\elements\Entry|null`
 
-The [Entry](https://docs.craftcms.com/api/v4/craft-elements-entry.html) this submission was made on.
+The [Entry](https://docs.craftcms.com/api/v5/craft-elements-entry.html) this submission was made on.
 :::
 
 ::: reference
@@ -26,7 +26,7 @@ The [Entry](https://docs.craftcms.com/api/v4/craft-elements-entry.html) this sub
 
 **Type:** `int|null`
 
-The [Entry](https://docs.craftcms.com/api/v4/craft-elements-entry.html) ID this submission was made on.
+The [Entry](https://docs.craftcms.com/api/v5/craft-elements-entry.html) ID this submission was made on.
 :::
 
 ::: reference
@@ -69,7 +69,7 @@ The date this submission was submitted by an editor.
 
 **Returns:** `array`
 
-Returns a collection of [Review](docs:developers/review) objects.
+Returns a collection of [Review](docs:reference/review) objects.
 :::
 
 ::: reference
@@ -77,19 +77,19 @@ Returns a collection of [Review](docs:developers/review) objects.
 
 **Returns:** `verbb\workflow\models\Review|null`
 
-Returns the most recent (last-submitted) [Review](docs:developers/review).
+Returns the most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 
 
-In additon, there are several other attributes and functions that are set at the submission level, but they in fact target the last (current) [Review](docs:developers/review). They are available here for convenience.
+In addition, there are several other attributes and functions that are set at the submission level, but they in fact target the last (current) [Review](docs:reference/review). They are available here for convenience.
 
 ::: reference
 ### `editor`
 
 **Type:** `craft\elements\User|null`
 
-The user as the editor role, if applicable to the most recent (last-submitted) [Review](docs:developers/review).
+The user as the editor role, if applicable to the most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -97,7 +97,7 @@ The user as the editor role, if applicable to the most recent (last-submitted) [
 
 **Type:** `int|null`
 
-The ID of the user as the editor role, if applicable to the most recent (last-submitted) [Review](docs:developers/review).
+The ID of the user as the editor role, if applicable to the most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -105,7 +105,7 @@ The ID of the user as the editor role, if applicable to the most recent (last-su
 
 **Type:** `craft\elements\User|null`
 
-The user as the reviewer role, if applicable to the most recent (last-submitted) [Review](docs:developers/review).
+The user as the reviewer role, if applicable to the most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -113,7 +113,7 @@ The user as the reviewer role, if applicable to the most recent (last-submitted)
 
 **Type:** `int|null`
 
-The ID of the ruser as the eviewer role, if applicable to the most recent (last-submitted) [Review](docs:developers/review).
+The ID of the user as the reviewer role, if applicable to the most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -121,7 +121,7 @@ The ID of the ruser as the eviewer role, if applicable to the most recent (last-
 
 **Type:** `craft\elements\User|null`
 
-The user as the publisher role, if applicable to the most recent (last-submitted) [Review](docs:developers/review).
+The user as the publisher role, if applicable to the most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -129,7 +129,7 @@ The user as the publisher role, if applicable to the most recent (last-submitted
 
 **Type:** `int|null`
 
-The ID of the user as the publisher role, if applicable to the most recent (last-submitted) [Review](docs:developers/review).
+The ID of the user as the publisher role, if applicable to the most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -137,7 +137,7 @@ The ID of the user as the publisher role, if applicable to the most recent (last
 
 **Type:** `string|null`
 
-The notes of this most recent (last-submitted) [Review](docs:developers/review).
+The notes of this most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -145,7 +145,7 @@ The notes of this most recent (last-submitted) [Review](docs:developers/review).
 
 **Type:** `string|null`
 
-The status of this most recent (last-submitted) [Review](docs:developers/review).
+The status of this most recent (last-submitted) [Review](docs:reference/review).
 :::
 
 ::: reference
@@ -153,5 +153,5 @@ The status of this most recent (last-submitted) [Review](docs:developers/review)
 
 **Type:** `string|null`
 
-The role of this most recent (last-submitted) [Review](docs:developers/review).
+The role of this most recent (last-submitted) [Review](docs:reference/review).
 :::

@@ -34,7 +34,7 @@ The ID of the submission this review is related to.
 
 **Type:** `craft\base\ElementInterface|null`
 
-The [Entry](https://docs.craftcms.com/api/v4/craft-elements-entry.html) this submission was made on.
+The [Entry](https://docs.craftcms.com/api/v5/craft-elements-entry.html) this submission was made on.
 :::
 
 ::: reference
@@ -42,7 +42,7 @@ The [Entry](https://docs.craftcms.com/api/v4/craft-elements-entry.html) this sub
 
 **Type:** `int|null`
 
-The ID of the [Entry](https://docs.craftcms.com/api/v4/craft-elements-entry.html) this submission was made on.
+The ID of the [Entry](https://docs.craftcms.com/api/v5/craft-elements-entry.html) this submission was made on.
 :::
 
 ::: reference
@@ -50,7 +50,7 @@ The ID of the [Entry](https://docs.craftcms.com/api/v4/craft-elements-entry.html
 
 **Type:** `int|null`
 
-The ID for the [Entry Draft](https://docs.craftcms.com/api/v4/craft-elements-entry.html) this submission was made on (if any).
+The ID for the [Entry Draft](https://docs.craftcms.com/api/v5/craft-elements-entry.html) this submission was made on (if any).
 :::
 
 ::: reference
@@ -58,7 +58,7 @@ The ID for the [Entry Draft](https://docs.craftcms.com/api/v4/craft-elements-ent
 
 **Type:** `craft\elements\User|null`
 
-The [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) this review is related to.
+The [User](https://docs.craftcms.com/api/v5/craft-elements-user.html) this review is related to.
 :::
 
 ::: reference
@@ -66,7 +66,7 @@ The [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) this revie
 
 **Type:** `int|null`
 
-The ID of the [User](https://docs.craftcms.com/api/v4/craft-elements-user.html) this review is related to.
+The ID of the [User](https://docs.craftcms.com/api/v5/craft-elements-user.html) this review is related to.
 :::
 
 ::: reference

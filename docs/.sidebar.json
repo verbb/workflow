@@ -39,10 +39,24 @@
         "title": "Developers",
         "collapsable": false,
         "children": [
-            "developers/submission",
-            "developers/review",
             "developers/events",
-            "developers/graphql"
+            "developers/custom-actions"
+        ]
+    },
+    {
+        "title": "GraphQL",
+        "collapsable": false,
+        "children": [
+            "graphql/queries",
+            "graphql/interfaces-types"
+        ]
+    },
+    {
+        "title": "Reference",
+        "collapsable": false,
+        "children": [
+            "reference/submission",
+            "reference/review"
         ]
     }
 ]
