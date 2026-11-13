@@ -12,7 +12,7 @@ return [
 ];
 ```
 
-All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults.
+All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults. You can also manage these settings in the control panel under **Workflow → Settings**.
 
 ## Configuration Options
 
@@ -200,6 +200,3 @@ return [
     ]
 ];
 ```
-
-## Control Panel
-You can also manage configuration settings through the Control Panel by visiting Settings → Workflow.

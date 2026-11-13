@@ -15,7 +15,8 @@
             "feature-tour/setup",
             "feature-tour/editors",
             "feature-tour/publishers",
-            "feature-tour/reviewers"
+            "feature-tour/reviewers",
+            "feature-tour/permissions"
         ]
     },
     {

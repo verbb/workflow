@@ -18,6 +18,6 @@ composer require verbb/workflow && php craft plugin/install workflow
 ```
 
 ## Licensing
-You can try Workflow in a development environment for as long as you like. Once your site goes live, you are required to purchase a license for the plugin.
+You can try Workflow in a development environment for as long as you like. Once your site goes live, you are required to purchase a licence for the plugin.
 
-For more information, see [Craft's Commercial Plugin Licensing](https://craftcms.com/docs/4.x/plugins.html#commercial-plugin-licensing).
+For more information, see [Craft's Commercial Plugin Licensing](https://craftcms.com/docs/5.x/system/plugins.html#commercial-plugin-licensing).

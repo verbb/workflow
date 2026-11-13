@@ -78,8 +78,10 @@ Create another User Group called "Publisher" with the following settings:
         - ☐ Delete other users’ drafts
 
 **Workflow**
-- ☑ Overview
-- ☐ Settings
+- ☑ Submissions
+- ☐ Approve own submissions
+
+[Permissions](docs:feature-tour/permissions) explains what each Workflow permission allows.
 
 You can name either of these groups whatever you like, but we'll refer to them as Editor/Reviewer/Publisher throughout the guide.
 
