@@ -36,3 +36,10 @@ it('publishes the publishers edits with the approval snapshot', function() {
     expect(array_values($result['history'][0]['data']['fields']))->toContain('Final publisher edit');
     expect(array_values($result['history'][1]['data']['fields']))->toContain('Revised summary');
 });
+
+it('locks only the submitted draft form and leaves the live entry editable', function(string $user, bool $draftStatic) {
+    $fixture = workflowSubmission('draft');
+    $result = workflowRequest(['target' => $fixture['target'], 'siteId' => $fixture['target']['siteId'], 'user' => $user, 'context' => $fixture['context'] ?? [], 'inspectForms' => true]);
+    expect($result['exception'] ?? null)->toBeNull();
+    expect($result['formStatic'])->toBe(['canonical' => false, 'entry' => $draftStatic]);
+})->with([['editor', true], ['publisher', false], ['admin', false]]);

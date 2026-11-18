@@ -81,6 +81,7 @@ class Service extends Component
         if ($action) {
             if (!$currentUser || ($submissionId && !$submission)) {
                 $this->_denyEntrySave($event, Craft::t('workflow', 'Unable to perform this Workflow action.'));
+
                 return;
             }
 
@@ -91,6 +92,7 @@ class Service extends Component
 
             if (!$appliesDraft && !$this->_acquireEntryActionLock($lockName)) {
                 $this->_denyEntrySave($event, Craft::t('workflow', 'This submission is already being updated. Please reload and try again.'));
+
                 return;
             }
 
@@ -103,6 +105,7 @@ class Service extends Component
 
                 if (!$submission) {
                     $this->_denyEntrySave($event, Craft::t('workflow', 'Unable to perform this Workflow action.'));
+
                     return;
                 }
             } elseif ($action === 'save-submission' && $event->sender->getCanonicalId()) {
@@ -117,12 +120,14 @@ class Service extends Component
 
                 if ($activeSubmission) {
                     $this->_denyEntrySave($event, Craft::t('workflow', 'This submission changed before the action could be completed. Please reload and try again.'));
+
                     return;
                 }
             }
 
             if ($submission && Workflow::$plugin->getSubmissions()->getLatestReviewId($submission) !== $this->_expectedReviewId) {
                 $this->_denyEntrySave($event, Craft::t('workflow', 'This submission changed before the action could be completed. Please reload and try again.'));
+
                 return;
             }
 
@@ -134,6 +139,7 @@ class Service extends Component
 
             if (!$actionAllowed) {
                 $this->_denyEntrySave($event, Craft::t('workflow', 'You are not allowed to perform this Workflow action.'));
+
                 return;
             }
         }
@@ -254,11 +260,13 @@ class Service extends Component
 
             if (!$currentUser || !Workflow::$plugin->getSubmissionPermissions()->canSubmit($currentUser, $event->element, $submission)) {
                 $this->_releaseEntryActionLock();
+
                 return;
             }
 
             if (!Workflow::$plugin->getSubmissions()->saveSubmission($event->element, $submission, $this->_expectedReviewId)) {
                 $this->_releaseEntryActionLock();
+
                 throw new InvalidElementException($event->element, Craft::t('workflow', 'Could not submit for approval.'));
             }
 
@@ -383,6 +391,7 @@ class Service extends Component
             ];
         } catch (Throwable $e) {
             $mutex->release($lockName);
+
             throw $e;
         }
     }
@@ -414,12 +423,14 @@ class Service extends Component
         } catch (Throwable $e) {
             $this->_releaseDraftApprovalLock($context);
             $this->_draftApproval = null;
+
             throw $e;
         }
 
         if (!$approved) {
             $this->_releaseDraftApprovalLock($context);
             $this->_draftApproval = null;
+
             throw new InvalidElementException($event->element, Craft::t('workflow', 'Could not approve and publish.'));
         }
 
@@ -472,7 +483,7 @@ class Service extends Component
         $submission = Submission::find()
             ->ownerId($event->element->getCanonicalId())
             ->ownerSiteId($event->element->siteId)
-            ->ownerDraftId($event->element->draftId)
+            ->ownerDraftId($event->element->draftId ?? ':empty:')
             ->limit(1)
             ->isComplete(false)
             ->isPending(true)
@@ -525,6 +536,7 @@ class Service extends Component
                 if ($submission->status === 'pending' && $submission->editorId == $currentUser->id) {
                     if (Workflow::$plugin->getSubmissions()->canUserApproveOwnSubmission($currentUser, $submission)) {
                         $pendingOwnAllowed = true;
+
                         break;
                     }
                 }
@@ -532,10 +544,12 @@ class Service extends Component
 
             if ($pendingSubmissionsFromOthers || $pendingOwnAllowed) {
                 $event->html .= $this->_renderEntrySidebarPanel($entry, 'publisher-pane');
+
                 return;
             }
 
             $event->html .= $this->_renderEntrySidebarPanel($entry, 'editor-pane');
+
             return;
         }
 
@@ -561,10 +575,12 @@ class Service extends Component
 
                 if ($pendingSubmissions) {
                     $event->html .= $this->_renderEntrySidebarPanel($entry, 'reviewer-pane');
+
                     return;
                 }
 
                 $event->html .= $this->_renderEntrySidebarPanel($entry, 'editor-pane');
+
                 return;
             }
         }
@@ -572,12 +588,14 @@ class Service extends Component
         // Show the sidebar submission button for editors
         if ($currentUser->isInGroup($editorGroup)) {
             $event->html .= $this->_renderEntrySidebarPanel($entry, 'editor-pane');
+
             return;
         }
 
         // Show another information panel for publishers (if there's submission info)
         if ($currentUser->isInGroup($publisherGroup)) {
             $event->html .= $this->_renderEntrySidebarPanel($entry, 'publisher-pane');
+
             return;
         }
 
@@ -588,6 +606,7 @@ class Service extends Component
         foreach (Workflow::$plugin->getSubmissions()->getReviewerUserGroups($entry->site, $lastSubmission) as $userGroup) {
             if ($currentUser->isInGroup($userGroup)) {
                 $event->html .= $this->_renderEntrySidebarPanel($entry, 'reviewer-pane');
+
                 return;
             }
         }
@@ -677,6 +696,7 @@ class Service extends Component
         }
 
         $this->_entryActionLockName = $lockName;
+
         return true;
     }
 

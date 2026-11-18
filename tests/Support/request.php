@@ -213,6 +213,18 @@ if ($target) {
         $out['menu'] = $entry ? $p->getActions()->getPublisherActionsMenuItems($entry, $submission, $submission->getLastReview()) : [];
     }
     $canonical = craft\elements\Entry::find()->id($target['canonicalId'])->siteId($target['siteId'])->status(null)->one();
+    if ($input['inspectForms'] ?? false) {
+        // Record whether Workflow made each edit form static, after its own form handler has run.
+        $formStatic = null;
+        yii\base\Event::on(craft\models\FieldLayout::class, craft\models\FieldLayout::EVENT_CREATE_FORM, function(craft\events\CreateFieldLayoutFormEvent $event) use (&$formStatic) {
+            $formStatic = $event->static;
+        });
+        foreach (['canonical' => $canonical, 'entry' => $entry] as $key => $element) {
+            $formStatic = null;
+            $element?->getFieldLayout()->createForm($element);
+            $out['formStatic'][$key] = $formStatic;
+        }
+    }
     $out['canonical'] = $canonical ? ['id' => $canonical->id, 'title' => $canonical->title, 'enabled' => $canonical->enabled, 'enabledForSite' => $canonical->enabledForSite, 'summary' => $canonical->getFieldValue('summary'), 'status' => $canonical->getStatus()] : null;
     if ($context['complexContent'] ?? false) {
         $out['content'] = $canonical ? ['related' => $canonical->getFieldValue('relatedEntries')->ids(), 'details' => $canonical->getFieldValue('details'), 'blocks' => array_map(fn($block) => ['title' => $block->title, 'summary' => $block->getFieldValue('summary')], $canonical->getFieldValue('body')->all())] : null;
