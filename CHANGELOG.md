@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.28 - 2026-11-21
 
 ### Fixed
 - Fixed the live entry becoming read-only for everyone, including admins, while one of its drafts had a pending submission and “Lock Draft Submissions” was on. ([#819](https://github.com/verbb/workflow/issues/819))
