@@ -4,12 +4,20 @@ import { defineConfig } from 'vite';
 
 const root = resolve(import.meta.dirname, 'src/web/assets/cp');
 
-export default defineConfig(({ mode }) => {
-    const isCssBuild = mode === 'css';
+// `css` and `js` build Workflow's own assets for every page. `setup` builds the Plugin Kit components for the
+// first-run checklist separately, so only the Submissions page loads them, and only until the first submission.
+const inputs = {
+    css: 'src/workflow.css',
+    js: 'src/workflow.js',
+    setup: 'src/setup.js',
+};
 
-    if (!isCssBuild && mode !== 'js') {
+export default defineConfig(({ mode }) => {
+    if (!inputs[mode]) {
         throw new Error(`Unknown asset build mode: ${mode}`);
     }
+
+    const isCssBuild = mode === 'css';
 
     let output;
 
@@ -19,6 +27,7 @@ export default defineConfig(({ mode }) => {
         };
     } else {
         output = {
+            assetFileNames: '[name][extname]',
             codeSplitting: false,
             entryFileNames: '[name].js',
             format: 'iife',
@@ -27,16 +36,17 @@ export default defineConfig(({ mode }) => {
 
     return {
         root,
-        input: resolve(root, `src/workflow.${isCssBuild ? 'css' : 'js'}`),
+        input: resolve(root, inputs[mode]),
         build: {
             outDir: resolve(root, 'dist'),
             emptyOutDir: isCssBuild,
             assetsDir: '',
             cssMinify: 'esbuild',
-            cssTarget: ['chrome61', 'safari10'],
+            // Plugin Kit targets the browsers Craft 5's control panel supports, so its bundle keeps modern syntax.
+            cssTarget: mode === 'setup' ? undefined : ['chrome61', 'safari10'],
             minify: 'oxc',
             sourcemap: !isCssBuild,
-            target: 'es2015',
+            target: mode === 'setup' ? 'es2022' : 'es2015',
             rolldownOptions: {
                 output,
             },

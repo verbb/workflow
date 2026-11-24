@@ -11,9 +11,12 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\db\Query;
 use craft\db\Table;
 use craft\elements\Entry;
 use craft\elements\User;
+use craft\enums\CmsEdition;
+use craft\helpers\Sequence;
 use craft\models\UserGroup;
 
 use Throwable;
@@ -26,6 +29,7 @@ class Submissions extends Component
     public const EVENT_AFTER_GET_REVIEWER_USER_GROUPS = 'afterGetReviewerUserGroups';
     public const EVENT_DEFINE_PUBLISHER_SELF_APPROVAL = 'definePublisherSelfApproval';
     public const TRANSITION_LOCK_TIMEOUT = 5;
+    public const FIRST_SUBMISSION_SEQUENCE = 'workflow:firstSubmission';
 
 
     // Properties
@@ -42,6 +46,66 @@ class Submissions extends Component
     {
         /* @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::$app->getElements()->getElementById($id, Submission::class, $siteId);
+    }
+
+    /**
+     * Returns what the Submissions page's first-run checklist needs, or null once a submission has ever been made.
+     *
+     * Each role reports whether any site has its group, the distinct group names and how many sites have one. Workflow
+     * only runs on a site that has both groups, so one site is enough to move on to the first submission.
+     */
+    public function getSetupSteps(): ?array
+    {
+        if ($this->hasHadSubmission()) {
+            return null;
+        }
+
+        $settings = Workflow::$plugin->getSettings();
+        $sites = Craft::$app->getSites()->getAllSites();
+        $roles = ['editor' => [], 'publisher' => []];
+
+        foreach ($sites as $site) {
+            // A group deleted since it was chosen comes back as null, so the step shows as not done again.
+            $roles['editor'][] = $settings->getEditorUserGroup($site);
+            $roles['publisher'][] = $settings->getPublisherUserGroup($site);
+        }
+
+        $steps = [
+            'siteCount' => count($sites),
+            'hasUserGroups' => (bool)Craft::$app->getUserGroups()->getAllGroups(),
+            'canCreateUserGroups' => Craft::$app->edition === CmsEdition::Pro,
+        ];
+
+        foreach ($roles as $role => $groups) {
+            $groups = array_filter($groups);
+
+            $steps[$role] = [
+                'done' => (bool)$groups,
+                'siteCount' => count($groups),
+                'groupNames' => array_values(array_unique(array_map(fn(UserGroup $group) => $group->name, $groups))),
+            ];
+        }
+
+        return $steps;
+    }
+
+    public function hasHadSubmission(): bool
+    {
+        // Trashed submissions keep their rows, but garbage collection removes them later, so the first one is also counted.
+        return (int)Sequence::current(self::FIRST_SUBMISSION_SEQUENCE) > 0
+            || (new Query())->from('{{%workflow_submissions}}')->exists();
+    }
+
+    public function recordFirstSubmission(): void
+    {
+        try {
+            if ((int)Sequence::current(self::FIRST_SUBMISSION_SEQUENCE) === 0) {
+                Sequence::next(self::FIRST_SUBMISSION_SEQUENCE);
+            }
+        } catch (Throwable $e) {
+            // Only the first-run checklist reads this, and the submission itself is already saved.
+            Workflow::error('Could not record the first submission: ' . $e->getMessage());
+        }
     }
 
     public function getLatestReviewId(Submission $submission): ?int

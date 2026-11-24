@@ -479,3 +479,10 @@ body.rtl .workflow-compare-review-content .field > .status-badge {
 .workflow-settings-pane .settings-content-pane {
     padding: 20px;
 }
+
+/* The first-run checklist is its own card, so the Submissions page drops Craft's content pane around it. */
+.workflow-bare-content #content.content-pane {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+}

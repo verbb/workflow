@@ -2,9 +2,10 @@
     "name": "workflow",
     "private": true,
     "scripts": {
-        "build": "npm run build:css && npm run build:js",
+        "build": "npm run build:css && npm run build:js && npm run build:setup",
         "build:css": "vite build --mode css",
         "build:js": "vite build --mode js",
+        "build:setup": "vite build --mode setup",
         "test:browser": "ddev test --filter=\"installs the plugin\" && playwright test",
         "test:browser:installed": "playwright test"
     },
@@ -12,5 +13,8 @@
         "esbuild": "^0.28.2",
         "playwright": "1.61.1",
         "vite": "^8.3.5"
+    },
+    "dependencies": {
+        "@verbb/plugin-kit-web": "file:../../../plugin-kit/plugin-kit/plugin-kit-web"
     }
 }

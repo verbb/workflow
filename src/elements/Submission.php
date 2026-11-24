@@ -467,6 +467,11 @@ class Submission extends Element
 
         $this->id = $record->id;
 
+        if ($isNew) {
+            // Ends the first-run checklist for good, even once this submission is deleted.
+            Workflow::$plugin->getSubmissions()->recordFirstSubmission();
+        }
+
         parent::afterSave($isNew);
     }
 

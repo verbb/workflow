@@ -1,0 +1,88 @@
+{# Workflow's home until the first submission, in place of the empty Submissions index. It keeps the index's title,
+   crumbs and subnav, and like the index it has no plugin footer. #}
+{% extends '_layouts/cp' %}
+
+{% do view.registerAssetBundle('verbb\\workflow\\web\\assets\\cp\\WorkflowAsset') %}
+{% do view.registerAssetBundle('verbb\\workflow\\web\\assets\\cp\\SetupAsset') %}
+
+{# The checklist is its own card, so it sits on the page background instead of inside Craft's content pane. #}
+{% set bodyClass = (bodyClass ?? [])|explodeClass|push('workflow-bare-content') %}
+
+{% block content %}
+{% set pluginName = craft.workflow.getPluginName()|t('workflow') %}
+{% set settingsUrl = cpUrl('workflow/settings/general') %}
+{% set allowAdminChanges = craft.app.config.general.allowAdminChanges %}
+{% set isAdmin = currentUser.admin %}
+{% set canChooseGroups = isAdmin and allowAdminChanges %}
+{% set canCreateGroups = canChooseGroups and setup.canCreateUserGroups %}
+
+{# Each role's step: what it does until a group is chosen, and what was chosen once it is. #}
+{% set roles = {
+    editor: {
+        heading: 'Choose the editor group'|t('workflow'),
+        about: 'Editors can edit entries and submit them for review, but can’t publish them.'|t('workflow'),
+        chosen: 'Members of {group} submit their changes for review.'|t('workflow', { group: setup.editor.groupNames|first }),
+        button: 'Choose editor group'|t('workflow'),
+    },
+    publisher: {
+        heading: 'Choose the publisher group'|t('workflow'),
+        about: 'Publishers are notified of new submissions and approve them to go live.'|t('workflow'),
+        chosen: 'Members of {group} approve submissions and publish them.'|t('workflow', { group: setup.publisher.groupNames|first }),
+        button: 'Choose publisher group'|t('workflow'),
+    },
+} %}
+
+<pk-setup-checklist
+    heading="{{ 'Set Up Content Approval'|t('workflow') }}"
+    count-label="{{ '{done} of {total} done'|t('workflow') }}"
+    done-label="{{ '(done)'|t('workflow') }}"
+>
+    <span slot="intro">
+        {{ 'Entries your editors submit for review will land here. Each step ticks itself off when {name} sees it done.'|t('workflow', { name: pluginName }) }}
+        {% if not isAdmin and (not setup.editor.done or not setup.publisher.done) %}
+            {{ 'An admin can finish these steps.'|t('workflow') }}
+        {% endif %}
+    </span>
+
+    {% for handle, role in roles %}
+        {% set step = setup[handle] %}
+
+        <pk-setup-step heading="{{ role.heading }}"{{ step.done ? ' done' }}>
+            {% if not step.done %}
+                {{ role.about }}
+
+                {# Workflow can only offer groups that exist, and a fresh Craft install has none. #}
+                {% if not setup.hasUserGroups %}
+                    {{ 'Create a user group for them first.'|t('workflow') }}
+                {% endif %}
+
+                {# Workflow's settings live in project config, so they can't be saved here. #}
+                {% if isAdmin and not allowAdminChanges %}
+                    {{ 'Choose it where admin changes are allowed, then deploy.'|t('workflow') }}
+                {% endif %}
+            {% elseif step.groupNames|length == 1 and step.siteCount == setup.siteCount %}
+                {{ role.chosen }}
+            {% else %}
+                {# Workflow stays off on a site until it has both groups. #}
+                {{ 'Set for {count} of {total} sites.'|t('workflow', { count: step.siteCount, total: setup.siteCount }) }}
+            {% endif %}
+
+            {% if not setup.hasUserGroups %}
+                {% if canCreateGroups %}
+                    <a slot="action" class="btn" href="{{ cpUrl('settings/users/groups/new') }}">{{ 'Create user group'|t('workflow') }}</a>
+                {% endif %}
+            {% elseif canChooseGroups %}
+                <a slot="action" class="btn" href="{{ settingsUrl }}">{{ role.button }}</a>
+            {% endif %}
+
+            {% if canChooseGroups %}
+                <a slot="change" href="{{ settingsUrl }}">{{ 'Change'|t('workflow') }}</a>
+            {% endif %}
+        </pk-setup-step>
+    {% endfor %}
+
+    <pk-setup-step heading="{{ 'Submit an entry for review'|t('workflow') }}">
+        {{ 'An editor saves a draft and submits it from the entry’s sidebar, ready for a publisher to approve.'|t('workflow') }}
+    </pk-setup-step>
+</pk-setup-checklist>
+{% endblock %}

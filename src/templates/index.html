@@ -1,8 +1,11 @@
 {% do view.registerAssetBundle('verbb\\workflow\\web\\assets\\cp\\WorkflowAsset') %}
 
-{% extends '_layouts/elementindex' %}
-
 {% requirePermission 'workflow-overview' %}
+
+{# Until the first submission, the page is Workflow's setup checklist instead of an empty Submissions index. #}
+{% set setup = craft.workflow.getPlugin().getSubmissions().getSetupSteps() %}
+
+{% extends setup ? 'workflow/submissions/_setup' : '_layouts/elementindex' %}
 
 {% set crumbs = [
     { label: 'Workflow' | t('workflow'), url: url('workflow') },
