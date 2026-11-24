@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.1.0 - 2026-11-24
 
 ### Added
 - Added a setup checklist to the Submissions page on new installs, shown until the first submission, which ticks off choosing the editor and publisher groups and links to where each is set.
