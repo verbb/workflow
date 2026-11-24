@@ -106,6 +106,7 @@ return [
   'Notes are required' => 'Notes are required',
   'Notifications' => 'Notifications',
   'Number of Reviewers' => 'Number of Reviewers',
+  'Open entries' => 'Open entries',
   'Pending' => 'Pending',
   'Permissions' => 'Permissions',
   'Plugin Name' => 'Plugin Name',

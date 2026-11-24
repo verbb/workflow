@@ -83,6 +83,11 @@
 
     <pk-setup-step heading="{{ 'Submit an entry for review'|t('workflow') }}">
         {{ 'An editor saves a draft and submits it from the entry’s sidebar, ready for a publisher to approve.'|t('workflow') }}
+
+        {# Submissions are only made from an entry, and the sidebar only shows once both groups are chosen. #}
+        {% if setup.editor.done and setup.publisher.done and craft.app.entries.getEditableSections() %}
+            <a slot="action" class="btn" href="{{ cpUrl('entries') }}">{{ 'Open entries'|t('workflow') }}</a>
+        {% endif %}
     </pk-setup-step>
 </pk-setup-checklist>
 {% endblock %}

@@ -19,6 +19,8 @@ use craft\enums\CmsEdition;
 use craft\helpers\Sequence;
 use craft\models\UserGroup;
 
+use DateTime;
+use DateTimeZone;
 use Throwable;
 
 class Submissions extends Component
@@ -30,6 +32,9 @@ class Submissions extends Component
     public const EVENT_DEFINE_PUBLISHER_SELF_APPROVAL = 'definePublisherSelfApproval';
     public const TRANSITION_LOCK_TIMEOUT = 5;
     public const FIRST_SUBMISSION_SEQUENCE = 'workflow:firstSubmission';
+
+    // Installs made before this date are existing sites, which never see the setup checklist.
+    public const SETUP_CHECKLIST_SINCE = '2026-11-23';
 
 
     // Properties
@@ -49,13 +54,21 @@ class Submissions extends Component
     }
 
     /**
-     * Returns what the Submissions page's first-run checklist needs, or null once a submission has ever been made.
+     * Returns what the Submissions page's first-run checklist needs, or null once a submission has ever been made. It
+     * shows only on installs made since the checklist was added, so sites that update Workflow never see it.
      *
      * Each role reports whether any site has its group, the distinct group names and how many sites have one. Workflow
      * only runs on a site that has both groups, so one site is enough to move on to the first submission.
      */
     public function getSetupSteps(): ?array
     {
+        $installDate = Craft::$app->getPlugins()->getStoredPluginInfo('workflow')['installDate'] ?? null;
+
+        // Craft stores the install date in UTC. A missing date is treated as an existing install.
+        if (!$installDate instanceof DateTime || $installDate < new DateTime(self::SETUP_CHECKLIST_SINCE, new DateTimeZone('UTC'))) {
+            return null;
+        }
+
         if ($this->hasHadSubmission()) {
             return null;
         }
